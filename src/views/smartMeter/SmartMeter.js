@@ -20,96 +20,121 @@ import ExportButton from '../ExportButton'
 
 const SmartMeter = () => {
   // Sample data - replace with your actual data
-  const [metersData] = useState([
-    {
-      id: 1,
-      userId: 'USR001',
-      meterId: 'MTR001',
-      customerName: 'John Doe',
-      meterReading: 1245.6,
-      amount: 89.5,
-      meterType: 'prepaid',
-      maintenance: 'paid',
-      isActive: true,
-    },
-    {
-      id: 2,
-      userId: 'USR002',
-      meterId: 'MTR002',
-      customerName: 'Jane Smith',
-      meterReading: 987.3,
-      amount: 156.75,
-      meterType: 'postpaid',
-      maintenance: 'pending',
-      isActive: true,
-    },
-    {
-      id: 3,
-      userId: 'USR003',
-      meterId: 'MTR003',
-      customerName: 'Mike Johnson',
-      meterReading: 2134.8,
-      amount: 201.2,
-      meterType: 'prepaid',
-      maintenance: 'paid',
-      isActive: false,
-    },
-    {
-      id: 4,
-      userId: 'USR004',
-      meterId: 'MTR004',
-      customerName: 'Sarah Wilson',
-      meterReading: 1567.2,
-      amount: 98.4,
-      meterType: 'postpaid',
-      maintenance: 'pending',
-      isActive: true,
-    },
-    {
-      id: 5,
-      userId: 'USR005',
-      meterId: 'MTR005',
-      customerName: 'David Brown',
-      meterReading: 845.9,
-      amount: 67.3,
-      meterType: 'prepaid',
-      maintenance: 'paid',
-      isActive: true,
-    },
-    {
-      id: 6,
-      userId: 'USR006',
-      meterId: 'MTR006',
-      customerName: 'Lisa Davis',
-      meterReading: 1789.4,
-      amount: 134.8,
-      meterType: 'postpaid',
-      maintenance: 'pending',
-      isActive: false,
-    },
-    {
-      id: 7,
-      userId: 'USR007',
-      meterId: 'MTR007',
-      customerName: 'Robert Taylor',
-      meterReading: 2456.1,
-      amount: 189.9,
-      meterType: 'prepaid',
-      maintenance: 'paid',
-      isActive: true,
-    },
-    {
-      id: 8,
-      userId: 'USR008',
-      meterId: 'MTR008',
-      customerName: 'Emma Wilson',
-      meterReading: 1023.7,
-      amount: 78.6,
-      meterType: 'postpaid',
-      maintenance: 'pending',
-      isActive: true,
-    },
-  ])
+const [metersData] = useState([
+  {
+    id: 1,
+    userId: 'USR001',
+    jbcareId: 'MTR001',
+    unitName: 'UNIT001',
+    site: 'SITE001',
+    customerName: 'John Doe',
+    meterType: 'prepaid',
+    meterReading: 134.6,
+    prevBalance: '1000',
+    maintenance: '150',
+    amount: 1150,
+    isActive: true,
+  },
+  {
+    id: 2,
+    userId: 'USR002',
+    jbcareId: 'MTR002',
+    unitName: 'UNIT002',
+    site: 'SITE002',
+    customerName: 'Jane Smith',
+    meterType: 'postpaid',
+    meterReading: 987.3,
+    prevBalance: '800',
+    maintenance: '200',
+    amount: 156.75,
+    isActive: true,
+  },
+  {
+    id: 3,
+    userId: 'USR003',
+    jbcareId: 'MTR003',
+    unitName: 'UNIT003',
+    site: 'SITE003',
+    customerName: 'Mike Johnson',
+    meterType: 'prepaid',
+    meterReading: 2134.8,
+    prevBalance: '1200',
+    maintenance: '100',
+    amount: 201.2,
+    isActive: false,
+  },
+  {
+    id: 4,
+    userId: 'USR004',
+    jbcareId: 'MTR004',
+    unitName: 'UNIT004',
+    site: 'SITE004',
+    customerName: 'Sarah Wilson',
+    meterType: 'postpaid',
+    meterReading: 1567.2,
+    prevBalance: '950',
+    maintenance: '250',
+    amount: 98.4,
+    isActive: true,
+  },
+  {
+    id: 5,
+    userId: 'USR005',
+    jbcareId: 'MTR005',
+    unitName: 'UNIT005',
+    site: 'SITE005',
+    customerName: 'David Brown',
+    meterType: 'prepaid',
+    meterReading: 845.9,
+    prevBalance: '700',
+    maintenance: '150',
+    amount: 67.3,
+    isActive: true,
+  },
+  {
+    id: 6,
+    userId: 'USR006',
+    jbcareId: 'MTR006',
+    unitName: 'UNIT006',
+    site: 'SITE006',
+    customerName: 'Lisa Davis',
+    meterType: 'postpaid',
+    meterReading: 1789.4,
+    prevBalance: '1100',
+    maintenance: '300',
+    amount: 134.8,
+    isActive: false,
+  },
+  {
+    id: 7,
+    userId: 'USR007',
+    jbcareId: 'MTR007',
+    unitName: 'UNIT007',
+    site: 'SITE007',
+    customerName: 'Robert Taylor',
+    meterType: 'prepaid',
+    meterReading: 2456.1,
+    prevBalance: '1050',
+    maintenance: '180',
+    amount: 189.9,
+    isActive: true,
+  },
+  {
+    id: 8,
+    userId: 'USR008',
+    jbcareId: 'MTR008',
+    unitName: 'UNIT008',
+    site: 'SITE008',
+    customerName: 'Emma Wilson',
+    meterType: 'postpaid',
+    meterReading: 1023.7,
+    prevBalance: '900',
+    maintenance: '220',
+    amount: 78.6,
+    isActive: true,
+  },
+]);
+
 
   // State for filtering and pagination
   const [searchTerm, setSearchTerm] = useState('')
@@ -152,7 +177,7 @@ const SmartMeter = () => {
       const matchesSearch =
         meter.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         meter.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        meter.meterId.toLowerCase().includes(searchTerm.toLowerCase())
+        meter.jbcareId.toLowerCase().includes(searchTerm.toLowerCase())
 
       const matchesMeterType = meterTypeFilter === 'all' || meter.meterType === meterTypeFilter
       const matchesMaintenance =
@@ -227,7 +252,7 @@ const SmartMeter = () => {
               {selectedMeter && (
                 <>
                   Are you sure you want to {selectedMeter.isActive ? 'turn OFF' : 'turn ON'} meter{' '}
-                  <strong>{selectedMeter.meterId}</strong> for customer{' '}
+                  <strong>{selectedMeter.jbcareId}</strong> for customer{' '}
                   <strong>{selectedMeter.customerName}</strong>?
                 </>
               )}
@@ -259,7 +284,7 @@ const SmartMeter = () => {
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Meter Management</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Monthly Billing Management</h2>
             <p className="text-gray-600 mt-1">Manage customer meters and billing</p>
           </div>
           <div className="flex items-center space-x-3">
@@ -336,17 +361,26 @@ const SmartMeter = () => {
                 onClick={() => handleSort('userId')}
               >
                 <div className="flex items-center">
-                  User ID
-                  <ChevronDown className="ml-1 w-4 h-4" />
+                  JBCare ID
+                 
                 </div>
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort('meterId')}
+                onClick={() => handleSort('userId')}
               >
                 <div className="flex items-center">
-                  Meter ID
-                  <ChevronDown className="ml-1 w-4 h-4" />
+                Unit Name
+                 
+                </div>
+              </th>
+              <th
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSort('jbcareId')}
+              >
+                <div className="flex items-center">
+                  Site
+                 
                 </div>
               </th>
               <th
@@ -355,7 +389,7 @@ const SmartMeter = () => {
               >
                 <div className="flex items-center">
                   Customer Name
-                  <ChevronDown className="ml-1 w-4 h-4" />
+                 
                 </div>
               </th>
               <th
@@ -363,24 +397,27 @@ const SmartMeter = () => {
                 onClick={() => handleSort('meterReading')}
               >
                 <div className="flex items-center">
-                  Meter Reading
-                  <ChevronDown className="ml-1 w-4 h-4" />
+                  Meter Type
+                 
                 </div>
               </th>
               <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort('amount')}
+                
               >
                 <div className="flex items-center">
-                  Amount
-                  <ChevronDown className="ml-1 w-4 h-4" />
+                 Meter Reading
+                 
                 </div>
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Meter Type
+                Bill Amount
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Maintenance
+                Maintenance Amount
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Total Amount
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action
@@ -394,7 +431,10 @@ const SmartMeter = () => {
                   {meter.userId}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {meter.meterId}
+                  {meter.jbcareId}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {meter.site}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
@@ -408,23 +448,31 @@ const SmartMeter = () => {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="flex items-center">
-                    <Zap className="w-4 h-4 mr-1 text-yellow-500" />
-                    {meter.meterReading} kWh
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="flex items-center">
-                    <DollarSign className="w-4 h-4 mr-1 text-green-500" />${meter.amount.toFixed(2)}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap">
                   <StatusBadge status={meter.meterType} />
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <StatusBadge status={meter.maintenance} />
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <div className="flex items-center">
+                     {meter?.meterReading} 
+                  </div>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <div className="flex items-center">
+                    ₹{meter.prevBalance}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <div className="flex items-center">
+                    ₹{meter.maintenance}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <div className="flex items-center">
+                    ₹{meter.amount}
+                  </div>
+                </td>
+              
+              
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     onClick={() => handleToggleClick(meter)}

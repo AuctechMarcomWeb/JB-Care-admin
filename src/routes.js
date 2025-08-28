@@ -3,6 +3,8 @@ import SmartMeter from './views/smartMeter/SmartMeter'
 import ComplaintsManagementTable from './views/complains/ComplaintsManagementTable'
 import StockIn from './views/stocks/StockIn'
 import StockOut from './views/stocks/StockOut'
+import ElmProfile from './views/CustomersProfile/ElmProfile'
+import MaintenanceProfile from './views/CustomersProfile/MaintenanceProfile'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
 const routes = [
@@ -12,6 +14,8 @@ const routes = [
   { path: '/complaints', name: 'Dashboard', element: ComplaintsManagementTable },
   { path: '/stockIn', name: 'Dashboard', element: StockIn },
   { path: '/stockOut', name: 'Dashboard', element: StockOut },
+  { path: '/elmProfile', name: 'ELM Profile', element: ElmProfile },
+  { path: '/maintenanceProfile', name: 'ELM Profile', element: MaintenanceProfile },
 ]
 
 export default routes

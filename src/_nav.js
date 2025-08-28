@@ -7,18 +7,38 @@ import {
 const useNav = () => {
 
   const navItems = [
-    {
+   {
       component: CNavItem,
       name: 'Dashboard',
       to: '/dashboard',
       icon: <MdOutlineDashboard className="me-3" />,
       
     },
+     {
+      component: CNavGroup,
+      name: 'Customer Profile',
+      to: '/Customer-Profile',
+      icon: <FaRegAddressCard className="me-3" />,
+      items: [
+      
+        {
+          component: CNavItem,
+          name: 'ELM',
+          to: '/elmProfile',
+        },
+        {
+          component: CNavItem,
+          name: 'Maintenance',
+          to: '/maintenanceProfile',
+        },
+      ],
+    },
+ 
     {
       component: CNavItem,
-      name: 'ELM Smart Meters',
+      name: 'Monthly Billing ',
       to: '/smartMeters',
-      icon: <MdOutlineDashboard className="me-3" />,
+      icon: <MdOutlineDashboard className="me-3 " />,
       
     },
     {
