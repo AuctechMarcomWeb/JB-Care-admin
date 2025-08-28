@@ -16,6 +16,35 @@ const useNav = () => {
     },
      {
       component: CNavGroup,
+      name: 'Masters',
+      to: '/Customer-Profile',
+      icon: <FaRegAddressCard className="me-3" />,
+      items: [
+      
+        {
+          component: CNavItem,
+          name: 'Maintenance Master',
+          to: '/maintenanceMaster',
+        },
+        {
+          component: CNavItem,
+          name: 'Category Master',
+          to: '/categoryMaster',
+        },
+        {
+          component: CNavItem,
+          name: 'Product Master',
+          to: '/productMaster',
+        },
+        {
+          component: CNavItem,
+          name: 'Site Master',
+          to: '/siteMaster',
+        },
+      ],
+    },
+     {
+      component: CNavGroup,
       name: 'Customer Profile',
       to: '/Customer-Profile',
       icon: <FaRegAddressCard className="me-3" />,
