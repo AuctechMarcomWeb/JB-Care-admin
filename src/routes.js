@@ -5,13 +5,15 @@ import StockIn from './views/stocks/StockIn'
 import StockOut from './views/stocks/StockOut'
 import ElmProfile from './views/CustomersProfile/ElmProfile'
 import MaintenanceProfile from './views/CustomersProfile/MaintenanceProfile'
-import Category from './views/masters/Category'
-import Maintenance from './views/masters/Maintenance'
-import Product from './views/masters/Product'
-import Site from './views/masters/Site'
+import Project from './views/masters/Project'
+import Unit from './views/masters/Unit'
+import UnitType from './views/masters/UnitType'
+import SiteLocation from './views/masters/Site-Location'
+import Rental from './views/masters/Rental'
+import LandLord from './views/masters/LandLord'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
-const routes = [
+const routes = [            
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/smartMeters', name: 'Dashboard', element: SmartMeter },
@@ -20,10 +22,12 @@ const routes = [
   { path: '/stockOut', name: 'Dashboard', element: StockOut },
   { path: '/elmProfile', name: 'ELM Profile', element: ElmProfile },
   { path: '/maintenanceProfile', name: 'ELM Profile', element: MaintenanceProfile },
-  { path: '/maintenanceMaster', name: 'ELM Profile', element: Maintenance },
-  { path: '/categoryMaster', name: 'ELM Profile', element: Category },
-  { path: '/productMaster', name: 'ELM Profile', element: Product },
-  { path: '/siteMaster', name: 'ELM Profile', element: Site },
+  { path: '/projectMaster', name: 'ELM Profile', element: Project },
+  { path: '/unitMaster', name: 'ELM Profile', element: Unit },
+  { path: '/unitTypeMaster', name: 'ELM Profile', element: UnitType },
+  { path: '/sitelocationMaster', name: 'ELM Profile', element: SiteLocation },
+  { path: '/landlordMaster', name: 'ELM Profile', element: LandLord },
+  { path: '/rentalMaster', name: 'ELM Profile', element: Rental },
 ]
 
 export default routes
