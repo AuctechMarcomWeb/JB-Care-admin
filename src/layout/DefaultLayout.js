@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/index'
 import { getRequest } from '../Helpers'
 import { useNavigate } from 'react-router-dom'
-import { deleteCookie } from "../Hooks/cookie"
+import { deleteCookie } from '../Hooks/cookie'
 
 const DefaultLayout = () => {
   const navigate = useNavigate()
   const [userData, setUserData] = useState(null)
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("DoctorAddaUser")
-    const savedUserId = localStorage.getItem("UserId")
+    const savedUser = localStorage.getItem('jbAdminToken')
+    const savedUserId = localStorage.getItem('UserId')
     // if (!savedUser) return
 
     const parsedUser = JSON.parse(savedUser)
@@ -18,18 +18,18 @@ const DefaultLayout = () => {
 
     setUserData(parsedUser)
 
-    getRequest(`auth/${parsedUserId}`)
+    getRequest(`auth/profile`)
       .then((res) => {
-        console.log("res data", res?.data?.data)
+        console.log('res data', res?.data?.data)
       })
       .catch((error) => {
         if (error.response?.status === 401) {
-          deleteCookie('DoctorAddaPanel')
+          deleteCookie('jbAdminToken')
           deleteCookie('UserId')
           navigate('/login')
           console.error('Unauthorized: Redirecting to login page')
         } else {
-          console.log("error", error)
+          console.log('error', error)
         }
       })
   }, [navigate])
@@ -37,7 +37,10 @@ const DefaultLayout = () => {
   return (
     <div>
       <AppSidebar userData={userData} />
-      <div style={{zIndex:1,position:"relative"}} className="wrapper d-flex flex-column min-vh-100">
+      <div
+        style={{ zIndex: 1, position: 'relative' }}
+        className="wrapper d-flex flex-column min-vh-100"
+      >
         <AppHeader userData={userData} />
         <div className=" flex-grow-1">
           <AppContent userData={userData} />

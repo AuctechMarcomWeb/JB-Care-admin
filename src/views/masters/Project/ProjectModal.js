@@ -3,7 +3,7 @@
 import { Modal } from 'antd'
 import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { fileUpload, postRequest, putRequest } from '../../../Helpers'
+import { getRequest, postRequest, putRequest } from '../../../Helpers'
 
 const ProjectModal = ({
   setUpdateStatus,
@@ -14,34 +14,50 @@ const ProjectModal = ({
 }) => {
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
+  const [sites, setSites] = useState([])
+
   const [formData, setFormData] = useState({
-    title: '',
-    url: '',
-    isActive: true,
+    projectName: '',
+    siteId: '',
+    projectAddress: '',
+    status: true,
   })
 
-  // Prefill data in edit mode
+  // 🔹 Fetch sites for dropdown
+  useEffect(() => {
+    getRequest('sites?isPagination=false')
+      .then((res) => {
+        const responseData = res?.data?.data
+        setSites(responseData?.sites || [])
+      })
+      .catch((error) => {
+        console.error('Error fetching sites:', error)
+      })
+  }, [])
+
+  // 🔹 Prefill in edit mode
   useEffect(() => {
     if (modalData) {
       setFormData({
-        title: modalData.title || '',
-        url: modalData.url || modalData.url || '', 
-        isActive: modalData.isActive ?? true,
+        projectName: modalData.projectName || '',
+        siteId: modalData.siteId || '',
+        projectAddress: modalData.projectAddress || '',
+        status: modalData.status ?? true,
       })
     } else {
-      setFormData({ title: '', url: '', isActive: true })
+      setFormData({ projectName: '', siteId: '', projectAddress: '', status: true })
     }
   }, [modalData])
 
-  // Close modal
+  // 🔹 Close modal
   const handleCancel = () => {
-    setFormData({ title: '', url: '', isActive: true })
+    setFormData({ projectName: '', siteId: '', projectAddress: '', status: true })
     setErrors({})
     setModalData(null)
     setIsModalOpen(false)
   }
 
-  // Handle input changes
+  // 🔹 Input handler
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prev) => ({
@@ -50,153 +66,109 @@ const ProjectModal = ({
     }))
   }
 
-  // Upload image and update url
-  const handleChangeImage = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    setLoading(true)
-
-    fileUpload({
-      url: 'upload/uploadImage',
-      cred: { file },
-    })
-      .then((res) => {
-        const uploadedUrl = res.data?.data?.imageUrl
-        if (uploadedUrl) {
-          setFormData((prev) => ({ ...prev, url: uploadedUrl }))
-          toast.success('Image uploaded successfully')
-        } else {
-          toast.error('Image URL not received')
-        }
-      })
-      .catch((error) => {
-        console.error('Image upload failed:', error)
-        toast.error('Image upload failed')
-      })
-      .finally(() => setLoading(false))
-  }
-
-  // Remove image
-  const handleRemoveImage = () => {
-    setFormData((prev) => ({ ...prev, url: '' }))
-  }
-
-  // Validate form fields
+  // 🔹 Validate form
   const validateForm = () => {
     const newErrors = {}
-    if (!formData.title.trim()) newErrors.title = 'Title is required'
-    if (!formData.url) newErrors.url = 'Image is required'
+    if (!formData.projectName.trim()) newErrors.projectName = 'Project name is required'
+    if (!formData.siteId) newErrors.siteId = 'Please select a site'
+    if (!formData.projectAddress.trim()) newErrors.projectAddress = 'Project address is required'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  // Submit new gallery
+  // 🔹 Add Project
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!validateForm()) return
+    setLoading(true)
 
     postRequest({
-      url: 'gallery',
-      cred: formData, // ✅ title, url, isActive
+      url: 'projects',
+      cred: formData,
     })
       .then((res) => {
-        toast.success(res?.data?.message || 'Gallery added successfully')
+        toast.success(res?.data?.message || 'Project created successfully')
         setUpdateStatus((prev) => !prev)
         handleCancel()
       })
       .catch((error) => {
         toast.error(error?.response?.data?.message || 'Something went wrong')
       })
+      .finally(() => setLoading(false))
   }
 
-  // Update existing gallery
+  // 🔹 Edit Project
   const handleEdit = (e) => {
     e.preventDefault()
     if (!validateForm()) return
+    setLoading(true)
 
     putRequest({
-      url: `gallery/${modalData?._id}`,
-      cred: formData, // ✅ title, url, isActive
+      url: `projects/${modalData?._id}`,
+      cred: formData,
     })
       .then((res) => {
-        toast.success(res?.data?.message || 'Gallery updated successfully')
+        toast.success(res?.data?.message || 'Project updated successfully')
         setUpdateStatus((prev) => !prev)
         handleCancel()
       })
       .catch((error) => {
         toast.error(error?.response?.data?.message || 'Something went wrong')
       })
+      .finally(() => setLoading(false))
   }
 
   return (
     <Modal
-      title={modalData ? 'Edit Gallery' : 'Add Gallery'}
+      title={modalData ? 'Edit Project' : 'Add Project'}
       open={isModalOpen}
       footer={null}
       onCancel={handleCancel}
     >
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
-        {/* Title */}
+        {/* Project Name */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Title</label>
+          <label className="form-label fw-bold">Project Name</label>
           <input
             type="text"
-            className={`form-control ${errors.title ? 'is-invalid' : ''}`}
-            name="title"
-            value={formData.title}
+            className={`form-control ${errors.projectName ? 'is-invalid' : ''}`}
+            name="projectName"
+            value={formData.projectName}
             onChange={handleChange}
           />
-          {errors.title && <div className="invalid-feedback">{errors.title}</div>}
+          {errors.projectName && <div className="invalid-feedback">{errors.projectName}</div>}
         </div>
 
-        {/* Image Upload */}
+        {/* Site Dropdown */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Image</label>
-          <input
-            type="file"
-            className={`form-control ${errors.url ? 'is-invalid' : ''}`}
-            disabled={loading}
-            onChange={handleChangeImage}
-          />
-          {errors.url && <div className="invalid-feedback">{errors.url}</div>}
+          <label className="form-label fw-bold">Select Site</label>
+          <select
+            name="siteId"
+            className={`form-select ${errors.siteId ? 'is-invalid' : ''}`}
+            value={formData.siteId}
+            onChange={handleChange}
+          >
+            <option value="">-- Select Site --</option>
+            {sites.map((site) => (
+              <option key={site._id} value={site._id}>
+                {site.siteName}
+              </option>
+            ))}
+          </select>
+          {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
+        </div>
 
-          {/* Image Preview */}
-          {formData.url && (
-            <div className="mt-2" style={{ position: 'relative', display: 'inline-block' }}>
-              <img
-                src={formData.url}
-                alt="Preview"
-                style={{
-                  width: '60px',
-                  height: '60px',
-                  objectFit: 'cover',
-                  borderRadius: '6px',
-                }}
-              />
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                style={{
-                  position: 'absolute',
-                  top: '-6px',
-                  right: '-6px',
-                  background: 'red',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '18px',
-                  height: '18px',
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                ✕
-              </button>
-            </div>
-          )}
+        {/* Project Address */}
+        <div className="mb-3">
+          <label className="form-label fw-bold">Project Address</label>
+          <input
+            type="text"
+            className={`form-control ${errors.projectAddress ? 'is-invalid' : ''}`}
+            name="projectAddress"
+            value={formData.projectAddress}
+            onChange={handleChange}
+          />
+          {errors.projectAddress && <div className="invalid-feedback">{errors.projectAddress}</div>}
         </div>
 
         {/* Active Checkbox */}
@@ -204,12 +176,12 @@ const ProjectModal = ({
           <input
             type="checkbox"
             className="form-check-input"
-            name="isActive"
-            checked={formData.isActive}
+            name="status"
+            checked={formData.status}
             onChange={handleChange}
-            id="isActive"
+            id="status"
           />
-          <label className="form-check-label" htmlFor="isActive">
+          <label className="form-check-label" htmlFor="status">
             Active
           </label>
         </div>
@@ -223,10 +195,10 @@ const ProjectModal = ({
             {modalData
               ? loading
                 ? 'Updating...'
-                : 'Update Gallery'
+                : 'Update Project'
               : loading
-                ? 'Uploading...'
-                : 'Save Gallery'}
+                ? 'Saving...'
+                : 'Save Project'}
           </button>
         </div>
       </form>
