@@ -12,12 +12,34 @@ import {
   Save,
 } from 'lucide-react'
 import ExportButton from '../ExportButton'
+import { getRequest } from '../../Helpers'
 
 const UnitType = () => {
   const [stockData] = useState([
-    { id: 1, UnitType: 'Villa', projectName: 'Project A', projectId: 'P001', landlordName: 'John Doe', landlordId: 'L001' },
-    { id: 2, UnitType: 'Plot', projectName: 'Project B', projectId: 'P002', landlordName: 'Jane Smith', landlordId: 'L002' },
-    { id: 3, UnitType: 'Apartment', projectName: 'Project C', projectId: 'P003', landlordName: 'Mike Johnson', landlordId: 'L003' },
+    {
+      id: 1,
+      UnitType: 'Villa',
+      projectName: 'Project A',
+      projectId: 'P001',
+      landlordName: 'John Doe',
+      landlordId: 'L001',
+    },
+    {
+      id: 2,
+      UnitType: 'Plot',
+      projectName: 'Project B',
+      projectId: 'P002',
+      landlordName: 'Jane Smith',
+      landlordId: 'L002',
+    },
+    {
+      id: 3,
+      UnitType: 'Apartment',
+      projectName: 'Project C',
+      projectId: 'P003',
+      landlordName: 'Mike Johnson',
+      landlordId: 'L003',
+    },
   ])
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -37,16 +59,35 @@ const UnitType = () => {
     landlordId: '',
   })
 
+  useEffect(() => {
+    getRequest()
+      .then((res) => {
+        setData(res?.data?.data)
+      })
+      .catch((error) => {
+        console.log('error hai bhaiii', error)
+      })
+  })
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const resetForm = () => setFormData({ UnitType: '', projectName: '', projectId: '', landlordName: '', landlordId: '' })
-  const handleAddProduct = () => { setShowAddModal(true); resetForm() }
+  const resetForm = () =>
+    setFormData({ UnitType: '', projectName: '', projectId: '', landlordName: '', landlordId: '' })
+  const handleAddProduct = () => {
+    setShowAddModal(true)
+    resetForm()
+  }
 
   const submitAdd = () => {
-    if (formData.UnitType && formData.projectName && formData.projectId && formData.landlordName && formData.landlordId) {
+    if (
+      formData.UnitType &&
+      formData.projectName &&
+      formData.projectId &&
+      formData.landlordName &&
+      formData.landlordId
+    ) {
       const newProduct = { id: Date.now(), ...formData }
       setStock((prev) => [...prev, newProduct])
       setShowAddModal(false)
@@ -67,11 +108,15 @@ const UnitType = () => {
   }
 
   const submitEdit = () => {
-    if (formData.UnitType && formData.projectName && formData.projectId && formData.landlordName && formData.landlordId) {
+    if (
+      formData.UnitType &&
+      formData.projectName &&
+      formData.projectId &&
+      formData.landlordName &&
+      formData.landlordId
+    ) {
       setStock((prev) =>
-        prev.map((item) =>
-          item.id === selectedItem.id ? { ...item, ...formData } : item
-        )
+        prev.map((item) => (item.id === selectedItem.id ? { ...item, ...formData } : item)),
       )
       setShowEditModal(false)
       setSelectedItem(null)
@@ -79,17 +124,31 @@ const UnitType = () => {
     }
   }
 
-  const handleDeleteProduct = (item) => { setSelectedItem(item); setShowDeleteModal(true) }
-  const confirmDelete = () => { if (selectedItem) setStock((prev) => prev.filter((item) => item.id !== selectedItem.id)); setShowDeleteModal(false); setSelectedItem(null) }
-  const closeModals = () => { setShowAddModal(false); setShowEditModal(false); setShowDeleteModal(false); setSelectedItem(null); resetForm() }
+  const handleDeleteProduct = (item) => {
+    setSelectedItem(item)
+    setShowDeleteModal(true)
+  }
+  const confirmDelete = () => {
+    if (selectedItem) setStock((prev) => prev.filter((item) => item.id !== selectedItem.id))
+    setShowDeleteModal(false)
+    setSelectedItem(null)
+  }
+  const closeModals = () => {
+    setShowAddModal(false)
+    setShowEditModal(false)
+    setShowDeleteModal(false)
+    setSelectedItem(null)
+    resetForm()
+  }
 
   const filteredAndSortedData = useMemo(() => {
-    let filtered = stock.filter((item) =>
-      item.UnitType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.projectId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.landlordName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.landlordId.toLowerCase().includes(searchTerm.toLowerCase())
+    let filtered = stock.filter(
+      (item) =>
+        item.UnitType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.projectId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.landlordName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.landlordId.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     if (sortConfig.key) {
       filtered.sort((a, b) => {
@@ -124,26 +183,36 @@ const UnitType = () => {
             </div>
 
             <div className="space-y-4">
-              {['UnitType', 'projectName', 'projectId', 'landlordName', 'landlordId'].map((field) => (
-                <div key={field}>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{field.replace(/([A-Z])/g, ' $1').trim()} *</label>
-                  <input
-                    type="text"
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder={`Enter ${field.replace(/([A-Z])/g, ' $1').trim()}`}
-                  />
-                </div>
-              ))}
+              {['UnitType', 'projectName', 'projectId', 'landlordName', 'landlordId'].map(
+                (field) => (
+                  <div key={field}>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {field.replace(/([A-Z])/g, ' $1').trim()} *
+                    </label>
+                    <input
+                      type="text"
+                      name={field}
+                      value={formData[field]}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder={`Enter ${field.replace(/([A-Z])/g, ' $1').trim()}`}
+                    />
+                  </div>
+                ),
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
-              <button onClick={closeModals} className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors rounded border">
+              <button
+                onClick={closeModals}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors rounded border"
+              >
                 Cancel
               </button>
-              <button onClick={showAddModal ? submitAdd : submitEdit} className="px-6 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors flex items-center justify-center rounded">
+              <button
+                onClick={showAddModal ? submitAdd : submitEdit}
+                className="px-6 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors flex items-center justify-center rounded"
+              >
                 <Save className="w-4 h-4 mr-2" />
                 {showAddModal ? 'Add UnitType' : 'Update UnitType'}
               </button>
@@ -161,11 +230,25 @@ const UnitType = () => {
               <h3 className="text-lg font-semibold text-gray-900">Confirm Delete</h3>
             </div>
             <p className="text-gray-600 mb-6">
-              {selectedItem && <>Are you sure you want to delete <strong>{selectedItem.UnitType}</strong>?</>}
+              {selectedItem && (
+                <>
+                  Are you sure you want to delete <strong>{selectedItem.UnitType}</strong>?
+                </>
+              )}
             </p>
             <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
-              <button onClick={closeModals} className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors rounded border">Cancel</button>
-              <button onClick={confirmDelete} className="px-6 py-2 bg-red-600 text-white font-medium hover:bg-red-700 transition-colors rounded">Delete</button>
+              <button
+                onClick={closeModals}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors rounded border"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-6 py-2 bg-red-600 text-white font-medium hover:bg-red-700 transition-colors rounded"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
@@ -175,12 +258,17 @@ const UnitType = () => {
       <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center sm:text-left">UnitType Master</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center sm:text-left">
+              UnitType Master
+            </h2>
             <p className="text-gray-600 mt-1 text-center sm:text-left">Manage UnitType Master</p>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <ExportButton data={stock} fileName="UnitTypeData.xlsx" sheetName="UnitType" />
-            <button onClick={handleAddProduct} className="bg-green-600 text-white px-4 py-2 hover:bg-green-700 transition-colors flex items-center justify-center w-full sm:w-auto rounded">
+            <button
+              onClick={handleAddProduct}
+              className="bg-green-600 text-white px-4 py-2 hover:bg-green-700 transition-colors flex items-center justify-center w-full sm:w-auto rounded"
+            >
               <Plus className="w-4 h-4 mr-2" /> Add UnitType
             </button>
           </div>
@@ -206,12 +294,24 @@ const UnitType = () => {
         <table className="w-full min-w-[600px]">
           <thead>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">UnitType</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Landlord Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Landlord ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                UnitType
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Project Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Project ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Landlord Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Landlord ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -224,8 +324,18 @@ const UnitType = () => {
                 <td className="px-6 py-4 whitespace-nowrap">{item.landlordId}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex space-x-2">
-                    <button onClick={() => handleEditProduct(item)} className="text-blue-600 hover:text-blue-800 flex items-center"><Edit className="w-4 h-4 mx-3" /></button>
-                    <button onClick={() => handleDeleteProduct(item)} className="text-red-600 hover:text-red-800 flex items-center"><Trash2 className="w-4 h-4" /></button>
+                    <button
+                      onClick={() => handleEditProduct(item)}
+                      className="text-blue-600 hover:text-blue-800 flex items-center"
+                    >
+                      <Edit className="w-4 h-4 mx-3" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProduct(item)}
+                      className="text-red-600 hover:text-red-800 flex items-center"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -240,7 +350,14 @@ const UnitType = () => {
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-700">Show:</span>
-              <select value={itemsPerPage} onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1) }} className="border border-gray-300 px-2 py-1 text-sm rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value))
+                  setCurrentPage(1)
+                }}
+                className="border border-gray-300 px-2 py-1 text-sm rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -249,24 +366,43 @@ const UnitType = () => {
               <span className="text-sm text-gray-700">per page</span>
             </div>
             <div className="text-sm text-gray-700">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of {filteredAndSortedData.length} results
+              Showing {startIndex + 1} to{' '}
+              {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of{' '}
+              {filteredAndSortedData.length} results
             </div>
           </div>
 
           <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2">
-            <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center rounded">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center rounded"
+            >
               <ChevronLeft className="w-4 h-4 mr-1" /> Previous
             </button>
             {[...Array(Math.min(totalPages, 5))].map((_, index) => {
-              const pageNumber = currentPage <= 3 ? index + 1 : currentPage >= totalPages - 2 ? totalPages - 4 + index : currentPage - 2 + index
+              const pageNumber =
+                currentPage <= 3
+                  ? index + 1
+                  : currentPage >= totalPages - 2
+                    ? totalPages - 4 + index
+                    : currentPage - 2 + index
               if (pageNumber < 1 || pageNumber > totalPages) return null
               return (
-                <button key={pageNumber} onClick={() => setCurrentPage(pageNumber)} className={`px-3 py-1 text-sm border rounded ${currentPage === pageNumber ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 hover:bg-gray-50'}`}>
+                <button
+                  key={pageNumber}
+                  onClick={() => setCurrentPage(pageNumber)}
+                  className={`px-3 py-1 text-sm border rounded ${currentPage === pageNumber ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 hover:bg-gray-50'}`}
+                >
                   {pageNumber}
                 </button>
               )
             })}
-            <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center rounded">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center rounded"
+            >
               Next <ChevronRight className="w-4 h-4 ml-1" />
             </button>
           </div>

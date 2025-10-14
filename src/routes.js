@@ -1,8 +1,9 @@
 import React from 'react'
 import SmartMeter from './views/smartMeter/SmartMeter'
 import ComplaintsManagementTable from './views/complains/ComplaintsManagementTable'
-import StockIn from './views/stocks/StockIn'
-import StockOut from './views/stocks/StockOut'
+import CentralStock from './views/stocks/CentralStock'
+import StockTransfer from './views/stocks/StockTransfer'
+import StockConsumption from './views/stocks/stockConsumption'
 import ElmProfile from './views/CustomersProfile/ElmProfile'
 import MaintenanceProfile from './views/CustomersProfile/MaintenanceProfile'
 import Project from './views/masters/Project'
@@ -17,9 +18,7 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/smartMeters', name: 'Dashboard', element: SmartMeter },
-  { path: '/complaints', name: 'Dashboard', element: ComplaintsManagementTable },
-  { path: '/stockIn', name: 'Dashboard', element: StockIn },
-  { path: '/stockOut', name: 'Dashboard', element: StockOut },
+  { path: '/complaints', name: 'ELM Profile', element: ComplaintsManagementTable },
   { path: '/elmProfile', name: 'ELM Profile', element: ElmProfile },
   { path: '/maintenanceProfile', name: 'ELM Profile', element: MaintenanceProfile },
   { path: '/projectMaster', name: 'ELM Profile', element: Project },
@@ -28,6 +27,9 @@ const routes = [
   { path: '/sitelocationMaster', name: 'ELM Profile', element: SiteLocation },
   { path: '/landlordMaster', name: 'ELM Profile', element: LandLord },
   { path: '/rentalMaster', name: 'ELM Profile', element: Rental },
+  { path: '/CentralStock', name: 'ELM Profile', element: CentralStock },
+  { path: '/StockTransfer', name: 'ELM Profile', element: StockTransfer },
+  { path: '/StockConsumption', name: 'ELM Profile', element: StockConsumption },
 ]
 
 export default routes
