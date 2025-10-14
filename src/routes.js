@@ -8,12 +8,12 @@ import MaintenanceProfile from './views/CustomersProfile/MaintenanceProfile'
 import Project from './views/masters/Project'
 import Unit from './views/masters/Unit'
 import UnitType from './views/masters/UnitType'
-import SiteLocation from './views/masters/Site-Location'
+import SiteLocation from './views/masters/Site-location'
 import Rental from './views/masters/Rental'
 import LandLord from './views/masters/LandLord'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
-const routes = [            
+const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/smartMeters', name: 'Dashboard', element: SmartMeter },
