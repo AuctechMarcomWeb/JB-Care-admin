@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import toast from 'react-hot-toast'
-import useCookie from '../../../Hooks/cookie'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
-
 import logo from '../../../assets/logo2.png'
 import { postRequest } from '../../../Helpers'
+import useCookie from '../../../Hooks/cookie'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -27,10 +25,10 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     setLoading(true)
-    axios
-      .postRequest(`auth/login`, formData)
+
+    postRequest({ url: `auth/login`, cred: formData })
       .then((res) => {
-        setCookie('token', res?.data?.data?.authToken, 30)
+        setCookie('token', res?.data?.token, 30)
         toast.success('User Login Successfully')
         navigate('/')
         window.location.reload()
@@ -43,87 +41,92 @@ const Login = () => {
 
   return (
     <div
-      className="min-vh-100 d-flex justify-content-center align-items-center"
-      style={{ backgroundColor: '#000000' }}
+      className="d-flex justify-content-center align-items-center vh-100"
+      style={{
+        backgroundColor: '#000',
+        padding: '20px',
+      }}
     >
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-md-6 col-lg-5">
-            <div className="card p-4 bg-white shadow">
-              <div className="card-body text-center">
-                <img
-                  src={logo}
-                  alt="Logo"
-                  style={{ width: '100px', marginBottom: '10px', margin: 'auto' }}
+      <div className="w-100" style={{ maxWidth: '420px' }}>
+        <div className="card shadow-lg border-0 p-4 rounded-4">
+          <div className="card-body  text-center">
+            <img
+              src={logo}
+              alt="Logo"
+              className="img-fluid mb-3"
+              style={{
+                width: '100px',
+                margin: 'auto',
+                marginBottom: '10px',
+                objectFit: 'contain',
+              }}
+            />
+
+            <form onSubmit={handleSubmit}>
+              {/* Phone Field */}
+              <div className="text-start mb-4">
+                <label className="form-label text-black fw-semibold">Phone Number</label>
+                <input
+                  type="text"
+                  className="form-control bg-light text-black py-2"
+                  placeholder="Enter phone number"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  required
                 />
-                <h3 className="mb-4  text-black">Login</h3>
-
-                <form onSubmit={handleSubmit}>
-                  <div className="input-block text-start mb-4">
-                    <label className="col-form-label text-black">User Name</label>
-                    <input
-                      type="tel"
-                      className="form-control bg-white text-black"
-                      placeholder="userName"
-                      name="userName"
-                      value={formData?.phone}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="input-block mb-4">
-                    <div className="row align-items-center">
-                      <div className="col text-start">
-                        <label className="col-form-label text-black">Password</label>
-                      </div>
-                      <div className="col-auto ">
-                        <a className=" text-black" href="#">
-                          Forgot password?
-                        </a>
-                      </div>
-                    </div>
-                    <div className="position-relative">
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        className="form-control bg-white text-black"
-                        placeholder="Password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        required
-                      />
-                      <span
-                        onClick={() => setShowPassword(!showPassword)}
-                        style={{
-                          position: 'absolute',
-                          top: '50%',
-                          right: '15px',
-                          transform: 'translateY(-50%)',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {showPassword ? (
-                          <FaEyeSlash className="text-black fs-5" />
-                        ) : (
-                          <FaEye className="text-black fs-5" />
-                        )}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="btn w-100 text-white"
-                    style={{
-                      background: 'linear-gradient(to right, #9F8054, #9F8054)',
-                    }}
-                    disabled={loading}
-                  >
-                    {loading ? 'Loading...' : 'Login'}
-                  </button>
-                </form>
               </div>
-            </div>
+
+              {/* Password Field */}
+              <div className="text-start mb-4">
+                <div className="d-flex justify-content-between align-items-center mb-1">
+                  <label className="form-label text-black fw-semibold">Password</label>
+                  <a href="#" className="small text-secondary text-decoration-none">
+                    Forgot password?
+                  </a>
+                </div>
+                <div className="position-relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="form-control bg-light text-black py-2"
+                    placeholder="Enter password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  <span
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      right: '15px',
+                      transform: 'translateY(-50%)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash className="text-black fs-5" />
+                    ) : (
+                      <FaEye className="text-black fs-5" />
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              {/* Button */}
+              <button
+                type="submit"
+                className="btn w-100 text-white py-2 fw-semibold"
+                style={{
+                  background: 'linear-gradient(to right, #9F8054, #b89665)',
+                  borderRadius: '8px',
+                }}
+                disabled={loading}
+              >
+                {loading ? 'Loading...' : 'Login'}
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -132,159 +135,3 @@ const Login = () => {
 }
 
 export default Login
-
-// import React, { useState } from 'react'
-// import { useNavigate } from 'react-router-dom'
-// import axios from 'axios'
-// import toast from 'react-hot-toast'
-// import useCookie from '../../../Hooks/cookie'
-// import { FaEye, FaEyeSlash } from 'react-icons/fa'
-// import logo from '../../../assets/logo2.png'
-// import { postRequest } from '../../../Helpers'
-
-// const Login = () => {
-//   const [showPassword, setShowPassword] = useState(false)
-//   const [loading, setLoading] = useState(false)
-//   const { setCookie } = useCookie()
-//   const navigate = useNavigate()
-
-//   const [formData, setFormData] = useState({
-//     phone: '',
-//     password: '',
-//   })
-
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target
-//     setFormData((prev) => ({ ...prev, [name]: value }))
-//   }
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault()
-//     setLoading(true)
-
-//     try {
-//       const res = await axios.postRequest('auth/login', formData)
-
-//       const token = res?.data?.token
-//       const user = res?.data?.user
-
-//       //  Only allow admin
-//       if (user?.role !== 'admin') {
-//         toast.error('Unauthorized: Admin access only')
-//         setLoading(false)
-//         return
-//       }
-
-//       if (token) {
-//         setCookie('token', token, 30)
-//         localStorage.setItem('user', JSON.stringify(user))
-//         toast.success(res?.data?.message || 'Admin login successful')
-
-//         // Redirect admin to dashboard
-//         navigate('/admin/dashboard')
-//         window.location.reload()
-//       } else {
-//         toast.error('Invalid response from server')
-//       }
-//     } catch (err) {
-//       toast.error(err?.response?.data?.message || 'Login failed')
-//     } finally {
-//       setLoading(false)
-//     }
-//   }
-
-//   return (
-//     <div
-//       className="min-vh-100 d-flex justify-content-center align-items-center"
-//       style={{ backgroundColor: '#000000' }}
-//     >
-//       <div className="container">
-//         <div className="row justify-content-center">
-//           <div className="col-md-6 col-lg-5">
-//             <div className="card p-4 bg-white shadow">
-//               <div className="card-body text-center">
-//                 <img
-//                   src={logo}
-//                   alt="Logo"
-//                   style={{ width: '100px', marginBottom: '10px', margin: 'auto' }}
-//                 />
-//                 <h3 className="mb-4 text-black">Admin Login</h3>
-
-//                 <form onSubmit={handleSubmit}>
-//                   {/* PHONE */}
-//                   <div className="input-block text-start mb-4">
-//                     <label className="col-form-label text-black">Phone Number</label>
-//                     <input
-//                       type="tel"
-//                       className="form-control bg-white text-black"
-//                       placeholder="Enter admin phone number"
-//                       name="phone"
-//                       value={formData.phone}
-//                       onChange={handleInputChange}
-//                       required
-//                     />
-//                   </div>
-
-//                   {/* PASSWORD */}
-//                   <div className="input-block mb-4">
-//                     <div className="row align-items-center">
-//                       <div className="col text-start">
-//                         <label className="col-form-label text-black">Password</label>
-//                       </div>
-//                       <div className="col-auto">
-//                         <a className="text-black" href="#">
-//                           Forgot password?
-//                         </a>
-//                       </div>
-//                     </div>
-//                     <div className="position-relative">
-//                       <input
-//                         type={showPassword ? 'text' : 'password'}
-//                         className="form-control bg-white text-black"
-//                         placeholder="Enter password"
-//                         name="password"
-//                         value={formData.password}
-//                         onChange={handleInputChange}
-//                         required
-//                       />
-//                       <span
-//                         onClick={() => setShowPassword(!showPassword)}
-//                         style={{
-//                           position: 'absolute',
-//                           top: '50%',
-//                           right: '15px',
-//                           transform: 'translateY(-50%)',
-//                           cursor: 'pointer',
-//                         }}
-//                       >
-//                         {showPassword ? (
-//                           <FaEyeSlash className="text-black fs-5" />
-//                         ) : (
-//                           <FaEye className="text-black fs-5" />
-//                         )}
-//                       </span>
-//                     </div>
-//                   </div>
-
-//                   {/* SUBMIT BUTTON */}
-//                   <button
-//                     type="submit"
-//                     className="btn w-100 text-white"
-//                     style={{
-//                       background: 'linear-gradient(to right, #9F8054, #9F8054)',
-//                     }}
-//                     disabled={loading}
-//                   >
-//                     {loading ? 'Loading...' : 'Login as Admin'}
-//                   </button>
-//                 </form>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Login
