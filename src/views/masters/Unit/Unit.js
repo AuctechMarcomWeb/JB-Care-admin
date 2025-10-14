@@ -22,24 +22,28 @@ const Unit = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [fromDate, setFormDate] = useState('')
+  const [toDate, setToDate] = useState('')
 
   useEffect(() => {
     setLoading(true)
-    getRequest(`projects?search=${searchTerm}&page=${page}&limit=${limit}`)
+    getRequest(
+      `units?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
+    )
       .then((res) => {
         const responseData = res?.data?.data
-        setData(responseData?.gallery || [])
-        setTotal(responseData?.totalGallery || 0)
+        setData(responseData?.units || [])
+        setTotal(responseData?.totalUnits || 0)
       })
       .catch((error) => {
         console.log('error', error)
       })
       .finally(() => setLoading(false))
-  }, [page, limit, searchTerm, updateStatus])
+  }, [page, limit, searchTerm, fromDate, toDate, updateStatus])
 
   // ✅ Delete handler
   const confirmDelete = () => {
-    deleteRequest(`projects/${selectedItem?._id}`)
+    deleteRequest(`units/${selectedItem?._id}`)
       .then((res) => {
         toast.success(res?.data?.message)
         setSelectedItem(null)
@@ -89,7 +93,7 @@ const Unit = () => {
           <p className="text-gray-600 text-sm sm:text-base">Manage Unit</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <ExportButton data={data} fileName="Property Type.xlsx" sheetName="Property Type" />
+          {/* <ExportButton data={data} fileName="Property Type.xlsx" sheetName="Property Type" /> */}
           <button
             onClick={() => {
               setIsModalOpen(true)
@@ -101,20 +105,74 @@ const Unit = () => {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value)
-              setPage(1)
-            }}
-            className="pl-10 pr-4 py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500"
-          />
+      {/* Filters Section */}
+      <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+          {/* From Date */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFormDate(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* To Date */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
+            <input
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Search Input */}
+          <div className="flex flex-col md:col-span-2">
+            <label className="text-sm font-medium text-gray-700 mb-1">Search</label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search by name, email, etc..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {/* Apply Filters */}
+            <button
+              onClick={() => {
+                setPage(1)
+                setUpdateStatus((prev) => !prev)
+              }}
+              className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Filters
+            </button>
+
+            {/* Clear Filters */}
+            {(fromDate || toDate || searchTerm) && (
+              <button
+                onClick={() => {
+                  setFormDate('')
+                  setToDate('')
+                  setSearchTerm('')
+                  setPage(1)
+                  setUpdateStatus((prev) => !prev)
+                }}
+                className="bg-red-600 text-white px-3 sm:px-4 py-2 hover:bg-red-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -137,8 +195,13 @@ const Unit = () => {
               <thead>
                 <tr>
                   <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Title</th>
-                  <th className="px-6 py-3">Image</th>
+                  <th className="px-6 py-3">Unit Number</th>
+                  <th className="px-6 py-3">Block</th>
+                  <th className="px-6 py-3">Floor</th>
+                  <th className="px-6 py-3">Area Sqft</th>
+                  <th className="px-6 py-3">Site Name</th>
+                  <th className="px-6 py-3">Project Name</th>
+                  <th className="px-6 py-3">Unit Type</th>
                   <th className="px-6 py-3">Active</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -150,16 +213,15 @@ const Unit = () => {
                       {(page - 1) * limit + (index + 1)}
                     </td>
 
-                    <td className="px-6 py-4">{item?.title}</td>
+                    <td className="px-6 py-4">{item?.unitNumber}</td>
+                    <td className="px-6 py-4">{item?.block}</td>
+                    <td className="px-6 py-4">{item?.floor}</td>
+                    <td className="px-6 py-4">{item?.areaSqFt}</td>
+                    <td className="px-6 py-4">{item?.siteId?.siteName}</td>
+                    <td className="px-6 py-4">{item?.projectId?.projectName}</td>
+                    <td className="px-6 py-4">{item?.unitTypeId?.title}</td>
                     <td className="px-6 py-4">
-                      <img
-                        src={item?.url}
-                        alt="gallery"
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    </td>
-                    <td className="px-6 py-4">
-                      {item?.isActive ? (
+                      {item?.status ? (
                         <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
                       ) : (
                         <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>

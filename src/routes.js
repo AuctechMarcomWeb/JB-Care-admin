@@ -1,6 +1,6 @@
 import React from 'react'
 import SmartMeter from './views/smartMeter/SmartMeter'
-import ComplaintsManagementTable from './views/complains/ComplaintsManagementTable'
+//import Complaints from './views/complains/Complaints'
 import CentralStock from './views/stocks/CentralStock'
 import StockTransfer from './views/stocks/StockTransfer'
 import StockConsumption from './views/stocks/stockConsumption'
@@ -18,7 +18,7 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/smartMeters', name: 'Dashboard', element: SmartMeter },
-  { path: '/complaints', name: 'ELM Profile', element: ComplaintsManagementTable },
+  // { path: '/complaints', name: 'ELM Profile', element: Complaints },
   { path: '/elmProfile', name: 'ELM Profile', element: ElmProfile },
   { path: '/maintenanceProfile', name: 'ELM Profile', element: MaintenanceProfile },
   { path: '/projectMaster', name: 'ELM Profile', element: Project },

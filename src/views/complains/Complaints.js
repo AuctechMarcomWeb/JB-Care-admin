@@ -17,89 +17,8 @@ import {
 import ExportButton from '../ExportButton'
 import { getRequest } from '../../Helpers'
 
-const ComplaintsManagementTable = () => {
+const Complaints = () => {
   // Sample complaints data - replace with your actual data
-  const [complaintsData] = useState([
-    {
-      id: 1,
-      flatType: 'A-101',
-      contactNumber: '+91 9876543210',
-      problemDescription: 'Water leakage in bathroom ceiling causing damage to electrical fittings',
-      status: 'pending',
-      createdDate: '2024-01-15',
-      image:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS17lS27WuUNirwy9zeYEoGGTqntiM7JtsYNw&s',
-    },
-    {
-      id: 2,
-      flatType: 'B-205',
-      contactNumber: '+91 9876543211',
-      problemDescription: 'Elevator not working properly, getting stuck between floors',
-      status: 'in-progress',
-      createdDate: '2024-01-14',
-      image: 'https://www.shutterstock.com/shutterstock/videos/1066661740/thumb/1.jpg',
-    },
-    {
-      id: 3,
-      flatType: 'C-304',
-      contactNumber: '+91 9876543212',
-      problemDescription: 'Air conditioning unit making loud noise and not cooling effectively',
-      status: 'completed',
-      createdDate: '2024-01-13',
-      image:
-        'https://davisheatingair.com/wp-content/uploads/2022/03/outside-ac-unit-making-loud-noise.jpg',
-    },
-    {
-      id: 4,
-      flatType: 'A-506',
-      contactNumber: '+91 9876543213',
-      problemDescription: 'Main door lock mechanism broken, unable to lock properly',
-      status: 'pending',
-      createdDate: '2024-01-16',
-      image:
-        'https://media.istockphoto.com/id/1460998703/photo/photo-collage-of-bedroom-before-and-after-renovation.jpg?s=612x612&w=0&k=20&c=N8Cs57CArG9I91Ipoxk6Vjy8cswBBNHN7hJs0Sfnspw=',
-    },
-    {
-      id: 5,
-      flatType: 'D-102',
-      contactNumber: '+91 9876543214',
-      problemDescription: 'Kitchen sink tap leaking continuously, water wastage issue',
-      status: 'in-progress',
-      createdDate: '2024-01-12',
-      image:
-        'https://media.istockphoto.com/id/1461004319/photo/comparison-of-bedroom-before-and-after-renovation.jpg?s=612x612&w=0&k=20&c=-qPZ8RO9eii8CDWMrwgSVJ2GsCN246MuZrD1tgsrN6A=',
-    },
-    {
-      id: 6,
-      flatType: 'B-403',
-      contactNumber: '+91 9876543215',
-      problemDescription: 'Parking area light not working, security concern during night',
-      status: 'completed',
-      createdDate: '2024-01-11',
-      image:
-        'https://media.istockphoto.com/id/1457257406/photo/narrow-toilet-room-with-minimalist-design.jpg?s=612x612&w=0&k=20&c=_ELXJBCnvP75ycvjPr1XkRJcrQhWIsahzjHDWDFm_WE=',
-    },
-    {
-      id: 7,
-      flatType: 'C-201',
-      contactNumber: '+91 9876543216',
-      problemDescription: 'Balcony railing loose and unsafe, needs immediate repair',
-      status: 'pending',
-      createdDate: '2024-01-17',
-      image:
-        'https://media.istockphoto.com/id/1461004561/photo/apartment-bedroom-before-and-after-renovation.jpg?s=612x612&w=0&k=20&c=1dcqJMmNZsB988CIfWEGG-hF-RqnUGrLdpjdsZRy_-A=',
-    },
-    {
-      id: 8,
-      flatType: 'A-303',
-      contactNumber: '+91 9876543217',
-      problemDescription: 'Internet connection issues, slow speed and frequent disconnections',
-      status: 'in-progress',
-      createdDate: '2024-01-10',
-      image:
-        'https://media.istockphoto.com/id/1457187821/photo/interior-of-modern-kitchen-with-blue-furniture.jpg?s=612x612&w=0&k=20&c=_jYtLj0uknJU3rAw9gO2D_oywhDhYEOgkf7m6UqrrMs=',
-    },
-  ])
 
   // State for filtering, pagination, and status updates
   const [searchTerm, setSearchTerm] = useState('')
@@ -506,4 +425,4 @@ const ComplaintsManagementTable = () => {
   )
 }
 
-export default ComplaintsManagementTable
+export default Complaints
