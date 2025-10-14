@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { fileUpload, postRequest, putRequest } from '../../../Helpers'
 
-const ProjectModal = ({
+const UnitModal = ({
   setUpdateStatus,
   setModalData,
   modalData,
@@ -90,17 +90,17 @@ const ProjectModal = ({
     return Object.keys(newErrors).length === 0
   }
 
-  // Submit new gallery
+  // Submit new Unit
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!validateForm()) return
 
     postRequest({
-      url: 'gallery',
+      url: 'Unit',
       cred: formData, // ✅ title, url, isActive
     })
       .then((res) => {
-        toast.success(res?.data?.message || 'Gallery added successfully')
+        toast.success(res?.data?.message || 'Unit added successfully')
         setUpdateStatus((prev) => !prev)
         handleCancel()
       })
@@ -109,17 +109,17 @@ const ProjectModal = ({
       })
   }
 
-  // Update existing gallery
+  // Update existing Unit
   const handleEdit = (e) => {
     e.preventDefault()
     if (!validateForm()) return
 
     putRequest({
-      url: `gallery/${modalData?._id}`,
+      url: `Unit/${modalData?._id}`,
       cred: formData, // ✅ title, url, isActive
     })
       .then((res) => {
-        toast.success(res?.data?.message || 'Gallery updated successfully')
+        toast.success(res?.data?.message || 'Unit updated successfully')
         setUpdateStatus((prev) => !prev)
         handleCancel()
       })
@@ -130,7 +130,7 @@ const ProjectModal = ({
 
   return (
     <Modal
-      title={modalData ? 'Edit Gallery' : 'Add Gallery'}
+      title={modalData ? 'Edit Unit' : 'Add Unit'}
       open={isModalOpen}
       footer={null}
       onCancel={handleCancel}
@@ -223,10 +223,10 @@ const ProjectModal = ({
             {modalData
               ? loading
                 ? 'Updating...'
-                : 'Update Gallery'
+                : 'Update Unit'
               : loading
                 ? 'Uploading...'
-                : 'Save Gallery'}
+                : 'Save Unit'}
           </button>
         </div>
       </form>
@@ -234,4 +234,4 @@ const ProjectModal = ({
   )
 }
 
-export default ProjectModal
+export default UnitModal

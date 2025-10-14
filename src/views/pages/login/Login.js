@@ -16,6 +16,7 @@ const Login = () => {
     phone: '',
     password: '',
   })
+  console.log('formData', formData)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -28,10 +29,12 @@ const Login = () => {
 
     postRequest({ url: `auth/login`, cred: formData })
       .then((res) => {
-        setCookie('token', res?.data?.token, 30)
-        toast.success('User Login Successfully')
+        console.log('login=====', res)
+
+        setCookie('jbAdminToken', res?.data?.data?.token, 30)
+        toast.success(res?.data?.message || 'User Login Successfully')
         navigate('/')
-        window.location.reload()
+        //window.location.reload()
       })
       .catch((err) => {
         toast.error(err?.response?.data?.message || 'Login failed')

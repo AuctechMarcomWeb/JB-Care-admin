@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { fileUpload, postRequest, putRequest } from '../../../Helpers'
 
-const ProjectModal = ({
+const RentalModal = ({
   setUpdateStatus,
   setModalData,
   modalData,
@@ -234,4 +234,4 @@ const ProjectModal = ({
   )
 }
 
-export default ProjectModal
+export default RentalModal

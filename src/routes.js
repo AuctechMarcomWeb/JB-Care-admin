@@ -7,11 +7,11 @@ import StockConsumption from './views/stocks/stockConsumption'
 import ElmProfile from './views/CustomersProfile/ElmProfile'
 import MaintenanceProfile from './views/CustomersProfile/MaintenanceProfile'
 import Project from './views/masters/Project/Project'
-import Unit from './views/masters/Unit'
-import UnitType from './views/masters/UnitType'
+import Unit from './views/masters/Unit/Unit'
+import UnitType from './views/masters/UnitType/UnitType'
 import SiteLocation from './views/masters/SiteLocation/SiteLocation'
-import Rental from './views/masters/Rental'
-import LandLord from './views/masters/LandLord'
+import Rental from './views/masters/Rental/Rental'
+import LandLord from './views/masters/LandLord/LandLord'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
 const routes = [

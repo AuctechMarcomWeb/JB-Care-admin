@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'
 import { confirmDialog } from 'primereact/confirmdialog'
 
 // FETCHING TOKEN FROM COOKIE
-export const token = Cookies.get('token')
+export const token = Cookies.get('jbAdminToken')
 
 export const request = async (props) => {
   try {
@@ -22,7 +22,7 @@ export const request = async (props) => {
     return response
   } catch (error) {
     if (error.response.status === 401) {
-      deleteCookie('token')
+      deleteCookie('jbAdminToken')
       // window != undefined && (window.location.href = `${import.meta.env.VITE_SIGNUP_URL}`);
       console.error('Unauthorized: Redirecting to login page')
     }
@@ -41,7 +41,7 @@ export const getRequest = async (url) => {
     return response
   } catch (error) {
     if (error.response.status === 401) {
-      deleteCookie('token')
+      deleteCookie('jbAdminToken')
       console.error('Unauthorized: Redirecting to login page')
     }
     throw error
@@ -63,7 +63,7 @@ export const postRequest = async (props) => {
     return response
   } catch (error) {
     if (error.response.status === 401) {
-      deleteCookie('token')
+      deleteCookie('jbAdminToken')
       window != undefined && (window.location.href = `${import.meta.env.VITE_SIGNUP_URL}`)
       console.error('Unauthorized: Redirecting to login page')
     }
@@ -86,7 +86,7 @@ export const putRequest = async (props) => {
     return response
   } catch (error) {
     if (error.response.status === 401) {
-      deleteCookie('token')
+      deleteCookie('jbAdminToken')
       window != undefined && (window.location.href = `${import.meta.env.VITE_SIGNUP_URL}`)
       console.error('Unauthorized: Redirecting to login page')
     }
@@ -110,7 +110,7 @@ export const patchRequest = async (props) => {
     return response
   } catch (error) {
     if (error.response.status === 401) {
-      deleteCookie('token')
+      deleteCookie('jbAdminToken')
       window != undefined && (window.location.href = `${import.meta.env.VITE_SIGNUP_URL}`)
       console.error('Unauthorized: Redirecting to login page')
     }
@@ -129,7 +129,7 @@ export const deleteRequest = async (url) => {
     return response
   } catch (error) {
     if (error.response.status === 401) {
-      deleteCookie('token')
+      deleteCookie('jbAdminToken')
       window != undefined && (window.location.href = `${import.meta.env.VITE_SIGNUP_URL}`)
       console.error('Unauthorized: Redirecting to login page')
     }
@@ -155,7 +155,7 @@ export const deleteRequest1 = async (url) => {
   } catch (error) {
     if (error?.response?.status) {
       if (error.response.status === 401) {
-        deleteCookie('token')
+        deleteCookie('jbAdminToken')
         console.error('Unauthorized: Redirecting to login page')
       }
     }
@@ -228,7 +228,7 @@ export const fileUpload = async (props) => {
     return response
   } catch (error) {
     if (error.response.status === 401) {
-      deleteCookie('token')
+      deleteCookie('jbAdminToken')
       window != undefined && (window.location.href = `${import.meta.env.VITE_SIGNUP_URL}`)
       console.error('Unauthorized: Redirecting to login page')
     }

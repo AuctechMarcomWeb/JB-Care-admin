@@ -8,9 +8,9 @@ import { deleteRequest, getRequest } from '../../../Helpers'
 import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
 import { faL } from '@fortawesome/free-solid-svg-icons'
-import ProjectModal from './ProjectModal'
+import UnitTypeModal from './UnitTypeModal'
 
-const Project = () => {
+const UnitType = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
   const [total, setTotal] = useState(0)
@@ -25,7 +25,7 @@ const Project = () => {
 
   useEffect(() => {
     setLoading(true)
-    getRequest(`projects?search=${searchTerm}&page=${page}&limit=${limit}`)
+    getRequest(`unit-types?search=${searchTerm}&page=${page}&limit=${limit}`)
       .then((res) => {
         const responseData = res?.data?.data
         setData(responseData?.gallery || [])
@@ -39,7 +39,7 @@ const Project = () => {
 
   // ✅ Delete handler
   const confirmDelete = () => {
-    deleteRequest(`projects/${selectedItem?._id}`)
+    deleteRequest(`unit-types/${selectedItem?._id}`)
       .then((res) => {
         toast.success(res?.data?.message)
         setSelectedItem(null)
@@ -85,8 +85,8 @@ const Project = () => {
       {/* Header */}
       <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Project</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Manage Project</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Unit Type</h2>
+          <p className="text-gray-600 text-sm sm:text-base">Manage Unit Type</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <ExportButton data={data} fileName="Property Type.xlsx" sheetName="Property Type" />
@@ -96,7 +96,7 @@ const Project = () => {
             }}
             className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
           >
-            <Plus className="w-4 h-4 mr-2" /> Add Project
+            <Plus className="w-4 h-4 mr-2" /> Add Unit Type
           </button>
         </div>
       </div>
@@ -124,7 +124,7 @@ const Project = () => {
           // Loader when fetching data
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />
-            <div className="mt-4 text-blue-500 font-medium text-center">Loading Project...</div>
+            <div className="mt-4 text-blue-500 font-medium text-center">Loading Unit Type...</div>
           </div>
         ) : !data || data.length === 0 ? (
           // Empty state when no data found
@@ -138,8 +138,7 @@ const Project = () => {
                 <tr>
                   <th className="px-6 py-3">Sr. No.</th>
                   <th className="px-6 py-3">Title</th>
-                  <th className="px-6 py-3">Image</th>
-                  <th className="px-6 py-3">Active</th>
+                  <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
@@ -159,7 +158,7 @@ const Project = () => {
                       />
                     </td>
                     <td className="px-6 py-4">
-                      {item?.isActive ? (
+                      {item?.status ? (
                         <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
                       ) : (
                         <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
@@ -216,7 +215,7 @@ const Project = () => {
       )}
 
       {isModalOpen && (
-        <ProjectModal
+        <UnitTypeModal
           setUpdateStatus={setUpdateStatus}
           setModalData={setSelectedItem}
           modalData={selectedItem}
@@ -228,4 +227,4 @@ const Project = () => {
   )
 }
 
-export default Project
+export default UnitType
