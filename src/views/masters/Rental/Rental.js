@@ -8,9 +8,9 @@ import { deleteRequest, getRequest } from '../../../Helpers'
 import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
 import { faL } from '@fortawesome/free-solid-svg-icons'
-import ProjectModal from './ProjectModal'
+import RentalModal from './Rentalmodal'
 
-const Project = () => {
+const Rental = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
   const [total, setTotal] = useState(0)
@@ -25,7 +25,7 @@ const Project = () => {
 
   useEffect(() => {
     setLoading(true)
-    getRequest(`projects?search=${searchTerm}&page=${page}&limit=${limit}`)
+    getRequest(`Rentals?search=${searchTerm}&page=${page}&limit=${limit}`)
       .then((res) => {
         const responseData = res?.data?.data
         setData(responseData?.gallery || [])
@@ -39,7 +39,7 @@ const Project = () => {
 
   // ✅ Delete handler
   const confirmDelete = () => {
-    deleteRequest(`projects/${selectedItem?._id}`)
+    deleteRequest(`Rentals/${selectedItem?._id}`)
       .then((res) => {
         toast.success(res?.data?.message)
         setSelectedItem(null)
@@ -85,8 +85,8 @@ const Project = () => {
       {/* Header */}
       <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Project</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Manage Project</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Rental</h2>
+          <p className="text-gray-600 text-sm sm:text-base">Manage Rental</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <ExportButton data={data} fileName="Property Type.xlsx" sheetName="Property Type" />
@@ -96,7 +96,7 @@ const Project = () => {
             }}
             className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
           >
-            <Plus className="w-4 h-4 mr-2" /> Add Project
+            <Plus className="w-4 h-4 mr-2" /> Add Rental
           </button>
         </div>
       </div>
@@ -124,7 +124,7 @@ const Project = () => {
           // Loader when fetching data
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />
-            <div className="mt-4 text-blue-500 font-medium text-center">Loading Project...</div>
+            <div className="mt-4 text-blue-500 font-medium text-center">Loading Rental...</div>
           </div>
         ) : !data || data.length === 0 ? (
           // Empty state when no data found
@@ -216,7 +216,7 @@ const Project = () => {
       )}
 
       {isModalOpen && (
-        <ProjectModal
+        <RentalModal
           setUpdateStatus={setUpdateStatus}
           setModalData={setSelectedItem}
           modalData={selectedItem}
@@ -228,4 +228,4 @@ const Project = () => {
   )
 }
 
-export default Project
+export default Rental

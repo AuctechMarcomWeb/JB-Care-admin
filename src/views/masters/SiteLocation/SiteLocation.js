@@ -21,16 +21,17 @@ const SiteLocation = () => {
   const [selectedItem, setSelectedItem] = useState(null)
 
   useEffect(() => {
-    getRequest(`sites?search=${searchTerm}&page=${page}&limit=${limit}`)
+    getRequest(`sites`)
       .then((res) => {
-        const responseData = res?.data?.data
-        setData(responseData?.categories || [])
-        setTotal(responseData?.totalCategories || 0)
+        const responseData = res
+        console.log('site fetch ', responseData)
+        setData(responseData || [])
+        setTotal(responseData || 0)
       })
       .catch((error) => {
         console.log('error', error)
       })
-  }, [page, limit, searchTerm, updateStatus])
+  }, [updateStatus])
 
   // ✅ Delete handler
   const confirmDelete = () => {
