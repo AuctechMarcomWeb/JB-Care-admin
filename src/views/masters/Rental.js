@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import {
   Search,
   ChevronLeft,
@@ -12,6 +12,7 @@ import {
   Save,
 } from 'lucide-react'
 import ExportButton from '../ExportButton'
+import { getRequest } from '../../Helpers'
 
 const Rental = () => {
   const [stockData] = useState([
@@ -35,6 +36,17 @@ const Rental = () => {
     landlordName: '',
   })
 
+  useEffect(() => {
+    getRequest()
+      .then((res) => {
+        setData(res?.data?.data)
+        console.log('Data:', res?.data?.data)
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+  }, [])
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -42,7 +54,10 @@ const Rental = () => {
 
   const resetForm = () => setFormData({ rentalName: '', projectName: '', landlordName: '' })
 
-  const handleAddProduct = () => { setShowAddModal(true); resetForm() }
+  const handleAddProduct = () => {
+    setShowAddModal(true)
+    resetForm()
+  }
 
   const submitAdd = () => {
     if (formData.rentalName && formData.projectName && formData.landlordName) {
@@ -66,9 +81,7 @@ const Rental = () => {
   const submitEdit = () => {
     if (formData.rentalName && formData.projectName && formData.landlordName) {
       setStock((prev) =>
-        prev.map((item) =>
-          item.id === selectedItem.id ? { ...item, ...formData } : item
-        )
+        prev.map((item) => (item.id === selectedItem.id ? { ...item, ...formData } : item)),
       )
       setShowEditModal(false)
       setSelectedItem(null)
@@ -96,10 +109,11 @@ const Rental = () => {
   }
 
   const filteredAndSortedData = useMemo(() => {
-    let filtered = stock.filter((item) =>
-      item.rentalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.landlordName.toLowerCase().includes(searchTerm.toLowerCase())
+    let filtered = stock.filter(
+      (item) =>
+        item.rentalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.landlordName.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     if (sortConfig.key) {
       filtered.sort((a, b) => {
@@ -135,7 +149,9 @@ const Rental = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Rental Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rental Name *
+                </label>
                 <input
                   type="text"
                   name="rentalName"
@@ -146,7 +162,9 @@ const Rental = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Project Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Project Name *
+                </label>
                 <input
                   type="text"
                   name="projectName"
@@ -157,7 +175,9 @@ const Rental = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Landlord Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Landlord Name *
+                </label>
                 <input
                   type="text"
                   name="landlordName"
@@ -224,7 +244,9 @@ const Rental = () => {
       <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center sm:text-left">Rental Master</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center sm:text-left">
+              Rental Master
+            </h2>
             <p className="text-gray-600 mt-1 text-center sm:text-left">Manage Rental Master</p>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
@@ -307,7 +329,10 @@ const Rental = () => {
           <span className="text-sm text-gray-700">Show:</span>
           <select
             value={itemsPerPage}
-            onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1) }}
+            onChange={(e) => {
+              setItemsPerPage(Number(e.target.value))
+              setCurrentPage(1)
+            }}
             className="border border-gray-300 px-2 py-1 text-sm rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value={5}>5</option>
@@ -317,7 +342,9 @@ const Rental = () => {
           </select>
           <span className="text-sm text-gray-700">per page</span>
           <span className="text-sm text-gray-700">
-            Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of {filteredAndSortedData.length} results
+            Showing {startIndex + 1} to{' '}
+            {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of{' '}
+            {filteredAndSortedData.length} results
           </span>
         </div>
 
@@ -331,7 +358,11 @@ const Rental = () => {
           </button>
           {[...Array(Math.min(totalPages, 5))].map((_, index) => {
             const pageNumber =
-              currentPage <= 3 ? index + 1 : currentPage >= totalPages - 2 ? totalPages - 4 + index : currentPage - 2 + index
+              currentPage <= 3
+                ? index + 1
+                : currentPage >= totalPages - 2
+                  ? totalPages - 4 + index
+                  : currentPage - 2 + index
             if (pageNumber < 1 || pageNumber > totalPages) return null
             return (
               <button

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import {
   Search,
   ChevronLeft,
@@ -12,6 +12,7 @@ import {
   Save,
 } from 'lucide-react'
 import ExportButton from '../ExportButton'
+import { getRequest } from '../../Helpers'
 
 const Project = () => {
   const [stockData] = useState([
@@ -20,7 +21,7 @@ const Project = () => {
     { id: 3, ProjectName: 'Metro Grove', LocationName: 'Boston', LocationId: 'BOS3' },
     { id: 4, ProjectName: 'The Urbania', LocationName: 'Seattle', LocationId: 'SEA4' },
   ])
-
+  const [data, setData] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(5)
@@ -38,6 +39,16 @@ const Project = () => {
     LocationName: '',
     LocationId: '',
   })
+  useEffect(() => {
+    getRequest()
+      .then((res) => {
+        setData(res?.data?.data)
+        console.log('Data:', res?.data?.data)
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+  }, [])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -73,9 +84,9 @@ const Project = () => {
   const handleEditProduct = (item) => {
     setSelectedItem(item)
     setFormData({
-      ProjectName: item.ProjectName,
-      LocationName: item.LocationName,
-      LocationId: item.LocationId,
+      ProjectName: item.projectName,
+      LocationName: item.projectAddress,
+      LocationId: item.siteId,
     })
     setShowEditModal(true)
   }
@@ -83,9 +94,7 @@ const Project = () => {
   const submitEdit = () => {
     if (formData.ProjectName && formData.LocationName && formData.LocationId) {
       setStock((prev) =>
-        prev.map((item) =>
-          item.id === selectedItem.id ? { ...item, ...formData } : item,
-        ),
+        prev.map((item) => (item.id === selectedItem.id ? { ...item, ...formData } : item)),
       )
       setShowEditModal(false)
       setSelectedItem(null)
@@ -123,10 +132,8 @@ const Project = () => {
 
     if (sortConfig.key) {
       filtered.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key])
-          return sortConfig.direction === 'asc' ? -1 : 1
-        if (a[sortConfig.key] > b[sortConfig.key])
-          return sortConfig.direction === 'asc' ? 1 : -1
+        if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1
+        if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1
         return 0
       })
     }
@@ -137,10 +144,7 @@ const Project = () => {
   // Pagination
   const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedData = filteredAndSortedData.slice(
-    startIndex,
-    startIndex + itemsPerPage,
-  )
+  const paginatedData = filteredAndSortedData.slice(startIndex, startIndex + itemsPerPage)
 
   const handleSort = (key) => {
     setSortConfig((prev) => ({
@@ -207,9 +211,9 @@ const Project = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {paginatedData.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">{item.ProjectName}</td>
-                <td className="px-4 py-3">{item.LocationName}</td>
-                <td className="px-4 py-3">{item.LocationId}</td>
+                <td className="px-4 py-3">{item.projectName}</td>
+                <td className="px-4 py-3">{item.projectAddress}</td>
+                <td className="px-4 py-3">{item.siteId}</td>
                 <td className="px-4 py-3 flex space-x-2">
                   <button
                     onClick={() => handleEditProduct(item)}
@@ -271,8 +275,8 @@ const Project = () => {
                 currentPage <= 3
                   ? index + 1
                   : currentPage >= totalPages - 2
-                  ? totalPages - 4 + index
-                  : currentPage - 2 + index
+                    ? totalPages - 4 + index
+                    : currentPage - 2 + index
               if (pageNumber < 1 || pageNumber > totalPages) return null
               return (
                 <button

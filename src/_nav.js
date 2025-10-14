@@ -1,26 +1,26 @@
 
 import { CNavGroup, CNavItem } from '@coreui/react'
-import {  FaRegAddressCard } from 'react-icons/fa'
+import { FaRegAddressCard } from 'react-icons/fa'
 import {
   MdOutlineDashboard,
 } from 'react-icons/md'
 const useNav = () => {
 
   const navItems = [
-   {
+    {
       component: CNavItem,
       name: 'Dashboard',
       to: '/dashboard',
+      // eslint-disable-next-line react/react-in-jsx-scope
       icon: <MdOutlineDashboard className="me-3" />,
-      
     },
-     {
+    {
       component: CNavGroup,
       name: 'Masters',
       to: '/Customer-Profile',
+      // eslint-disable-next-line react/react-in-jsx-scope
       icon: <FaRegAddressCard className="me-3" />,
       items: [
-      
         {
           component: CNavItem,
           name: 'Site/Location ',
@@ -36,18 +36,18 @@ const useNav = () => {
           name: 'Unit',
           to: '/unitMaster',
         },
-      
-          {
+
+        {
           component: CNavItem,
           name: 'UnitType',
           to: '/unitTypeMaster',
         },
-             {
+        {
           component: CNavItem,
           name: 'LandLord',
           to: '/landlordMaster',
         },
-             {
+        {
           component: CNavItem,
           name: 'Rental',
           to: '/rentalMaster',
@@ -60,7 +60,7 @@ const useNav = () => {
     //   to: '/Customer-Profile',
     //   icon: <FaRegAddressCard className="me-3" />,
     //   items: [
-      
+
     //     {
     //       component: CNavItem,
     //       name: 'ELM',
@@ -71,45 +71,50 @@ const useNav = () => {
     //       name: 'Maintenance',
     //       to: '/maintenanceProfile',
     //     },
-        
+
     //   ],
     // },
- 
+
     // {
     //   component: CNavItem,
     //   name: 'Monthly Billing ',
     //   to: '/smartMeters',
     //   icon: <MdOutlineDashboard className="me-3 " />,
-      
-    // },
-    // {
-    //   component: CNavItem,
-    //   name: 'Complaints',
-    //   to: '/complaints',
-    //   icon: <MdOutlineDashboard className="me-3" />,
-      
-    // },
 
-    // {
-    //   component: CNavGroup,
-    //   name: 'Inventory',
-    //   to: '/sub-menu',
-    //   icon: <FaRegAddressCard className="me-3" />,
-    //   items: [
-      
-    //     {
-    //       component: CNavItem,
-    //       name: 'Stock In',
-    //       to: '/stockIn',
-    //     },
-    //     {
-    //       component: CNavItem,
-    //       name: 'Stock Out',
-    //       to: '/stockOut',
-    //     },
-    //   ],
     // },
-   
+    {
+      component: CNavItem,
+      name: 'Complaints',
+      to: '/complaints',
+      icon: <MdOutlineDashboard className="me-3" />,
+
+    },
+
+
+    {
+      component: CNavGroup,
+      name: 'Stock Management',
+      to: '/sub-menu',
+      icon: <FaRegAddressCard className="me-3" />,
+      items: [
+
+        {
+          component: CNavItem,
+          name: ' Central Stock',
+          to: '/CentralStock',
+        },
+        {
+          component: CNavItem,
+          name: 'Stock Transfer',
+          to: '/stockTransfer',
+        },
+           {
+          component: CNavItem,
+          name: 'Stock Consumption',
+          to: '/stockConsumption',
+        },
+      ],
+    },,
   ]
 
   return navItems

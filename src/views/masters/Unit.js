@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo,useEffect } from 'react'
 import {
   Search,
   ChevronLeft,
@@ -12,6 +12,7 @@ import {
   Save,
 } from 'lucide-react'
 import ExportButton from '../ExportButton'
+import { getRequest } from '../../Helpers'
 
 const Unit = () => {
   const [stockData] = useState([
@@ -36,13 +37,27 @@ const Unit = () => {
   const [selectedItem, setSelectedItem] = useState(null)
   const [formData, setFormData] = useState({ UnitName: '' })
 
+  useEffect(() => {
+    getRequest()
+      .then((res) => {
+        setData(res?.data?.data)
+        console.log('Data:', res?.data?.data)
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+  }, [])
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const resetForm = () => setFormData({ UnitName: '' })
-  const handleAddProduct = () => { setShowAddModal(true); resetForm() }
+  const handleAddProduct = () => {
+    setShowAddModal(true)
+    resetForm()
+  }
 
   const submitAdd = () => {
     if (formData.UnitName) {
@@ -63,8 +78,8 @@ const Unit = () => {
     if (formData?.UnitName) {
       setStock((prev) =>
         prev.map((item) =>
-          item.id === selectedItem.id ? { ...item, UnitName: formData.UnitName } : item
-        )
+          item.id === selectedItem.id ? { ...item, UnitName: formData.UnitName } : item,
+        ),
       )
       setShowEditModal(false)
       setSelectedItem(null)
@@ -93,7 +108,7 @@ const Unit = () => {
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = stock.filter((item) =>
-      item.UnitName.toLowerCase().includes(searchTerm.toLowerCase())
+      item.UnitName.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     if (sortConfig.key) {
       filtered.sort((a, b) => {
@@ -136,9 +151,7 @@ const Unit = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Unit Name *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Unit Name *</label>
                 <input
                   type="text"
                   name="UnitName"
@@ -211,9 +224,7 @@ const Unit = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center sm:text-left">
               Unit Master
             </h2>
-            <p className="text-gray-600 mt-1 text-center sm:text-left">
-              Manage Unit Master
-            </p>
+            <p className="text-gray-600 mt-1 text-center sm:text-left">Manage Unit Master</p>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
@@ -313,7 +324,9 @@ const Unit = () => {
               <span className="text-sm text-gray-700">per page</span>
             </div>
             <div className="text-sm text-gray-700">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of {filteredAndSortedData.length} results
+              Showing {startIndex + 1} to{' '}
+              {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of{' '}
+              {filteredAndSortedData.length} results
             </div>
           </div>
 
@@ -333,8 +346,8 @@ const Unit = () => {
                   currentPage <= 3
                     ? index + 1
                     : currentPage >= totalPages - 2
-                    ? totalPages - 4 + index
-                    : currentPage - 2 + index
+                      ? totalPages - 4 + index
+                      : currentPage - 2 + index
 
                 if (pageNumber < 1 || pageNumber > totalPages) return null
 

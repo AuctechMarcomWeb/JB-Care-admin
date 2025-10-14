@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo,useEffect } from 'react'
 import {
   Search,
   ChevronDown,
@@ -15,8 +15,9 @@ import {
   Download,
 } from 'lucide-react'
 import ExportButton from '../ExportButton'
+import { getRequest } from '../../Helpers'
 
-const StockOut = () => {
+const CentralStock = () => {
   // Sample stock data - replace with your actual data
   const [stockData] = useState([
     {
@@ -105,6 +106,7 @@ const StockOut = () => {
   const [selectedItem, setSelectedItem] = useState(null)
 
   // Form state
+  const [data, setData] = useState([])
   const [formData, setFormData] = useState({
     productName: '',
     productDetails: '',
@@ -112,6 +114,17 @@ const StockOut = () => {
     category: '',
     minStockLevel: '',
   })
+
+  useEffect(() => {
+    getRequest()
+      .then((res) => {
+        setData(res?.data?.data)
+        console.log('Data:', res?.data?.data)
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+  }, [])
 
   // Get unique categories for filter
   const categories = [...new Set(stock.map((item) => item.category))]
@@ -438,11 +451,11 @@ const StockOut = () => {
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Stock Out Management</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Stock Management</h2>
             <p className="text-gray-600 mt-1">Manage inventory and track stock levels</p>
           </div>
           <div className="flex items-center space-x-3">
-            <ExportButton data={stock} fileName="StockOutData.xlsx" sheetName="Stock" />
+            <ExportButton data={stock} fileName="StockInData.xlsx" sheetName="Stock" />
             <button
               onClick={handleAddProduct}
               className="bg-green-600 text-white px-4 py-2 hover:bg-green-700 transition-colors flex items-center"
@@ -524,7 +537,9 @@ const StockOut = () => {
                   <ChevronDown className="ml-1 w-4 h-4" />
                 </div>
               </th>
-            
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Stock Status
+              </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
@@ -551,7 +566,9 @@ const StockOut = () => {
                     {item.category}
                   </span>
                 </td>
-              
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <StockLevel quantity={item.quantity} minLevel={item.minStockLevel} />
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex space-x-2">
                     <button
@@ -654,4 +671,4 @@ const StockOut = () => {
   )
 }
 
-export default StockOut
+export default CentralStock
