@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react'
+/* eslint-disable prettier/prettier */
+import React, { useState, useMemo, useEffect } from 'react'
 import {
   Search,
   ChevronLeft,
@@ -12,6 +13,7 @@ import {
   Save,
 } from 'lucide-react'
 import ExportButton from '../ExportButton'
+import { getRequest } from '../../Helpers'
 
 const SiteLocation = () => {
   const [stockData] = useState([
@@ -24,7 +26,7 @@ const SiteLocation = () => {
     { id: 7, LocationName: 'Suryanagar' },
     { id: 8, LocationName: 'Devbhumi' },
   ])
-
+  const [data,setData]=useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(5)
@@ -36,13 +38,27 @@ const SiteLocation = () => {
   const [selectedItem, setSelectedItem] = useState(null)
   const [formData, setFormData] = useState({ LocationName: '' })
 
+  useEffect(() => {
+    getRequest()
+      .then((res) => {
+        setData(res?.data?.data)
+        console.log('Data:', res?.data?.data)
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+  }, [])
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const resetForm = () => setFormData({ LocationName: '' })
-  const handleAddProduct = () => { setShowAddModal(true); resetForm() }
+  const handleAddProduct = () => {
+    setShowAddModal(true)
+    resetForm()
+  }
 
   const submitAdd = () => {
     if (formData.LocationName) {
@@ -63,8 +79,8 @@ const SiteLocation = () => {
     if (formData?.LocationName) {
       setStock((prev) =>
         prev.map((item) =>
-          item.id === selectedItem.id ? { ...item, LocationName: formData.LocationName } : item
-        )
+          item.id === selectedItem.id ? { ...item, LocationName: formData.LocationName } : item,
+        ),
       )
       setShowEditModal(false)
       setSelectedItem(null)
@@ -93,7 +109,7 @@ const SiteLocation = () => {
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = stock.filter((item) =>
-      item.LocationName.toLowerCase().includes(searchTerm.toLowerCase())
+      item.LocationName.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     if (sortConfig.key) {
       filtered.sort((a, b) => {
@@ -313,7 +329,9 @@ const SiteLocation = () => {
               <span className="text-sm text-gray-700">per page</span>
             </div>
             <div className="text-sm text-gray-700">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of {filteredAndSortedData.length} results
+              Showing {startIndex + 1} to{' '}
+              {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of{' '}
+              {filteredAndSortedData.length} results
             </div>
           </div>
 
@@ -333,8 +351,8 @@ const SiteLocation = () => {
                   currentPage <= 3
                     ? index + 1
                     : currentPage >= totalPages - 2
-                    ? totalPages - 4 + index
-                    : currentPage - 2 + index
+                      ? totalPages - 4 + index
+                      : currentPage - 2 + index
 
                 if (pageNumber < 1 || pageNumber > totalPages) return null
 

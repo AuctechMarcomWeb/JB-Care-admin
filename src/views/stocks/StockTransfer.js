@@ -1,8 +1,6 @@
-
-
-import React, { useState, useMemo } from 'react';
-import { 
-  Search, 
+import React, { useState, useMemo } from 'react'
+import {
+  Search,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -14,28 +12,30 @@ import {
   AlertTriangle,
   Save,
   RefreshCw,
-  Download
-} from 'lucide-react';
-import ExportButton from '../ExportButton';
+  Download,
+} from 'lucide-react'
+import ExportButton from '../ExportButton'
 
-const StockIn = () => {
+const StockTransfer = () => {
   // Sample stock data - replace with your actual data
   const [stockData] = useState([
     {
       id: 1,
       productName: 'Electric Meter',
-      productDetails: 'Digital smart meter with WiFi connectivity, LCD display, and remote monitoring capabilities',
+      productDetails:
+        'Digital smart meter with WiFi connectivity, LCD display, and remote monitoring capabilities',
       quantity: 150,
       category: 'Electronics',
-      minStockLevel: 20
+      minStockLevel: 20,
     },
     {
       id: 2,
       productName: 'Water Pipes',
-      productDetails: 'PVC pipes for water supply, 1 inch diameter, 10 feet length, corrosion resistant',
+      productDetails:
+        'PVC pipes for water supply, 1 inch diameter, 10 feet length, corrosion resistant',
       quantity: 75,
       category: 'Plumbing',
-      minStockLevel: 15
+      minStockLevel: 15,
     },
     {
       id: 3,
@@ -43,7 +43,7 @@ const StockIn = () => {
       productDetails: 'Heavy duty mortise locks with 5 lever mechanism, anti-pick technology',
       quantity: 45,
       category: 'Hardware',
-      minStockLevel: 10
+      minStockLevel: 10,
     },
     {
       id: 4,
@@ -51,31 +51,34 @@ const StockIn = () => {
       productDetails: '12W LED energy saving bulbs, warm white light, B22 base, 2 year warranty',
       quantity: 200,
       category: 'Electronics',
-      minStockLevel: 50
+      minStockLevel: 50,
     },
     {
       id: 5,
       productName: 'Cable Wires',
-      productDetails: 'Copper electrical wires, 2.5mm thickness, fire resistant coating, 100 meter roll',
+      productDetails:
+        'Copper electrical wires, 2.5mm thickness, fire resistant coating, 100 meter roll',
       quantity: 30,
       category: 'Electrical',
-      minStockLevel: 5
+      minStockLevel: 5,
     },
     {
       id: 6,
       productName: 'Paint Brushes',
-      productDetails: 'Professional paint brushes set, various sizes, synthetic bristles, ergonomic handle',
+      productDetails:
+        'Professional paint brushes set, various sizes, synthetic bristles, ergonomic handle',
       quantity: 60,
       category: 'Tools',
-      minStockLevel: 12
+      minStockLevel: 12,
     },
     {
       id: 7,
       productName: 'Faucets',
-      productDetails: 'Chrome finished bathroom faucets, single handle design, water saving aerator',
+      productDetails:
+        'Chrome finished bathroom faucets, single handle design, water saving aerator',
       quantity: 25,
       category: 'Plumbing',
-      minStockLevel: 8
+      minStockLevel: 8,
     },
     {
       id: 8,
@@ -83,44 +86,44 @@ const StockIn = () => {
       productDetails: 'Ceramic floor tiles, 2x2 feet, anti-slip surface, suitable for wet areas',
       quantity: 120,
       category: 'Construction',
-      minStockLevel: 25
-    }
-  ]);
+      minStockLevel: 25,
+    },
+  ])
 
   // State management
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-  const [stock, setStock] = useState(stockData);
-  
+  const [searchTerm, setSearchTerm] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
+  const [stock, setStock] = useState(stockData)
+
   // Modal states
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
+
   // Form state
   const [formData, setFormData] = useState({
     productName: '',
     productDetails: '',
     quantity: '',
     category: '',
-    minStockLevel: ''
-  });
+    minStockLevel: '',
+  })
 
   // Get unique categories for filter
-  const categories = [...new Set(stock.map(item => item.category))];
+  const categories = [...new Set(stock.map((item) => item.category))]
 
   // Handle form input changes
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+    const { name, value } = e.target
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }));
-  };
+      [name]: value,
+    }))
+  }
 
   // Reset form
   const resetForm = () => {
@@ -129,15 +132,15 @@ const StockIn = () => {
       productDetails: '',
       quantity: '',
       category: '',
-      minStockLevel: ''
-    });
-  };
+      minStockLevel: '',
+    })
+  }
 
   // Handle Add Product
   const handleAddProduct = () => {
-    setShowAddModal(true);
-    resetForm();
-  };
+    setShowAddModal(true)
+    resetForm()
+  }
 
   const submitAdd = () => {
     if (formData.productName && formData.quantity) {
@@ -147,122 +150,136 @@ const StockIn = () => {
         productDetails: formData.productDetails,
         quantity: parseInt(formData.quantity),
         category: formData.category,
-        minStockLevel: parseInt(formData.minStockLevel) || 0
-      };
-      setStock(prev => [...prev, newProduct]);
-      setShowAddModal(false);
-      resetForm();
+        minStockLevel: parseInt(formData.minStockLevel) || 0,
+      }
+      setStock((prev) => [...prev, newProduct])
+      setShowAddModal(false)
+      resetForm()
     }
-  };
+  }
 
   // Handle Edit Product
   const handleEditProduct = (item) => {
-    setSelectedItem(item);
+    setSelectedItem(item)
     setFormData({
       productName: item.productName,
       productDetails: item.productDetails,
       quantity: item.quantity.toString(),
       category: item.category,
-      minStockLevel: item.minStockLevel.toString()
-    });
-    setShowEditModal(true);
-  };
+      minStockLevel: item.minStockLevel.toString(),
+    })
+    setShowEditModal(true)
+  }
 
   const submitEdit = () => {
     if (selectedItem && formData.productName && formData.quantity) {
-      setStock(prev => prev.map(item => 
-        item.id === selectedItem.id 
-          ? {
-              ...item,
-              productName: formData.productName,
-              productDetails: formData.productDetails,
-              quantity: parseInt(formData.quantity),
-              category: formData.category,
-              minStockLevel: parseInt(formData.minStockLevel) || 0
-            }
-          : item
-      ));
-      setShowEditModal(false);
-      setSelectedItem(null);
-      resetForm();
+      setStock((prev) =>
+        prev.map((item) =>
+          item.id === selectedItem.id
+            ? {
+                ...item,
+                productName: formData.productName,
+                productDetails: formData.productDetails,
+                quantity: parseInt(formData.quantity),
+                category: formData.category,
+                minStockLevel: parseInt(formData.minStockLevel) || 0,
+              }
+            : item,
+        ),
+      )
+      setShowEditModal(false)
+      setSelectedItem(null)
+      resetForm()
     }
-  };
+  }
 
   // Handle Delete Product
   const handleDeleteProduct = (item) => {
-    setSelectedItem(item);
-    setShowDeleteModal(true);
-  };
+    setSelectedItem(item)
+    setShowDeleteModal(true)
+  }
 
   const confirmDelete = () => {
     if (selectedItem) {
-      setStock(prev => prev.filter(item => item.id !== selectedItem.id));
+      setStock((prev) => prev.filter((item) => item.id !== selectedItem.id))
     }
-    setShowDeleteModal(false);
-    setSelectedItem(null);
-  };
+    setShowDeleteModal(false)
+    setSelectedItem(null)
+  }
 
   // Close modals
   const closeModals = () => {
-    setShowAddModal(false);
-    setShowEditModal(false);
-    setShowDeleteModal(false);
-    setSelectedItem(null);
-    resetForm();
-  };
+    setShowAddModal(false)
+    setShowEditModal(false)
+    setShowDeleteModal(false)
+    setSelectedItem(null)
+    resetForm()
+  }
 
   // Filtered and sorted data
   const filteredAndSortedData = useMemo(() => {
-    let filtered = stock.filter(item => {
-      const matchesSearch = 
+    let filtered = stock.filter((item) => {
+      const matchesSearch =
         item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.productDetails.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
+        item.category.toLowerCase().includes(searchTerm.toLowerCase())
 
-      return matchesSearch && matchesCategory;
-    });
+      const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter
+
+      return matchesSearch && matchesCategory
+    })
 
     // Sort data
     if (sortConfig.key) {
       filtered.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
+          return sortConfig.direction === 'asc' ? -1 : 1
         }
         if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
+          return sortConfig.direction === 'asc' ? 1 : -1
         }
-        return 0;
-      });
+        return 0
+      })
     }
 
-    return filtered;
-  }, [stock, searchTerm, categoryFilter, sortConfig]);
+    return filtered
+  }, [stock, searchTerm, categoryFilter, sortConfig])
 
   // Pagination
-  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = filteredAndSortedData.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedData = filteredAndSortedData.slice(startIndex, startIndex + itemsPerPage)
 
   // Handle sort
   const handleSort = (key) => {
-    setSortConfig(prev => ({
+    setSortConfig((prev) => ({
       key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
-    }));
-  };
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }))
+  }
 
   // Stock level indicator
   const StockLevel = ({ quantity, minLevel }) => {
     if (quantity <= minLevel) {
-      return <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 border border-red-200">Low Stock</span>;
+      return (
+        <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+          Low Stock
+        </span>
+      )
     } else if (quantity <= minLevel * 2) {
-      return <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">Medium</span>;
+      return (
+        <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+          Medium
+        </span>
+      )
     } else {
-      return <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 border border-green-200">In Stock</span>;
+      return (
+        <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+          In Stock
+        </span>
+      )
     }
-  };
+  }
 
   return (
     <div className="bg-white">
@@ -281,7 +298,7 @@ const StockIn = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -314,9 +331,7 @@ const StockIn = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Quantity *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
                   <input
                     type="number"
                     name="quantity"
@@ -346,9 +361,7 @@ const StockIn = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                 <select
                   name="category"
                   value={formData.category}
@@ -365,7 +378,7 @@ const StockIn = () => {
                 </select>
               </div>
             </div>
-            
+
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={closeModals}
@@ -393,16 +406,16 @@ const StockIn = () => {
               <AlertTriangle className="w-6 h-6 text-red-500 mr-3" />
               <h3 className="text-lg font-semibold text-gray-900">Confirm Delete</h3>
             </div>
-            
+
             <p className="text-gray-600 mb-6">
               {selectedItem && (
                 <>
-                  Are you sure you want to delete <strong>{selectedItem.productName}</strong>? 
-                  This action cannot be undone.
+                  Are you sure you want to delete <strong>{selectedItem.productName}</strong>? This
+                  action cannot be undone.
                 </>
               )}
             </p>
-            
+
             <div className="flex justify-end space-x-3">
               <button
                 onClick={closeModals}
@@ -425,19 +438,18 @@ const StockIn = () => {
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Stock Management</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Stock Out Management</h2>
             <p className="text-gray-600 mt-1">Manage inventory and track stock levels</p>
           </div>
           <div className="flex items-center space-x-3">
-              <ExportButton data={stock} fileName="StockInData.xlsx" sheetName="Stock" />
-            <button 
+            <ExportButton data={stock} fileName="StockOutData.xlsx" sheetName="Stock" />
+            <button
               onClick={handleAddProduct}
               className="bg-green-600 text-white px-4 py-2 hover:bg-green-700 transition-colors flex items-center"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Product
             </button>
-          
           </div>
         </div>
       </div>
@@ -467,8 +479,10 @@ const StockIn = () => {
               className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
               ))}
             </select>
           </div>
@@ -480,7 +494,7 @@ const StockIn = () => {
         <table className="w-full">
           <thead>
             <tr>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSort('productName')}
               >
@@ -492,7 +506,7 @@ const StockIn = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Product Details
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSort('quantity')}
               >
@@ -501,7 +515,7 @@ const StockIn = () => {
                   <ChevronDown className="ml-1 w-4 h-4" />
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSort('category')}
               >
@@ -510,9 +524,7 @@ const StockIn = () => {
                   <ChevronDown className="ml-1 w-4 h-4" />
                 </div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Stock Status
-              </th>
+            
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
@@ -528,26 +540,18 @@ const StockIn = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm text-gray-900 max-w-xs">
-                    {item.productDetails}
-                  </div>
+                  <div className="text-sm text-gray-900 max-w-xs">{item.productDetails}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-bold text-gray-900">
-                    {item.quantity}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    Min: {item.minStockLevel}
-                  </div>
+                  <div className="text-sm font-bold text-gray-900">{item.quantity}</div>
+                  <div className="text-xs text-gray-500">Min: {item.minStockLevel}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                     {item.category}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <StockLevel quantity={item.quantity} minLevel={item.minStockLevel} />
-                </td>
+              
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex space-x-2">
                     <button
@@ -579,8 +583,8 @@ const StockIn = () => {
               <select
                 value={itemsPerPage}
                 onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value));
-                  setCurrentPage(1);
+                  setItemsPerPage(Number(e.target.value))
+                  setCurrentPage(1)
                 }}
                 className="border border-gray-300 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -592,13 +596,15 @@ const StockIn = () => {
               <span className="text-sm text-gray-700">per page</span>
             </div>
             <div className="text-sm text-gray-700">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of {filteredAndSortedData.length} results
+              Showing {startIndex + 1} to{' '}
+              {Math.min(startIndex + itemsPerPage, filteredAndSortedData.length)} of{' '}
+              {filteredAndSortedData.length} results
             </div>
           </div>
 
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
             >
@@ -608,32 +614,33 @@ const StockIn = () => {
 
             <div className="flex space-x-1">
               {[...Array(Math.min(totalPages, 5))].map((_, index) => {
-                const pageNumber = currentPage <= 3 
-                  ? index + 1 
-                  : currentPage >= totalPages - 2 
-                    ? totalPages - 4 + index 
-                    : currentPage - 2 + index;
-                
-                if (pageNumber < 1 || pageNumber > totalPages) return null;
-                
+                const pageNumber =
+                  currentPage <= 3
+                    ? index + 1
+                    : currentPage >= totalPages - 2
+                      ? totalPages - 4 + index
+                      : currentPage - 2 + index
+
+                if (pageNumber < 1 || pageNumber > totalPages) return null
+
                 return (
                   <button
                     key={pageNumber}
                     onClick={() => setCurrentPage(pageNumber)}
                     className={`px-3 py-1 text-sm border ${
-                      currentPage === pageNumber 
-                        ? 'bg-blue-600 text-white border-blue-600' 
+                      currentPage === pageNumber
+                        ? 'bg-blue-600 text-white border-blue-600'
                         : 'border-gray-300 hover:bg-gray-50'
                     }`}
                   >
                     {pageNumber}
                   </button>
-                );
+                )
               })}
             </div>
 
             <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
               className="px-3 py-1 border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
             >
@@ -644,7 +651,7 @@ const StockIn = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default StockIn;
+export default StockTransfer

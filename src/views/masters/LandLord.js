@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import {
   Search,
   ChevronLeft,
@@ -12,6 +12,7 @@ import {
   Save,
 } from 'lucide-react'
 import ExportButton from '../ExportButton'
+import { getRequest } from '../../Helpers'
 
 const LandLord = () => {
   const [stockData] = useState([
@@ -37,6 +38,17 @@ const LandLord = () => {
     LocationName: '',
     LandLordName: '',
   })
+
+  useEffect(() => {
+    getRequest()
+      .then((res) => {
+        setData(res?.data?.data)
+        console.log('Data:', res?.data?.data)
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+  }, [])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -77,9 +89,7 @@ const LandLord = () => {
   const submitEdit = () => {
     if (formData.ProjectName && formData.LocationName && formData.LandLordName) {
       setStock((prev) =>
-        prev.map((item) =>
-          item.id === selectedItem.id ? { ...item, ...formData } : item,
-        ),
+        prev.map((item) => (item.id === selectedItem.id ? { ...item, ...formData } : item)),
       )
       setShowEditModal(false)
       setSelectedItem(null)
@@ -115,10 +125,8 @@ const LandLord = () => {
 
     if (sortConfig.key) {
       filtered.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key])
-          return sortConfig.direction === 'asc' ? -1 : 1
-        if (a[sortConfig.key] > b[sortConfig.key])
-          return sortConfig.direction === 'asc' ? 1 : -1
+        if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1
+        if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1
         return 0
       })
     }
@@ -264,8 +272,8 @@ const LandLord = () => {
                   currentPage <= 3
                     ? index + 1
                     : currentPage >= totalPages - 2
-                    ? totalPages - 4 + index
-                    : currentPage - 2 + index
+                      ? totalPages - 4 + index
+                      : currentPage - 2 + index
 
                 if (pageNumber < 1 || pageNumber > totalPages) return null
 
