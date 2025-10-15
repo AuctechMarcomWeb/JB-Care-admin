@@ -1,11 +1,7 @@
-
 import { CNavGroup, CNavItem } from '@coreui/react'
 import { FaRegAddressCard } from 'react-icons/fa'
-import {
-  MdOutlineDashboard,
-} from 'react-icons/md'
+import { MdOutlineDashboard } from 'react-icons/md'
 const useNav = () => {
-
   const navItems = [
     {
       component: CNavItem,
@@ -87,9 +83,7 @@ const useNav = () => {
       name: 'Complaints',
       to: '/complaints',
       icon: <MdOutlineDashboard className="me-3" />,
-
     },
-
 
     {
       component: CNavGroup,
@@ -97,24 +91,24 @@ const useNav = () => {
       to: '/sub-menu',
       icon: <FaRegAddressCard className="me-3" />,
       items: [
-
         {
           component: CNavItem,
           name: ' Central Stock',
-          to: '/CentralStock',
+          to: '/centralStock',
         },
         {
           component: CNavItem,
           name: 'Stock Transfer',
           to: '/stockTransfer',
         },
-           {
+        {
           component: CNavItem,
           name: 'Stock Consumption',
           to: '/stockConsumption',
         },
       ],
-    },,
+    },
+    ,
   ]
 
   return navItems
