@@ -39,8 +39,8 @@ const ProjectModal = ({
   useEffect(() => {
     if (modalData) {
       setFormData({
-        projectName: modalData.projectName || '',
-        siteId: modalData.siteId || '',
+        projectName: modalData?.projectName || '',
+        siteId: modalData?.siteId?._id || '',
         projectAddress: modalData.projectAddress || '',
         status: modalData.status ?? true,
       })
@@ -69,9 +69,9 @@ const ProjectModal = ({
   // 🔹 Validate form
   const validateForm = () => {
     const newErrors = {}
-    if (!formData.projectName.trim()) newErrors.projectName = 'Project name is required'
-    if (!formData.siteId) newErrors.siteId = 'Please select a site'
-    if (!formData.projectAddress.trim()) newErrors.projectAddress = 'Project address is required'
+    if (!formData?.projectName.trim()) newErrors.projectName = 'Project name is required'
+    if (!formData?.siteId) newErrors.siteId = 'Please select a site'
+    if (!formData?.projectAddress.trim()) newErrors.projectAddress = 'Project address is required'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -131,12 +131,12 @@ const ProjectModal = ({
           <label className="form-label fw-bold">Project Name</label>
           <input
             type="text"
-            className={`form-control ${errors.projectName ? 'is-invalid' : ''}`}
+            className={`form-control ${errors?.projectName ? 'is-invalid' : ''}`}
             name="projectName"
-            value={formData.projectName}
+            value={formData?.projectName}
             onChange={handleChange}
           />
-          {errors.projectName && <div className="invalid-feedback">{errors.projectName}</div>}
+          {errors?.projectName && <div className="invalid-feedback">{errors?.projectName}</div>}
         </div>
 
         {/* Site Dropdown */}
@@ -144,18 +144,18 @@ const ProjectModal = ({
           <label className="form-label fw-bold">Select Site</label>
           <select
             name="siteId"
-            className={`form-select ${errors.siteId ? 'is-invalid' : ''}`}
-            value={formData.siteId}
+            className={`form-select ${errors?.siteId ? 'is-invalid' : ''}`}
+            value={formData?.siteId}
             onChange={handleChange}
           >
             <option value="">-- Select Site --</option>
             {sites.map((site) => (
               <option key={site._id} value={site._id}>
-                {site.siteName}
+                {site?.siteName}
               </option>
             ))}
           </select>
-          {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
+          {errors?.siteId && <div className="invalid-feedback">{errors?.siteId}</div>}
         </div>
 
         {/* Project Address */}
@@ -163,12 +163,14 @@ const ProjectModal = ({
           <label className="form-label fw-bold">Project Address</label>
           <input
             type="text"
-            className={`form-control ${errors.projectAddress ? 'is-invalid' : ''}`}
+            className={`form-control ${errors?.projectAddress ? 'is-invalid' : ''}`}
             name="projectAddress"
-            value={formData.projectAddress}
+            value={formData?.projectAddress}
             onChange={handleChange}
           />
-          {errors.projectAddress && <div className="invalid-feedback">{errors.projectAddress}</div>}
+          {errors?.projectAddress && (
+            <div className="invalid-feedback">{errors?.projectAddress}</div>
+          )}
         </div>
 
         {/* Active Checkbox */}
@@ -177,7 +179,7 @@ const ProjectModal = ({
             type="checkbox"
             className="form-check-input"
             name="status"
-            checked={formData.status}
+            checked={formData?.status}
             onChange={handleChange}
             id="status"
           />
