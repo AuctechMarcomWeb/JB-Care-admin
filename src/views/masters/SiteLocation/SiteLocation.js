@@ -30,7 +30,7 @@ const SiteLocation = () => {
   useEffect(() => {
     setLoading(true)
     getRequest(
-      `sites&search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
+      `sites?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
     )
       .then((res) => {
         const responseData = res?.data?.data
