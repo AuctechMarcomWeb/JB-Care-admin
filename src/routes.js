@@ -3,7 +3,7 @@ import SmartMeter from './views/smartMeter/SmartMeter'
 //import Complaints from './views/complains/Complaints'
 import CentralStock from './views/stocks/CentralStock'
 import StockTransfer from './views/stocks/StockTransfer'
-import StockConsumption from './views/stocks/stockConsumption'
+import StockConsumption from './views/stocks/StockConsumption'
 import ElmProfile from './views/CustomersProfile/ElmProfile'
 import MaintenanceProfile from './views/CustomersProfile/MaintenanceProfile'
 import Project from './views/masters/Project/Project'
@@ -27,9 +27,9 @@ const routes = [
   { path: '/sitelocationMaster', name: 'ELM Profile', element: SiteLocation },
   { path: '/landlordMaster', name: 'ELM Profile', element: LandLord },
   { path: '/rentalMaster', name: 'ELM Profile', element: Rental },
-  { path: '/CentralStock', name: 'ELM Profile', element: CentralStock },
-  { path: '/StockTransfer', name: 'ELM Profile', element: StockTransfer },
-  { path: '/StockConsumption', name: 'ELM Profile', element: StockConsumption },
+  { path: '/centralStock', name: 'ELM Profile', element: CentralStock },
+  { path: '/stockTransfer', name: 'ELM Profile', element: StockTransfer },
+  { path: '/stockConsumption', name: 'ELM Profile', element: StockConsumption },
 ]
 
 export default routes
