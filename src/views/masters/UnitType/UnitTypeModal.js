@@ -14,17 +14,17 @@ const UnitTypeModal = ({
 }) => {
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
-   const [formData, setFormData] = useState(
-      modalData
-        ? {
-            ...modalData,
-          }
-        : {
-            title: '',
-            status: true,
-          },
-    )
-  console.log('form Data',formData);
+  const [formData, setFormData] = useState(
+    modalData
+      ? {
+          ...modalData,
+        }
+      : {
+          title: '',
+          status: true,
+        },
+  )
+  console.log('form Data', formData)
   // Close modal
   const handleCancel = () => {
     setFormData({ title: '', status: true })
@@ -41,8 +41,6 @@ const UnitTypeModal = ({
       [name]: type === 'checkbox' ? checked : value,
     }))
   }
-
- 
 
   // Validate form fields
   const validateForm = () => {
@@ -78,7 +76,7 @@ const UnitTypeModal = ({
 
     putRequest({
       url: `unit-types/${modalData?._id}`,
-      cred: formData, // ✅ title, url, isActive
+      cred: formData, //
     })
       .then((res) => {
         toast.success(res?.data?.message || 'UnitType updated successfully')
@@ -117,7 +115,7 @@ const UnitTypeModal = ({
             type="checkbox"
             className="form-check-input"
             name="status"
-            checked={formData.isActive}
+            checked={formData?.status}
             onChange={handleChange}
             id="status"
           />

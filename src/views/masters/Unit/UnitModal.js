@@ -24,37 +24,40 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
   })
   console.log('formData', formData)
 
-  // Fetch all dropdown data
   useEffect(() => {
     getRequest(`sites?isPagination=false`)
       .then((res) => {
-        const responseData = res?.data?.data
-        setSite(responseData?.sites || [])
+        setSite(res?.data?.data?.sites || [])
       })
       .catch((error) => {
         console.log('Error fetching sites:', error)
       })
 
-    getRequest(`projects?isPagination=false`)
-      .then((res) => {
-        const responseData = res?.data?.data
-        setProject(responseData?.projects || [])
-      })
-      .catch((error) => {
-        console.log('Error fetching projects:', error)
-      })
-
     getRequest(`unit-types?isPagination=false`)
       .then((res) => {
-        const responseData = res?.data?.data
-        setunitType(responseData?.unitTypes || [])
+        setunitType(res?.data?.data?.unitTypes || [])
       })
       .catch((error) => {
         console.log('Error fetching unit types:', error)
       })
   }, [])
 
-  // If edit mode, fill form
+  useEffect(() => {
+    if (formData?.siteId) {
+      getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
+        .then((res) => {
+          setProject(res?.data?.data?.projects || [])
+        })
+        .catch((error) => {
+          console.log('Error fetching projects:', error)
+        })
+    } else {
+      setProject([])
+      setFormData((prev) => ({ ...prev, projectId: '' }))
+    }
+  }, [formData?.siteId])
+
+  //  Pre-fill form if editing
   useEffect(() => {
     if (modalData) {
       setFormData({
@@ -81,7 +84,6 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     }
   }, [modalData])
 
-  // Close modal
   const handleCancel = () => {
     setFormData({
       unitNumber: '',
@@ -98,7 +100,6 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     setIsModalOpen(false)
   }
 
-  // Input change handler
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prev) => ({
@@ -121,7 +122,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     return Object.keys(newErrors).length === 0
   }
 
-  // Add new unit
+  //  Add new unit
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!validateForm()) return
@@ -190,6 +191,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     >
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
         <div className="row">
+          {/* Unit Details */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">Unit Number</label>
             <input
@@ -238,6 +240,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
             {errors?.areaSqFt && <div className="invalid-feedback">{errors?.areaSqFt}</div>}
           </div>
 
+          {/* Site Dropdown */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">Select Site</label>
             <select
@@ -252,6 +255,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
             {errors?.siteId && <div className="invalid-feedback">{errors?.siteId}</div>}
           </div>
 
+          {/* Project Dropdown  */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">Select Project</label>
             <select
@@ -259,6 +263,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
               name="projectId"
               value={formData.projectId}
               onChange={handleChange}
+              disabled={!formData.siteId}
             >
               <option value="">Select Project</option>
               {projectOption}
@@ -266,6 +271,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
             {errors?.projectId && <div className="invalid-feedback">{errors?.projectId}</div>}
           </div>
 
+          {/* Unit Type */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">Select Unit Type</label>
             <select
@@ -280,10 +286,11 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
             {errors?.unitTypeId && <div className="invalid-feedback">{errors?.unitTypeId}</div>}
           </div>
 
-          <div className="col-md-6 mb-3 d-flex align-items-center">
+          {/* Status */}
+          <div className="form-check mb-3">
             <input
               type="checkbox"
-              className="form-check-input p-2"
+              className="form-check-input"
               name="status"
               checked={formData?.status}
               onChange={handleChange}

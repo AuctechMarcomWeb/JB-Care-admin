@@ -106,7 +106,7 @@ const Unit = () => {
       </div>
 
       {/* Filters Section */}
-      <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <div className="px-6 py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* From Date */}
           <div className="flex flex-col">
@@ -202,7 +202,7 @@ const Unit = () => {
                   <th className="px-6 py-3">Site Name</th>
                   <th className="px-6 py-3">Project Name</th>
                   <th className="px-6 py-3">Unit Type</th>
-                  <th className="px-6 py-3">Active</th>
+                  <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
