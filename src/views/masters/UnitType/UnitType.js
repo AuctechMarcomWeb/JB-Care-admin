@@ -33,7 +33,7 @@ const UnitType = () => {
       .then((res) => {
         const responseData = res?.data?.data
         setData(responseData?.unitTypes || [])
-        setTotal(responseData?.totalPages || 0)
+        setTotal(responseData?.totalUnitTypes || 0)
       })
       .catch((error) => {
         console.log('error', error)
