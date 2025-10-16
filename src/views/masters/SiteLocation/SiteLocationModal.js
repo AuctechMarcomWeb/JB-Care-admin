@@ -13,18 +13,18 @@ const SiteLocationModal = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-    const [formData, setFormData] = useState(
+  const [formData, setFormData] = useState(
     modalData
       ? {
           ...modalData,
         }
       : {
           siteName: '',
-          siteAddress:'',
+          siteAddress: '',
           status: true,
         },
   )
-console.log('form Data',formData);
+  console.log('form Data', formData)
 
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
@@ -63,7 +63,7 @@ console.log('form Data',formData);
     putRequest({
       url: `sites/${modalData?._id}`,
       cred: { ...formData },
-    }) 
+    })
       .then((res) => {
         toast.success(res?.data?.message || ' Site Location updated successfully')
         setUpdateStatus((prev) => !prev)
@@ -78,7 +78,7 @@ console.log('form Data',formData);
     e.preventDefault()
     if (!validateForm()) return
 
-    postRequest({ url: `sites`, cred: { ...formData} })
+    postRequest({ url: `sites`, cred: { ...formData } })
       .then((res) => {
         toast.success(res?.data?.message || 'Site Location added successfully')
         setUpdateStatus((prev) => !prev)
@@ -110,7 +110,7 @@ console.log('form Data',formData);
           {errors?.siteName && <div className="invalid-feedback">{errors?.siteName}</div>}
         </div>
 
-         <div className="mb-3">
+        <div className="mb-3">
           <label className="form-label fw-bold">Site Address</label>
           <input
             type="text"
@@ -121,7 +121,6 @@ console.log('form Data',formData);
           />
           {errors?.siteAddress && <div className="invalid-feedback">{errors?.siteAddress}</div>}
         </div>
-       
 
         {/* Active Status */}
         <div className="form-check mb-3">
@@ -144,7 +143,13 @@ console.log('form Data',formData);
             Cancel
           </button>
           <button type="submit" className="btn btn-primary">
-            {loading ? 'Uploading...' : 'Save Site Location'}
+            {modalData
+              ? loading
+                ? 'Updating...'
+                : 'Update Site Loaction'
+              : loading
+                ? 'Saving...'
+                : 'Save Site Loaction'}
           </button>
         </div>
       </form>
