@@ -357,7 +357,13 @@ const LandLordModal = ({
             Cancel
           </button>
           <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Saving...' : modalData ? 'Update' : 'Save'}
+            {modalData
+              ? loading
+                ? 'Updating...'
+                : 'Update Landlord'
+              : loading
+                ? 'Saving...'
+                : 'Save Landlord'}
           </button>
         </div>
       </form>

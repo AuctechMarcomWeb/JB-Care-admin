@@ -25,7 +25,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     unitId: '',
     landlordId: '',
     addedBy: 'landlord',
-    billTo: '',
+    billTo: 'tenant',
   })
 
   // ✅ Fetch landlord list only once
@@ -445,7 +445,13 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
             Cancel
           </button>
           <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Saving...' : modalData ? 'Update' : 'Save'}
+            {modalData
+              ? loading
+                ? 'Updating...'
+                : 'Update Rental'
+              : loading
+                ? 'Saving...'
+                : 'Save Rental'}{' '}
           </button>
         </div>
       </form>
