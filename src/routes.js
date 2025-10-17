@@ -13,6 +13,7 @@ import SiteLocation from './views/masters/SiteLocation/SiteLocation'
 import Rental from './views/masters/Rental/Rental'
 import LandLord from './views/masters/LandLord/LandLord'
 import UserList from './views/UserList/UserList'
+import Supervisor from './views/Supervisor/Supervisor'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
@@ -29,6 +30,7 @@ const routes = [
   { path: '/unitTypeMaster', name: 'ELM Profile', element: UnitType },
   { path: '/sitelocationMaster', name: 'ELM Profile', element: SiteLocation },
   { path: '/landlordMaster', name: 'ELM Profile', element: LandLord },
+  { path: '/supervisor', name: 'ELM Profile', element: Supervisor },
   { path: '/rentalMaster', name: 'ELM Profile', element: Rental },
   { path: '/centralStock', name: 'ELM Profile', element: CentralStock },
   { path: '/stockTransfer', name: 'ELM Profile', element: StockTransfer },

@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
-import { Modal } from 'antd'
+import { Modal, Select } from 'antd'
 import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { fileUpload, getRequest, postRequest, putRequest } from '../../../Helpers'
@@ -63,7 +63,6 @@ const LandLordModal = ({
       setFormData((prev) => ({ ...prev, unitId: '' }))
     }
   }, [formData?.projectId, formData?.siteId])
-  console.log('number', units.unitNumber)
 
   useEffect(() => {
     if (modalData) {
@@ -279,19 +278,22 @@ const LandLordModal = ({
             <label className="form-label fw-bold">
               Site<span className="text-danger">*</span>
             </label>
-            <select
-              name="siteId"
-              value={formData?.siteId}
-              onChange={handleChange}
-              className={`form-select ${errors?.siteId ? 'is-invalid' : ''}`}
-            >
-              <option value="">Select Site</option>
-              {site.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s?.siteName}
-                </option>
-              ))}
-            </select>
+            <Select
+              showSearch
+              allowClear
+              placeholder="--Select Site--"
+              value={formData?.siteId || undefined}
+              onChange={(value) => setFormData((prev) => ({ ...prev, siteId: value }))}
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={site?.map((s) => ({
+                value: s?._id,
+                label: s?.siteName,
+              }))}
+              style={{ width: '100%', height: '38px' }} // 🔹 match native select height
+              className={errors?.siteId ? 'is-invalid' : ''}
+            />
             {errors?.siteId && <div className="invalid-feedback">{errors?.siteId}</div>}
           </div>
 
@@ -304,6 +306,7 @@ const LandLordModal = ({
               value={formData?.projectId}
               onChange={handleChange}
               className={`form-select ${errors?.projectId ? 'is-invalid' : ''}`}
+              disabled={!formData?.siteId}
             >
               <option value="">Select Project</option>
               {project.map((p) => (
@@ -327,6 +330,7 @@ const LandLordModal = ({
               value={formData?.unitId}
               onChange={handleChange}
               className={`form-select ${errors.unitId ? 'is-invalid' : ''}`}
+              disabled={!formData?.projectId}
             >
               <option value="">Select Unit</option>
               {units.map((u) => (

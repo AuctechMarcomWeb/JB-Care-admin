@@ -64,4 +64,14 @@ body {
   body {
     overflow-x: hidden;
   }
+  /* Make Ant Design Select placeholder text black */
+.ant-select-selection-placeholder {
+  color: #000 !important; /* black */
+  opacity: 1 !important;  /* ensures full visibility */
+}
+.ant-select-selection-item {
+  color: #000 !important;
+  font-weight: 500 !important;
+}
+
 }

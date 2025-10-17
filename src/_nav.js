@@ -66,6 +66,12 @@ const useNav = () => {
       to: '/complaints',
       icon: <MdOutlineDashboard className="me-3" />,
     },
+    {
+      component: CNavItem,
+      name: 'Supervisor',
+      to: '/supervisor',
+      icon: <MdOutlineDashboard className="me-3" />,
+    },
 
     {
       component: CNavGroup,
