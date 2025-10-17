@@ -100,24 +100,35 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     setIsModalOpen(false)
   }
 
+  // 🔹 Handle input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
+
+    // Update form data
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }))
+
+    // 🔹 Clear field-specific error when user starts typing or toggling
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }))
+    }
   }
 
   // Validation
   const validateForm = () => {
     const newErrors = {}
-    if (!formData.unitNumber) newErrors.unitNumber = 'Unit Number is required'
-    if (!formData.block) newErrors.block = 'Block is required'
-    if (!formData.floor) newErrors.floor = 'Floor is required'
-    if (!formData.areaSqFt) newErrors.areaSqFt = 'Area is required'
-    if (!formData.siteId) newErrors.siteId = 'Site is required'
-    if (!formData.projectId) newErrors.projectId = 'Project is required'
-    if (!formData.unitTypeId) newErrors.unitTypeId = 'Unit Type is required'
+    if (!formData?.unitNumber) newErrors.unitNumber = 'Unit Number is required'
+    if (!formData?.block) newErrors.block = 'Block is required'
+    if (!formData?.floor) newErrors.floor = 'Floor is required'
+    if (!formData?.areaSqFt) newErrors.areaSqFt = 'Area is required'
+    if (!formData?.siteId) newErrors.siteId = 'Site is required'
+    if (!formData?.projectId) newErrors.projectId = 'Project is required'
+    if (!formData?.unitTypeId) newErrors.unitTypeId = 'Unit Type is required'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -193,48 +204,56 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
         <div className="row">
           {/* Unit Details */}
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Unit Number</label>
+            <label className="form-label fw-bold">
+              Unit Number<span className="text-danger">*</span>
+            </label>
             <input
               type="text"
               className={`form-control ${errors.unitNumber ? 'is-invalid' : ''}`}
               name="unitNumber"
-              value={formData.unitNumber}
+              value={formData?.unitNumber}
               onChange={handleChange}
             />
             {errors?.unitNumber && <div className="invalid-feedback">{errors?.unitNumber}</div>}
           </div>
 
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Block</label>
+            <label className="form-label fw-bold">
+              Block<span className="text-danger">*</span>
+            </label>
             <input
               type="text"
               className={`form-control ${errors.block ? 'is-invalid' : ''}`}
               name="block"
-              value={formData.block}
+              value={formData?.block}
               onChange={handleChange}
             />
             {errors?.block && <div className="invalid-feedback">{errors?.block}</div>}
           </div>
 
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Floor</label>
+            <label className="form-label fw-bold">
+              Floor<span className="text-danger">*</span>
+            </label>
             <input
               type="number"
               className={`form-control ${errors.floor ? 'is-invalid' : ''}`}
               name="floor"
-              value={formData.floor}
+              value={formData?.floor}
               onChange={handleChange}
             />
             {errors?.floor && <div className="invalid-feedback">{errors?.floor}</div>}
           </div>
 
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Area (SqFt)</label>
+            <label className="form-label fw-bold">
+              Area (SqFt)<span className="text-danger">*</span>
+            </label>
             <input
               type="number"
               className={`form-control ${errors.areaSqFt ? 'is-invalid' : ''}`}
               name="areaSqFt"
-              value={formData.areaSqFt}
+              value={formData?.areaSqFt}
               onChange={handleChange}
             />
             {errors?.areaSqFt && <div className="invalid-feedback">{errors?.areaSqFt}</div>}
@@ -242,11 +261,13 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
 
           {/* Site Dropdown */}
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Select Site</label>
+            <label className="form-label fw-bold">
+              Select Site<span className="text-danger">*</span>
+            </label>
             <select
-              className={`form-select ${errors.siteId ? 'is-invalid' : ''}`}
+              className={`form-select ${errors?.siteId ? 'is-invalid' : ''}`}
               name="siteId"
-              value={formData.siteId}
+              value={formData?.siteId}
               onChange={handleChange}
             >
               <option value="">Select Site</option>
@@ -257,13 +278,15 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
 
           {/* Project Dropdown  */}
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Select Project</label>
+            <label className="form-label fw-bold">
+              Select Project<span className="text-danger">*</span>
+            </label>
             <select
               className={`form-select ${errors.projectId ? 'is-invalid' : ''}`}
               name="projectId"
-              value={formData.projectId}
+              value={formData?.projectId}
               onChange={handleChange}
-              disabled={!formData.siteId}
+              disabled={!formData?.siteId}
             >
               <option value="">Select Project</option>
               {projectOption}
@@ -273,11 +296,13 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
 
           {/* Unit Type */}
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Select Unit Type</label>
+            <label className="form-label fw-bold">
+              Select Unit Type<span className="text-danger">*</span>
+            </label>
             <select
-              className={`form-select ${errors.unitTypeId ? 'is-invalid' : ''}`}
+              className={`form-select ${errors?.unitTypeId ? 'is-invalid' : ''}`}
               name="unitTypeId"
-              value={formData.unitTypeId}
+              value={formData?.unitTypeId}
               onChange={handleChange}
             >
               <option value="">Select Unit Type</option>
