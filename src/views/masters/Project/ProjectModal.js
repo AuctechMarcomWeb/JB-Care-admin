@@ -64,6 +64,12 @@ const ProjectModal = ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }))
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }))
+    }
   }
 
   // 🔹 Validate form
@@ -128,7 +134,9 @@ const ProjectModal = ({
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
         {/* Project Name */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Project Name</label>
+          <label className="form-label fw-bold">
+            Project Name<span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className={`form-control ${errors?.projectName ? 'is-invalid' : ''}`}
@@ -141,7 +149,9 @@ const ProjectModal = ({
 
         {/* Site Dropdown */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Select Site</label>
+          <label className="form-label fw-bold">
+            Select Site<span className="text-danger">*</span>
+          </label>
           <select
             name="siteId"
             className={`form-select ${errors?.siteId ? 'is-invalid' : ''}`}
@@ -160,7 +170,9 @@ const ProjectModal = ({
 
         {/* Project Address */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Project Address</label>
+          <label className="form-label fw-bold">
+            Project Address<span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className={`form-control ${errors?.projectAddress ? 'is-invalid' : ''}`}

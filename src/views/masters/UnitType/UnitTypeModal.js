@@ -33,19 +33,25 @@ const UnitTypeModal = ({
     setIsModalOpen(false)
   }
 
-  // Handle input changes
+  // 🔹 Handle input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }))
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }))
+    }
   }
 
   // Validate form fields
   const validateForm = () => {
     const newErrors = {}
-    if (!formData.title.trim()) newErrors.title = 'Title is required'
+    if (!formData?.title.trim()) newErrors.title = 'Title is required'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -98,15 +104,17 @@ const UnitTypeModal = ({
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
         {/* Title */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Title</label>
+          <label className="form-label fw-bold">
+            Title<span className="text-danger">*</span>
+          </label>
           <input
             type="text"
-            className={`form-control ${errors.title ? 'is-invalid' : ''}`}
+            className={`form-control ${errors?.title ? 'is-invalid' : ''}`}
             name="title"
-            value={formData.title}
+            value={formData?.title}
             onChange={handleChange}
           />
-          {errors.title && <div className="invalid-feedback">{errors.title}</div>}
+          {errors?.title && <div className="invalid-feedback">{errors?.title}</div>}
         </div>
 
         {/* Active Checkbox */}

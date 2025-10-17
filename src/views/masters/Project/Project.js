@@ -13,13 +13,17 @@ const Project = () => {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
-  const [fromDate, setFormDate] = useState('')
+  const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
   const [updateStatus, setUpdateStatus] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false)
+  //filters
+  const [tempFromDate, setTempFromDate] = useState('')
+  const [tempToDate, setTempToDate] = useState('')
+  const [tempSelectedSite, setTempSelectedSite] = useState('')
 
   // 🔹 NEW: Site list and filter
   const [sites, setSites] = useState([])
@@ -101,6 +105,7 @@ const Project = () => {
           <p className="text-gray-600 text-sm sm:text-base">Manage Project</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <ExportButton data={data} fileName="Project.xlsx" sheetName="Project" />
           <button
             onClick={() => {
               setSelectedItem(null)
@@ -115,14 +120,31 @@ const Project = () => {
 
       {/* Filters Section */}
       <div className="px-6 py-4 border-b border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+          {/* 🔹 Site Name Filter */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
+            <select
+              value={tempSelectedSite}
+              onChange={(e) => setTempSelectedSite(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Sites</option>
+              {sites.map((site) => (
+                <option key={site._id} value={site._id}>
+                  {site.siteName}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* From Date */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
-              value={fromDate}
-              onChange={(e) => setFormDate(e.target.value)}
+              value={tempFromDate}
+              onChange={(e) => setTempFromDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -132,8 +154,8 @@ const Project = () => {
             <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
+              value={tempToDate}
+              onChange={(e) => setTempToDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -145,7 +167,7 @@ const Project = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search by name, email, etc..."
+                placeholder="Search by name or address..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
@@ -153,31 +175,37 @@ const Project = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            {/* Apply Filters */}
+          {/* Buttons */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
             <button
               onClick={() => {
+                setFromDate(tempFromDate)
+                setToDate(tempToDate)
+                setSelectedSite(tempSelectedSite)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+              className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 rounded-md text-sm sm:text-base"
             >
-              <Plus className="w-4 h-4 mr-2" /> Filters
+              Apply
             </button>
 
-            {/* Clear Filters */}
-            {(fromDate || toDate || searchTerm) && (
+            {(fromDate || toDate || searchTerm || selectedSite) && (
               <button
                 onClick={() => {
-                  setFormDate('')
+                  setTempFromDate('')
+                  setTempToDate('')
+                  setFromDate('')
                   setToDate('')
                   setSearchTerm('')
+                  setTempSelectedSite('')
+                  setSelectedSite('')
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
-                className="bg-red-600 text-white px-3 sm:px-4 py-2 hover:bg-red-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+                className="bg-red-600 text-white px-3 sm:px-4 py-2 hover:bg-red-700 rounded-md text-sm sm:text-base"
               >
-                Clear Filters
+                Clear
               </button>
             )}
           </div>
@@ -266,6 +294,7 @@ const Project = () => {
               current={page}
               pageSize={limit}
               total={total}
+              pageSizeOptions={['5', '10', '15', '20', '30', '50', '100', '500']}
               onChange={(newPage) => setPage(newPage)}
               showSizeChanger={true}
               onShowSizeChange={(current, size) => {

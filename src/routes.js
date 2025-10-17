@@ -1,7 +1,7 @@
 import React from 'react'
 import SmartMeter from './views/smartMeter/SmartMeter'
-//import Complaints from './views/complains/Complaints'
-import CentralStock from './views/stocks/CentralStock'
+import Complaints from './views/Complaints/Complaints'
+import CentralStock from './views/stocks/CentralStock/CentralStock'
 import StockTransfer from './views/stocks/StockTransfer'
 import StockConsumption from './views/stocks/StockConsumption'
 import ElmProfile from './views/CustomersProfile/ElmProfile'
@@ -12,13 +12,16 @@ import UnitType from './views/masters/UnitType/UnitType'
 import SiteLocation from './views/masters/SiteLocation/SiteLocation'
 import Rental from './views/masters/Rental/Rental'
 import LandLord from './views/masters/LandLord/LandLord'
+import UserList from './views/UserList/UserList'
+
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/user', name: 'User', element: UserList },
   { path: '/smartMeters', name: 'Dashboard', element: SmartMeter },
-  // { path: '/complaints', name: 'ELM Profile', element: Complaints },
+  { path: '/complaints', name: 'ELM Profile', element: Complaints },
   { path: '/elmProfile', name: 'ELM Profile', element: ElmProfile },
   { path: '/maintenanceProfile', name: 'ELM Profile', element: MaintenanceProfile },
   { path: '/projectMaster', name: 'ELM Profile', element: Project },

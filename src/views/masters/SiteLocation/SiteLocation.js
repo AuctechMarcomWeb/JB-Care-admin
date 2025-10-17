@@ -14,14 +14,16 @@ const SiteLocation = () => {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
-  const [fromDate, setFormDate] = useState('')
+  const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
   const [updateStatus, setUpdateStatus] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false) // ✅ Loader state added
-
+  //filters
+  const [tempFromDate, setTempFromDate] = useState('')
+  const [tempToDate, setTempToDate] = useState('')
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
@@ -95,6 +97,7 @@ const SiteLocation = () => {
           <p className="text-gray-600 text-sm sm:text-base">Manage Site-Location</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <ExportButton data={data} fileName="Site Location.xlsx" sheetName="Site Location" />
           <button
             onClick={() => {
               setIsModalOpen(true)
@@ -114,8 +117,8 @@ const SiteLocation = () => {
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
-              value={fromDate}
-              onChange={(e) => setFormDate(e.target.value)}
+              value={tempFromDate}
+              onChange={(e) => setTempFromDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -125,8 +128,8 @@ const SiteLocation = () => {
             <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
+              value={tempToDate}
+              onChange={(e) => setTempToDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -150,6 +153,8 @@ const SiteLocation = () => {
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
             <button
               onClick={() => {
+                setFromDate(tempFromDate)
+                setToDate(tempToDate)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
@@ -160,7 +165,9 @@ const SiteLocation = () => {
             {(fromDate || toDate || searchTerm) && (
               <button
                 onClick={() => {
-                  setFormDate('')
+                  setTempFromDate('')
+                  setTempToDate('')
+                  setFromDate('')
                   setToDate('')
                   setSearchTerm('')
                   setPage(1)
@@ -254,6 +261,7 @@ const SiteLocation = () => {
               current={page}
               pageSize={limit}
               total={total}
+              pageSizeOptions={['5', '10', '15', '20', '30', '50', '100', '500']}
               onChange={(newPage) => setPage(newPage)}
               showSizeChanger={true}
               onShowSizeChange={(current, size) => {

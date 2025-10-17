@@ -44,13 +44,20 @@ const SiteLocationModal = ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }))
+
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }))
+    }
   }
 
   // 🔹 Validate form
   const validateForm = () => {
     const newErrors = {}
-    if (!formData.siteName.trim()) newErrors.siteName = 'Site Name is required'
-    if (!formData.siteAddress.trim()) newErrors.siteAddress = 'Site Address is required'
+    if (!formData?.siteName.trim()) newErrors.siteName = 'Site Name is required'
+    if (!formData?.siteAddress.trim()) newErrors.siteAddress = 'Site Address is required'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -99,7 +106,9 @@ const SiteLocationModal = ({
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
         {/* Name */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Site Name</label>
+          <label className="form-label fw-bold">
+            Site Name<span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className={`form-control ${errors.siteName ? 'is-invalid' : ''}`}
@@ -111,7 +120,9 @@ const SiteLocationModal = ({
         </div>
 
         <div className="mb-3">
-          <label className="form-label fw-bold">Site Address</label>
+          <label className="form-label fw-bold">
+            Site Address<span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className={`form-control ${errors.siteAddress ? 'is-invalid' : ''}`}

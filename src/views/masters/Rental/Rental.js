@@ -16,11 +16,14 @@ const Rental = () => {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
-  const [fromDate, setFormDate] = useState('')
+  const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
   const [isActive, setIsActive] = useState(false)
   const [updateStatus, setUpdateStatus] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  //filters
+  const [tempFromDate, setTempFromDate] = useState('')
+  const [tempToDate, setTempToDate] = useState('')
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
@@ -94,7 +97,7 @@ const Rental = () => {
           <p className="text-gray-600 text-sm sm:text-base">Manage Rental</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          {/* <ExportButton data={data} fileName="Property Type.xlsx" sheetName="Property Type" /> */}
+          <ExportButton data={data} fileName="Rental.xlsx" sheetName="Rental" />
           <button
             onClick={() => {
               setIsModalOpen(true)
@@ -114,8 +117,8 @@ const Rental = () => {
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
-              value={fromDate}
-              onChange={(e) => setFormDate(e.target.value)}
+              value={tempFromDate}
+              onChange={(e) => setTempFromDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -125,8 +128,8 @@ const Rental = () => {
             <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
+              value={tempToDate}
+              onChange={(e) => setTempToDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -163,6 +166,8 @@ const Rental = () => {
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
             <button
               onClick={() => {
+                setFromDate(tempFromDate)
+                setToDate(tempToDate)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
@@ -170,13 +175,14 @@ const Rental = () => {
             >
               Apply
             </button>
-            {(fromDate || toDate || searchTerm || isActive) && (
+            {(fromDate || toDate || searchTerm) && (
               <button
                 onClick={() => {
-                  setFormDate('')
+                  setTempFromDate('')
+                  setTempToDate('')
+                  setFromDate('')
                   setToDate('')
                   setSearchTerm('')
-                  setIsActive(false)
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
@@ -259,7 +265,7 @@ const Rental = () => {
 
                     {/* Status */}
                     <td className="px-6 py-4">
-                      {item?.status ? (
+                      {item?.isActive ? (
                         <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">
                           Active
                         </span>
@@ -310,6 +316,7 @@ const Rental = () => {
               current={page}
               pageSize={limit}
               total={total}
+              pageSizeOptions={['5', '10', '15', '20', '30', '50', '100', '500']}
               onChange={(newPage) => setPage(newPage)}
               showSizeChanger={true}
               onShowSizeChange={(current, size) => {

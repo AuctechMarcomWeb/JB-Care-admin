@@ -1,14 +1,10 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
-import { Search, Plus, Edit, Trash2, AlertTriangle } from 'lucide-react'
-import ExportButton from '../../ExportButton'
-import { deleteRequest, getRequest } from '../../../Helpers'
+import { Search, Plus, AlertTriangle, Edit, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { deleteRequest, getRequest } from '../../../Helpers'
 import { Empty, Pagination, Spin } from 'antd'
-import { faL } from '@fortawesome/free-solid-svg-icons'
-import UnitModal from './UnitModal'
+import ExportButton from '../../ExportButton'
 
 const Unit = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -18,28 +14,64 @@ const Unit = () => {
   const [limit, setLimit] = useState(10)
   const [updateStatus, setUpdateStatus] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [fromDate, setFormDate] = useState('')
-  const [toDate, setToDate] = useState('')
 
+  // 🔹 Filters
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
+  const [tempFromDate, setTempFromDate] = useState('')
+  const [tempToDate, setTempToDate] = useState('')
+
+  // 🔹 Site & Project filters
+  const [sites, setSites] = useState([])
+  const [projects, setProjects] = useState([])
+  const [selectedSite, setSelectedSite] = useState('')
+  const [selectedProject, setSelectedProject] = useState('')
+  const [tempSelectedSite, setTempSelectedSite] = useState('')
+  const [tempSelectedProject, setTempSelectedProject] = useState('')
+
+  // 🔹 Fetch sites
+  useEffect(() => {
+    getRequest('sites?isPagination=false')
+      .then((res) => {
+        const responseData = res?.data?.data
+        setSites(responseData?.sites || [])
+      })
+      .catch((error) => console.error('Error fetching sites:', error))
+  }, [])
+
+  // 🔹 Fetch projects (filtered by selected site)
+  useEffect(() => {
+    if (!tempSelectedSite) {
+      setProjects([])
+      return
+    }
+    getRequest(`projects?isPagination=false&siteId=${tempSelectedSite}`)
+      .then((res) => {
+        const responseData = res?.data?.data
+        setProjects(responseData?.projects || [])
+      })
+      .catch((error) => console.error('Error fetching projects:', error))
+  }, [tempSelectedSite])
+
+  // 🔹 Fetch Units (with filters)
   useEffect(() => {
     setLoading(true)
     getRequest(
-      `units?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
+      `units?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}${
+        selectedSite ? `&siteId=${selectedSite}` : ''
+      }${selectedProject ? `&projectId=${selectedProject}` : ''}`,
     )
       .then((res) => {
         const responseData = res?.data?.data
         setData(responseData?.units || [])
         setTotal(responseData?.totalUnits || 0)
       })
-      .catch((error) => {
-        console.log('error', error)
-      })
+      .catch((error) => console.error('Error fetching units:', error))
       .finally(() => setLoading(false))
-  }, [page, limit, searchTerm, fromDate, toDate, updateStatus])
+  }, [page, limit, searchTerm, fromDate, toDate, selectedSite, selectedProject, updateStatus])
 
   // ✅ Delete handler
   const confirmDelete = () => {
@@ -50,9 +82,7 @@ const Unit = () => {
         setUpdateStatus((prev) => !prev)
         setShowDeleteModal(false)
       })
-      .catch((error) => {
-        console.log('error', error)
-      })
+      .catch((error) => console.log('error', error))
   }
 
   return (
@@ -85,7 +115,6 @@ const Unit = () => {
           </div>
         </div>
       )}
-
       {/* Header */}
       <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
@@ -93,12 +122,10 @@ const Unit = () => {
           <p className="text-gray-600 text-sm sm:text-base">Manage Unit</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          {/* <ExportButton data={data} fileName="Property Type.xlsx" sheetName="Property Type" /> */}
+          <ExportButton data={data} fileName="Unit.xlsx" sheetName="Unit" />
           <button
-            onClick={() => {
-              setIsModalOpen(true)
-            }}
-            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+            onClick={() => setIsModalOpen(true)}
+            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Unit
           </button>
@@ -107,14 +134,52 @@ const Unit = () => {
 
       {/* Filters Section */}
       <div className="px-6 py-4 border-b border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+          {/* 🔹 Site Filter */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
+            <select
+              value={tempSelectedSite}
+              onChange={(e) => {
+                setTempSelectedSite(e.target.value)
+                setTempSelectedProject('') // reset project when site changes
+              }}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Sites</option>
+              {sites.map((site) => (
+                <option key={site._id} value={site._id}>
+                  {site.siteName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 🔹 Project Filter */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Project</label>
+            <select
+              value={tempSelectedProject}
+              onChange={(e) => setTempSelectedProject(e.target.value)}
+              disabled={!tempSelectedSite}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Projects</option>
+              {projects.map((project) => (
+                <option key={project._id} value={project._id}>
+                  {project.projectName}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* From Date */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
-              value={fromDate}
-              onChange={(e) => setFormDate(e.target.value)}
+              value={tempFromDate}
+              onChange={(e) => setTempFromDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -124,20 +189,20 @@ const Unit = () => {
             <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
+              value={tempToDate}
+              onChange={(e) => setTempToDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Search Input */}
-          <div className="flex flex-col md:col-span-2">
+          {/* Search */}
+          <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Search</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search by name, email, etc..."
+                placeholder="Search by name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
@@ -145,31 +210,40 @@ const Unit = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            {/* Apply Filters */}
+          {/* Buttons */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
             <button
               onClick={() => {
+                setFromDate(tempFromDate)
+                setToDate(tempToDate)
+                setSelectedSite(tempSelectedSite)
+                setSelectedProject(tempSelectedProject)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+              className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 rounded-md text-sm sm:text-base"
             >
-              <Plus className="w-4 h-4 mr-2" /> Filters
+              Apply
             </button>
 
-            {/* Clear Filters */}
-            {(fromDate || toDate || searchTerm) && (
+            {(fromDate || toDate || searchTerm || selectedSite || selectedProject) && (
               <button
                 onClick={() => {
-                  setFormDate('')
+                  setTempFromDate('')
+                  setTempToDate('')
+                  setFromDate('')
                   setToDate('')
                   setSearchTerm('')
+                  setTempSelectedSite('')
+                  setTempSelectedProject('')
+                  setSelectedSite('')
+                  setSelectedProject('')
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
-                className="bg-red-600 text-white px-3 sm:px-4 py-2 hover:bg-red-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+                className="bg-red-600 text-white px-3 sm:px-4 py-2 hover:bg-red-700 rounded-md text-sm sm:text-base"
               >
-                Clear Filters
+                Clear
               </button>
             )}
           </div>
@@ -265,6 +339,7 @@ const Unit = () => {
               current={page}
               pageSize={limit}
               total={total}
+              pageSizeOptions={['5', '10', '15', '20', '30', '50', '100', '500']}
               onChange={(newPage) => setPage(newPage)}
               showSizeChanger={true}
               onShowSizeChange={(current, size) => {
