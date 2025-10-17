@@ -28,34 +28,34 @@ const UserList = () => {
   useEffect(() => {
     setLoading(true)
     getRequest(
-      // `users/?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
-      `users`,
+      `users/?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
     )
       .then((res) => {
         const responseData = res?.data?.data
-        setData(responseData?.unitTypes || [])
-        setTotal(responseData?.totalUnitTypes || 0)
+        console.log('res', res)
+
+        setData(responseData?.data || [])
+        setTotal(responseData?.totalUsers || 0)
       })
       .catch((error) => {
         console.log('error', error)
       })
       .finally(() => setLoading(false))
-  }, [updateStatus])
-  // }, [page, limit, searchTerm, fromDate, toDate, updateStatus])
+  }, [page, limit, searchTerm, fromDate, toDate, updateStatus])
 
   // ✅ Delete handler
-  const confirmDelete = () => {
-    deleteRequest(`users/${selectedItem?._id}`)
-      .then((res) => {
-        toast.success(res?.data?.message)
-        setSelectedItem(null)
-        setUpdateStatus((prev) => !prev)
-        setShowDeleteModal(false)
-      })
-      .catch((error) => {
-        console.log('error', error)
-      })
-  }
+  // const confirmDelete = () => {
+  //   deleteRequest(`users/${selectedItem?._id}`)
+  //     .then((res) => {
+  //       toast.success(res?.data?.message)
+  //       setSelectedItem(null)
+  //       setUpdateStatus((prev) => !prev)
+  //       setShowDeleteModal(false)
+  //     })
+  //     .catch((error) => {
+  //       console.log('error', error)
+  //     })
+  // }
 
   return (
     <div className="bg-white">
@@ -199,9 +199,12 @@ const UserList = () => {
               <thead>
                 <tr>
                   <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Title</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Actions</th>
+                  <th className="px-6 py-3">Name</th>
+                  <th className="px-6 py-3">Email</th>
+                  <th className="px-6 py-3">Phone</th>
+                  <th className="px-6 py-3">Role</th>
+                  {/* <th className="px-6 py-3">Status</th> */}
+                  {/* <th className="px-6 py-3">Actions</th> */}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -211,16 +214,19 @@ const UserList = () => {
                       {(page - 1) * limit + (index + 1)}
                     </td>
 
-                    <td className="px-6 py-4">{item?.title}</td>
+                    <td className="px-6 py-4">{item?.name}</td>
+                    <td className="px-6 py-4">{item?.email}</td>
+                    <td className="px-6 py-4">{item?.phone}</td>
+                    <td className="px-6 py-4">{item?.role}</td>
 
-                    <td className="px-6 py-4">
+                    {/* <td className="px-6 py-4">
                       {item?.status ? (
                         <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
                       ) : (
                         <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
                       )}
-                    </td>
-                    <td className="px-6 py-4 flex gap-2">
+                    </td> */}
+                    {/* <td className="px-6 py-4 flex gap-2">
                       <button
                         onClick={() => {
                           setSelectedItem(item)
@@ -239,7 +245,7 @@ const UserList = () => {
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>

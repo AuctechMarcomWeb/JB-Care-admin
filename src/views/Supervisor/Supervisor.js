@@ -1,15 +1,16 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react/jsx-no-undef */
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
 import { Search, Plus, Edit, Trash2, AlertTriangle } from 'lucide-react'
-import ExportButton from '../ExportButton'
+import ExportButton from '../../views/ExportButton'
 import { deleteRequest, getRequest } from '../../Helpers'
 import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
-import axios from 'axios'
-import ComplaintsModal from './ComplaintsModal'
 import { faL } from '@fortawesome/free-solid-svg-icons'
+import SupervisorModal from './SupervisorModal'
 
-const Complaints = () => {
+const Supervisor = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
   const [total, setTotal] = useState(0)
@@ -17,61 +18,34 @@ const Complaints = () => {
   const [limit, setLimit] = useState(10)
   const [updateStatus, setUpdateStatus] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false)
-
-  // Filters
+  //filters
   const [tempFromDate, setTempFromDate] = useState('')
   const [tempToDate, setTempToDate] = useState('')
-
-  // NEW FILTER STATES
-  const [sites, setSites] = useState([])
-  const [projects, setProjects] = useState([])
-  const [units, setUnits] = useState([])
-  const [selectedSite, setSelectedSite] = useState('')
-  const [selectedProject, setSelectedProject] = useState('')
-  const [selectedUnit, setSelectedUnit] = useState('')
-
-  // Fetch Property Type with Pagination + Search
   useEffect(() => {
     setLoading(true)
-    // getRequest(
-    //   `complaints?search=${searchTerm}&page=${page}&limit=${limit}` +
-    //     +`${fromDate ? `&fromDate=${fromDate}` : ''}` +
-    //     `${toDate ? `&toDate=${toDate}` : ''}` +
-    //     `${selectedSite ? `&siteId=${selectedSite}` : ''}` +
-    //     `${selectedProject ? `&projectId=${selectedProject}` : ''}` +
-    //     `${selectedUnit ? `&unitId=${selectedUnit}` : ''}`,
-    // )
-    getRequest(`complaints`)
+    getRequest(
+      `supervisor?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
+    )
       .then((res) => {
         const responseData = res?.data?.data
-        setData(responseData?.complaints || [])
-        setTotal(responseData?.totalComplaints || 0)
+        setData(responseData?.unitTypes || [])
+        setTotal(responseData?.totalUnitTypes || 0)
       })
       .catch((error) => {
         console.log('error', error)
       })
       .finally(() => setLoading(false))
-  }, [])
-  // }, [
-  //   page,
-  //   limit,
-  //   searchTerm,
-  //   fromDate,
-  //   toDate,
-  //   isActive,
-  //   selectedSite,
-  //   selectedProject,
-  //   selectedUnit,
-  //   updateStatus,
-  // ])
+  }, [page, limit, searchTerm, fromDate, toDate, updateStatus])
 
-  // ✅ Delete handler
+  // Delete handler
   const confirmDelete = () => {
-    deleteRequest(`Complaints/${selectedItem?._id}`)
+    deleteRequest(`unit-types/${selectedItem?._id}`)
       .then((res) => {
         toast.success(res?.data?.message)
         setSelectedItem(null)
@@ -117,98 +91,48 @@ const Complaints = () => {
       {/* Header */}
       <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Complaints</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Manage Complaints</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Supervisor</h2>
+          <p className="text-gray-600 text-sm sm:text-base">Manage Supervisor</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <ExportButton data={data} fileName="Complaints.xlsx" sheetName="Complaints" />
+          <ExportButton data={data} fileName="Supervisor.xlsx" sheetName="Supervisor" />
           <button
             onClick={() => {
               setIsModalOpen(true)
             }}
             className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
           >
-            <Plus className="w-4 h-4 mr-2" /> Add Complaints
+            <Plus className="w-4 h-4 mr-2" /> Add Supervisor
           </button>
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Filters Section */}
       <div className="px-6 py-4 border-b border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
-          {/* Site Filter */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+          {/* From Date */}
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
-            <select
-              value={selectedSite}
-              onChange={(e) => setSelectedSite(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Sites</option>
-              {sites.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s.siteName}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Project Filter */}
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">Project</label>
-            <select
-              value={selectedProject}
-              onChange={(e) => setSelectedProject(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Projects</option>
-              {projects.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.projectName}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Unit Filter */}
-          {/* <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
-            <select
-              value={selectedUnit}
-              onChange={(e) => setSelectedUnit(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Units</option>
-              {units.map((u) => (
-                <option key={u._id} value={u._id}>
-                  {u.unitName}
-                </option>
-              ))}
-            </select>
-          </div> */}
-
-          {/* Date Filters */}
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">From</label>
+            <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
               value={tempFromDate}
               onChange={(e) => setTempFromDate(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
+          {/* To Date */}
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">To</label>
+            <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
               value={tempToDate}
               onChange={(e) => setTempToDate(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Search */}
+          {/* Search Input */}
           <div className="flex flex-col md:col-span-2">
             <label className="text-sm font-medium text-gray-700 mb-1">Search</label>
             <div className="relative">
@@ -218,13 +142,13 @@ const Complaints = () => {
                 placeholder="Search by name or address..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                className="pl-10 pr-4 py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
               />
             </div>
           </div>
 
-          {/* Buttons */}
-          {/* <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+          {/* Filter Buttons */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
             <button
               onClick={() => {
                 setFromDate(tempFromDate)
@@ -232,17 +156,11 @@ const Complaints = () => {
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 rounded-md text-sm sm:text-base"
+              className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 rounded-md text-sm sm:text-base"
             >
               Apply
             </button>
-
-            {(fromDate ||
-              toDate ||
-              searchTerm ||
-              selectedSite ||
-              selectedProject ||
-              selectedUnit) && (
+            {(fromDate || toDate || searchTerm) && (
               <button
                 onClick={() => {
                   setTempFromDate('')
@@ -250,18 +168,15 @@ const Complaints = () => {
                   setFromDate('')
                   setToDate('')
                   setSearchTerm('')
-                  setSelectedSite('')
-                  setSelectedProject('')
-                  setSelectedUnit('')
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
-                className="bg-red-600 text-white px-4 py-2 hover:bg-red-700 rounded-md text-sm sm:text-base"
+                className="bg-red-600 text-white px-3 sm:px-4 py-2 hover:bg-red-700 rounded-md text-sm sm:text-base"
               >
                 Clear
               </button>
             )}
-          </div> */}
+          </div>
         </div>
       </div>
 
@@ -271,7 +186,7 @@ const Complaints = () => {
           // Loader when fetching data
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />
-            <div className="mt-4 text-blue-500 font-medium text-center">Loading Complaints...</div>
+            <div className="mt-4 text-blue-500 font-medium text-center">Loading Unit Type...</div>
           </div>
         ) : !data || data.length === 0 ? (
           // Empty state when no data found
@@ -285,9 +200,6 @@ const Complaints = () => {
                 <tr>
                   <th className="px-6 py-3">Sr. No.</th>
                   <th className="px-6 py-3">Title</th>
-                  <th className="px-6 py-3">Description</th>
-                  <th className="px-6 py-3">Image</th>
-                  {/* <th className="px-6 py-3">Comments</th> */}
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -299,21 +211,13 @@ const Complaints = () => {
                       {(page - 1) * limit + (index + 1)}
                     </td>
 
-                    <td className="px-6 py-4">{item?.complaintTitle}</td>
-                    <td className="px-6 py-4">{item?.complaintDescription}</td>
-                    <td className="px-6 py-4">
-                      <img
-                        src={item?.images}
-                        alt="Complaints"
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    </td>
-                    {/* <td className="px-6 py-4">{item?.supervisorComments}</td> */}
+                    <td className="px-6 py-4">{item?.title}</td>
+
                     <td className="px-6 py-4">
                       {item?.status ? (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Success</span>
+                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
                       ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Pending</span>
+                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
                       )}
                     </td>
                     <td className="px-6 py-4 flex gap-2">
@@ -354,8 +258,8 @@ const Complaints = () => {
               current={page}
               pageSize={limit}
               total={total}
-              onChange={(newPage) => setPage(newPage)}
               pageSizeOptions={['5', '10', '15', '20', '30', '50', '100', '500']}
+              onChange={(newPage) => setPage(newPage)}
               showSizeChanger={true}
               onShowSizeChange={(current, size) => {
                 setLimit(size)
@@ -368,7 +272,7 @@ const Complaints = () => {
       )}
 
       {isModalOpen && (
-        <ComplaintsModal
+        <SupervisorModal
           setUpdateStatus={setUpdateStatus}
           setModalData={setSelectedItem}
           modalData={selectedItem}
@@ -380,4 +284,4 @@ const Complaints = () => {
   )
 }
 
-export default Complaints
+export default Supervisor

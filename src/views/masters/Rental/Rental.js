@@ -34,8 +34,7 @@ const Rental = () => {
     getRequest(`tenants?search=${searchTerm}&page=${page}&limit=${limit}&isActive=${isActive}`)
       .then((res) => {
         const responseData = res?.data?.data
-        console.log('res==', res)
-
+        console.log('res', res)
         setData(responseData?.tenants || [])
         setTotal(responseData?.total || 0)
       })

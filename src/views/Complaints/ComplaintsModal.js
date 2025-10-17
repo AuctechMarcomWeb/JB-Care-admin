@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
-import { Modal, Spin } from 'antd'
 import React, { useState, useEffect } from 'react'
+import { Modal } from 'antd'
 import toast from 'react-hot-toast'
-import { fileUpload, postRequest, putRequest, getRequest } from '../../Helpers'
+import { fileUpload, getRequest, postRequest, putRequest } from '../../Helpers'
 
 const ComplaintsModal = ({
   setUpdateStatus,
@@ -14,138 +14,95 @@ const ComplaintsModal = ({
 }) => {
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
-  const [sites, setSites] = useState([])
-  const [projects, setProjects] = useState([])
-  const [units, setUnits] = useState([])
   const [users, setUsers] = useState([])
-
+  const [selectedUser, setSelectedUser] = useState(null)
   const [formData, setFormData] = useState({
+    userId: '',
     siteId: '',
     projectId: '',
     unitId: '',
-    userId: '68f08ead4ec6868878de3b38',
     complaintTitle: '',
     complaintDescription: '',
     images: [],
   })
 
-  // 🔹 Prefill in Edit Mode
+  // Fetch Users Once
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await getRequest(`users?isPagination=false`)
+        setUsers(res?.data?.data?.data || [])
+      } catch (err) {
+        console.error('Error fetching users:', err)
+      }
+    }
+    fetchUsers()
+  }, [])
+
+  // Prefill Edit Mode
   useEffect(() => {
     if (modalData) {
       setFormData({
+        userId: modalData?.userId?._id || '',
         siteId: modalData?.siteId?._id || '',
         projectId: modalData?.projectId?._id || '',
         unitId: modalData?.unitId?._id || '',
-        userId: modalData?.userId?._id || '',
         complaintTitle: modalData?.complaintTitle || '',
         complaintDescription: modalData?.complaintDescription || '',
         images: modalData?.images || [],
       })
-    } else {
-      setFormData({
-        siteId: '',
-        projectId: '',
-        unitId: '',
-        userId: '',
-        complaintTitle: '',
-        complaintDescription: '',
-        images: [],
-      })
+
+      const user = users.find((u) => u._id === modalData?.userId?._id)
+      if (user) setSelectedUser(user)
     }
-  }, [modalData])
+  }, [modalData, users])
 
-  // 🔹 Fetch all Sites
-  useEffect(() => {
-    getRequest('sites?isPagination=false')
-      .then((res) => {
-        setSites(res?.data?.data?.sites || [])
-      })
-      .catch((err) => console.error('Error fetching sites:', err))
-  }, [])
-
-  // 🔹 Fetch Projects based on selected Site
-  useEffect(() => {
-    if (!formData.siteId) {
-      setProjects([])
-      setUnits([])
-      return
-    }
-    getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
-      .then((res) => {
-        setProjects(res?.data?.data?.projects || [])
-      })
-      .catch((err) => console.error('Error fetching projects:', err))
-  }, [formData.siteId])
-
-  // 🔹 Fetch Units based on selected Project
-  useEffect(() => {
-    if (!formData.projectId) {
-      setUnits([])
-      return
-    }
-    getRequest(`units?isPagination=false&projectId=${formData.projectId}`)
-      .then((res) => {
-        setUnits(res?.data?.data?.units || [])
-      })
-      .catch((err) => console.error('Error fetching units:', err))
-  }, [formData.projectId])
-
-  // 🔹 Fetch Users
-  useEffect(() => {
-    getRequest('users')
-      .then((res) => {
-        setUsers(res?.data?.data?.users || [])
-      })
-      .catch((err) => console.error('Error fetching users:', err))
-  }, [])
-
-  // 🔹 Cancel Modal
-  const handleCancel = () => {
-    setFormData({
-      siteId: '',
-      projectId: '',
-      unitId: '',
-      userId: '',
-      complaintTitle: '',
-      complaintDescription: '',
-      images: [],
-    })
-    setErrors({})
-    setModalData(null)
-    setIsModalOpen(false)
-  }
-
-  // 🔹 Input Change
+  // ✅ Handle Change
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
+
+    // Auto-fill user related info
+    if (name === 'userId') {
+      const user = users.find((u) => u._id === value)
+      setSelectedUser(user || null)
+
+      if (user) {
+        setFormData((prev) => ({
+          ...prev,
+          userId: value,
+          siteId: user?.siteId?._id || '',
+          projectId: user?.projectId?._id || '',
+          unitId: user?.unitId?._id || '',
+        }))
+      }
+    }
   }
 
-  // 🔹 Image Upload
-  const handleImageUpload = (e) => {
+  // ✅ Handle Image Upload
+  const handleImageUpload = async (e) => {
     const image = e.target.files[0]
     if (!image) return
     setLoading(true)
 
-    fileUpload({ url: 'upload', cred: { image } })
-      .then((res) => {
-        const uploadedUrl = res?.data?.imageUrl
-        if (uploadedUrl) {
-          setFormData((prev) => ({
-            ...prev,
-            images: [...(prev.images || []), uploadedUrl],
-          }))
-          toast.success('Image uploaded successfully')
-        } else {
-          toast.error('Image URL not received')
-        }
-      })
-      .catch(() => toast.error('Image upload failed'))
-      .finally(() => setLoading(false))
+    try {
+      const res = await fileUpload({ url: 'upload', cred: { image } })
+      const uploadedUrl = res?.data?.imageUrl
+      if (uploadedUrl) {
+        setFormData((prev) => ({
+          ...prev,
+          images: [...(prev.images || []), uploadedUrl],
+        }))
+        toast.success('Image uploaded successfully')
+      } else toast.error('Image upload failed')
+    } catch {
+      toast.error('Image upload failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  // 🔹 Remove Image
   const handleRemoveImage = (index) => {
     setFormData((prev) => ({
       ...prev,
@@ -153,41 +110,80 @@ const ComplaintsModal = ({
     }))
   }
 
-  // 🔹 Validate Form
+  // ✅ Validation
   const validateForm = () => {
     const newErrors = {}
-    if (!formData.siteId) newErrors.siteId = 'Site is required'
-    if (!formData.projectId) newErrors.projectId = 'Project is required'
-    if (!formData.unitId) newErrors.unitId = 'Unit is required'
+
     if (!formData.userId) newErrors.userId = 'User is required'
+    if (!formData.siteId) newErrors.siteId = 'Site is required (auto-filled)'
+    if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
+    if (!formData.unitId) newErrors.unitId = 'Unit is required (auto-filled)'
+
     if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
     if (!formData.complaintDescription.trim())
       newErrors.complaintDescription = 'Description is required'
-    if (formData.images.length === 0) newErrors.images = 'At least one image is required'
+
+    if (!formData.images || formData.images.length === 0)
+      newErrors.images = 'At least one image is required'
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  // 🔹 Submit Add/Edit
-  const handleSubmit = (e) => {
+  // ✅ Submit New Complaint
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validateForm()) return
+
     setLoading(true)
+    try {
+      const res = await postRequest({ url: 'complaints', cred: formData })
+      toast.success(res?.data?.message || 'Complaint added successfully')
+      setUpdateStatus((p) => !p)
+      handleCancel()
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
+  }
 
-    const apiCall = modalData
-      ? putRequest({ url: `complaints/${modalData?._id}/review`, cred: formData })
-      : postRequest({ url: 'complaints', cred: formData })
+  // ✅ Update Complaint
+  const handleEdit = async (e) => {
+    e.preventDefault()
+    if (!validateForm()) return
 
-    apiCall
-      .then((res) => {
-        toast.success(res?.data?.message || 'Complaint saved successfully')
-        setUpdateStatus((prev) => !prev)
-        handleCancel()
+    setLoading(true)
+    try {
+      const res = await putRequest({
+        url: `complaints/${modalData._id}`,
+        cred: formData,
       })
-      .catch((err) => {
-        toast.error(err?.response?.data?.message || 'Something went wrong')
-      })
-      .finally(() => setLoading(false))
+      toast.success(res?.data?.message || 'Complaint updated successfully')
+      setUpdateStatus((p) => !p)
+      handleCancel()
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ✅ Cancel / Reset
+  const handleCancel = () => {
+    setModalData(null)
+    setIsModalOpen(false)
+    setErrors({})
+    setSelectedUser(null)
+    setFormData({
+      userId: '',
+      siteId: '',
+      projectId: '',
+      unitId: '',
+      complaintTitle: '',
+      complaintDescription: '',
+      images: [],
+    })
   }
 
   return (
@@ -198,72 +194,9 @@ const ComplaintsModal = ({
       onCancel={handleCancel}
       width={700}
     >
-      <form onSubmit={handleSubmit} noValidate>
-        {/* 🔹 Row 1 — Site & Project */}
+      <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
+        {/* 🔹 User Selection */}
         <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Site <span className="text-danger">*</span>
-            </label>
-            <select
-              name="siteId"
-              value={formData.siteId}
-              onChange={handleChange}
-              className={`form-select ${errors.siteId ? 'is-invalid' : ''}`}
-            >
-              <option value="">Select Site</option>
-              {sites.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s.siteName}
-                </option>
-              ))}
-            </select>
-            {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
-          </div>
-
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Project <span className="text-danger">*</span>
-            </label>
-            <select
-              name="projectId"
-              value={formData.projectId}
-              onChange={handleChange}
-              className={`form-select ${errors.projectId ? 'is-invalid' : ''}`}
-            >
-              <option value="">Select Project</option>
-              {projects.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.projectName}
-                </option>
-              ))}
-            </select>
-            {errors.projectId && <div className="invalid-feedback">{errors.projectId}</div>}
-          </div>
-        </div>
-
-        {/* 🔹 Row 2 — Unit & User */}
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Unit <span className="text-danger">*</span>
-            </label>
-            <select
-              name="unitId"
-              value={formData.unitId}
-              onChange={handleChange}
-              className={`form-select ${errors.unitId ? 'is-invalid' : ''}`}
-            >
-              <option value="">Select Unit</option>
-              {units.map((u) => (
-                <option key={u._id} value={u._id}>
-                  {u.unitNumber}
-                </option>
-              ))}
-            </select>
-            {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
-          </div>
-
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               User <span className="text-danger">*</span>
@@ -283,10 +216,55 @@ const ComplaintsModal = ({
             </select>
             {errors.userId && <div className="invalid-feedback">{errors.userId}</div>}
           </div>
+
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Site <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              value={selectedUser?.siteId?.siteName || ''}
+              disabled={!formData.userId}
+              readOnly
+            />
+            {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
+          </div>
         </div>
 
-        {/* 🔹 Row 3 — Complaint Title & Description */}
+        {/* 🔹 Auto-Filled Site, Project, Unit */}
         <div className="row">
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Project <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              value={selectedUser?.projectId?.projectName || ''}
+              disabled={!formData.userId}
+              readOnly
+            />
+            {errors.projectId && <div className="invalid-feedback">{errors.projectId}</div>}
+          </div>
+
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Unit <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              value={selectedUser?.unitId?.unitNumber || ''}
+              disabled={!formData.userId}
+              readOnly
+            />
+            {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
+          </div>
+        </div>
+
+        <div className="row">
+          {/* 🔹 Complaint Title */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Complaint Title <span className="text-danger">*</span>
@@ -320,54 +298,57 @@ const ComplaintsModal = ({
           </div>
         </div>
 
-        {/* 🔹 Row 4 — Images */}
-        <div className="mb-3">
-          <label className="form-label fw-bold">
-            Images <span className="text-danger">*</span>
-          </label>
-          <input
-            type="file"
-            className={`form-control ${errors.images ? 'is-invalid' : ''}`}
-            disabled={loading}
-            onChange={handleImageUpload}
-          />
-          {errors.images && <div className="invalid-feedback">{errors.images}</div>}
+        {/* 🔹 Image Upload */}
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Images <span className="text-danger">*</span>
+            </label>
+            <input
+              type="file"
+              className={`form-control ${errors.images ? 'is-invalid' : ''}`}
+              onChange={handleImageUpload}
+              disabled={loading}
+            />
+            {errors.images && <div className="invalid-feedback">{errors.images}</div>}
+          </div>
 
-          {/* Preview */}
-          <div className="mt-2 d-flex flex-wrap gap-2">
-            {formData.images?.map((img, i) => (
-              <div key={i} style={{ position: 'relative' }}>
-                <img
-                  src={img}
-                  alt={`Uploaded ${i}`}
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    objectFit: 'cover',
-                    borderRadius: '6px',
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(i)}
-                  style={{
-                    position: 'absolute',
-                    top: '-6px',
-                    right: '-6px',
-                    background: 'red',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '18px',
-                    height: '18px',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
+          <div className="col-md-6 mb-3 d-flex align-items-center">
+            <div className="mt-2 d-flex flex-wrap gap-2">
+              {formData.images.map((img, i) => (
+                <div key={i} style={{ position: 'relative' }}>
+                  <img
+                    src={img}
+                    alt={`Uploaded ${i}`}
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      borderRadius: '6px',
+                      objectFit: 'cover',
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(i)}
+                    style={{
+                      position: 'absolute',
+                      top: '-6px',
+                      right: '-6px',
+                      background: 'red',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '18px',
+                      height: '18px',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
