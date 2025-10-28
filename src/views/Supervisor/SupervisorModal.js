@@ -14,6 +14,7 @@ const SupervisorModal = ({
 }) => {
   // 🔹 States
   const [loading, setLoading] = useState(false)
+  const [uploadingDocs, setUploadingDocs] = useState([]) // ✅ loader per doc
   const [errors, setErrors] = useState({})
   const [sites, setSites] = useState([])
   const [projects, setProjects] = useState([])
@@ -39,7 +40,7 @@ const SupervisorModal = ({
       .catch((err) => console.error('Site fetch error:', err))
   }, [])
 
-  // 🔹 Fetch Projects based on site
+  // 🔹 Fetch Projects based on Site
   useEffect(() => {
     if (!formData.siteId) {
       setProjects([])
@@ -47,24 +48,22 @@ const SupervisorModal = ({
       setFormData((prev) => ({ ...prev, projectId: '', unitId: '' }))
       return
     }
-
     getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
       .then((res) => setProjects(res?.data?.data?.projects || []))
       .catch((err) => console.error('Project fetch error:', err))
   }, [formData.siteId])
 
-  // 🔹 Fetch Units based on project
+  // 🔹 Fetch Units based on Project
   useEffect(() => {
-    if (!formData.siteId || !formData.projectId) {
+    if (!formData.projectId) {
       setUnits([])
       setFormData((prev) => ({ ...prev, unitId: '' }))
       return
     }
-
     getRequest(`units?isPagination=false&siteId=${formData.siteId}&projectId=${formData.projectId}`)
       .then((res) => setUnits(res?.data?.data?.units || []))
       .catch((err) => console.error('Unit fetch error:', err))
-  }, [formData.siteId, formData.projectId])
+  }, [formData.projectId])
 
   // 🔹 Handlers
   const handleCancel = () => {
@@ -80,7 +79,9 @@ const SupervisorModal = ({
 
     if (name === 'phone') {
       const digits = value.replace(/\D/g, '')
-      if (digits.length <= 10) setFormData((prev) => ({ ...prev, phone: digits }))
+      if (digits.length <= 10) {
+        setFormData((prev) => ({ ...prev, phone: digits }))
+      }
       return
     }
 
@@ -88,24 +89,28 @@ const SupervisorModal = ({
     setErrors((prev) => ({ ...prev, [name]: '' }))
   }
 
-  const handleFileUpload = async (index, file) => {
-    if (!file) return
-    setLoading(true)
+  // ✅ Upload each doc with loader
+  const handleFileUpload = async (index, image) => {
+    if (!image) return
 
+    setUploadingDocs((prev) => [...prev, index])
     try {
-      const res = await fileUpload({ url: 'upload', cred: { image: file } })
+      const res = await fileUpload({ url: 'upload', cred: { image } })
       const uploadedUrl = res?.data?.imageUrl
+      console.log('dfdfds', res?.data?.imageUrl)
 
       if (uploadedUrl) {
         const updatedDocs = [...formData.verificationDocuments]
         updatedDocs[index].fileUrl = uploadedUrl
         setFormData((prev) => ({ ...prev, verificationDocuments: updatedDocs }))
         toast.success('File uploaded successfully')
-      } else toast.error('File upload failed')
+      } else {
+        toast.error('File upload failed')
+      }
     } catch {
       toast.error('Upload failed')
     } finally {
-      setLoading(false)
+      setUploadingDocs((prev) => prev.filter((i) => i !== index))
     }
   }
 
@@ -239,7 +244,7 @@ const SupervisorModal = ({
             setFormData={setFormData}
             handleFileUpload={handleFileUpload}
             errors={errors}
-            loading={loading}
+            uploadingDocs={uploadingDocs}
           />
 
           {/* 🔸 Active Status */}
@@ -321,8 +326,8 @@ const SelectField = ({
   </div>
 )
 
-// ✅ VerificationDocuments
-const VerificationDocuments = ({ docs, setFormData, handleFileUpload, errors, loading }) => {
+// ✅ VerificationDocuments (with loader + remove)
+const VerificationDocuments = ({ docs, setFormData, handleFileUpload, errors, uploadingDocs }) => {
   const handleChange = (index, field, value) => {
     const updated = [...docs]
     updated[index][field] = value
@@ -351,67 +356,91 @@ const VerificationDocuments = ({ docs, setFormData, handleFileUpload, errors, lo
       </div>
 
       {docs.map((doc, i) => (
-        <div key={i} className="row align-items-end mb-2 p-2 rounded border">
-          <div className="col-md-3">
-            <input
-              type="text"
-              placeholder="Document Type"
-              value={doc.type}
-              onChange={(e) => handleChange(i, 'type', e.target.value)}
-              className={`form-control ${errors[`docType${i}`] ? 'is-invalid' : ''}`}
-            />
-            {errors[`docType${i}`] && (
-              <div className="invalid-feedback">{errors[`docType${i}`]}</div>
-            )}
-          </div>
+        <div key={i} className="border rounded p-3 mb-3">
+          <div className="row g-3 align-items-end">
+            {/* Document Type */}
+            <div className="col-md-6">
+              <label className="form-label">Document Type</label>
+              <select
+                value={doc.type}
+                onChange={(e) => handleChange(i, 'type', e.target.value)}
+                className={`form-control ${errors[`docType${i}`] ? 'is-invalid' : ''}`}
+              >
+                <option value="">Select Document Type</option>
+                <option value="Aadhar">Aadhar</option>
+                <option value="PAN">PAN</option>
+                <option value="Other">Other</option>
+              </select>
 
-          <div className="col-md-3">
-            <input
-              type="text"
-              placeholder="Document Number"
-              value={doc.number}
-              onChange={(e) => handleChange(i, 'number', e.target.value)}
-              className={`form-control ${errors[`docNumber${i}`] ? 'is-invalid' : ''}`}
-            />
-            {errors[`docNumber${i}`] && (
-              <div className="invalid-feedback">{errors[`docNumber${i}`]}</div>
-            )}
-          </div>
+              {errors[`docType${i}`] && (
+                <div className="invalid-feedback">{errors[`docType${i}`]}</div>
+              )}
+            </div>
 
-          <div className="col-md-4">
-            <input
-              type="file"
-              accept="image/*,.pdf"
-              disabled={loading}
-              onChange={(e) => handleFileUpload(i, e.target.files[0])}
-              className={`form-control ${errors[`docFile${i}`] ? 'is-invalid' : ''}`}
-            />
-            {doc.fileUrl && (
-              <div className="mt-2">
-                {doc.fileUrl.endsWith('.pdf') ? (
-                  <a href={doc.fileUrl} target="_blank" rel="noreferrer">
-                    View PDF
-                  </a>
-                ) : (
-                  <img
-                    src={doc.fileUrl}
-                    alt={doc.type}
-                    style={{ width: 50, height: 50, borderRadius: 5, objectFit: 'cover' }}
-                  />
-                )}
-              </div>
-            )}
-            {errors[`docFile${i}`] && (
-              <div className="invalid-feedback">{errors[`docFile${i}`]}</div>
-            )}
-          </div>
+            {/* Document Number */}
+            <div className="col-md-6">
+              <label className="form-label">Document Number</label>
+              <input
+                type="text"
+                placeholder="Enter Document Number"
+                value={doc.number}
+                onChange={(e) => handleChange(i, 'number', e.target.value)}
+                className={`form-control ${errors[`docNumber${i}`] ? 'is-invalid' : ''}`}
+              />
+              {errors[`docNumber${i}`] && (
+                <div className="invalid-feedback">{errors[`docNumber${i}`]}</div>
+              )}
+            </div>
 
-          <div className="col-md-2 text-center">
-            {docs.length > 1 && (
-              <Button danger onClick={() => removeDoc(i)}>
-                Remove
-              </Button>
-            )}
+            {/* Document File Upload */}
+            <div className="col-md-6">
+              <label className="form-label">Upload Document</label>
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                disabled={uploadingDocs.includes(i)}
+                onChange={(e) => handleFileUpload(i, e.target.files[0])}
+                className={`form-control ${errors[`docFile${i}`] ? 'is-invalid' : ''}`}
+              />
+              {uploadingDocs.includes(i) && <small className="text-primary">Uploading...</small>}
+              {errors[`docFile${i}`] && (
+                <div className="invalid-feedback">{errors[`docFile${i}`]}</div>
+              )}
+            </div>
+
+            {/* Uploaded Preview */}
+            <div className="col-md-4">
+              {doc.fileUrl && (
+                <div className="mt-2">
+                  {doc.fileUrl.endsWith('.pdf') ? (
+                    <a href={doc.fileUrl} target="_blank" rel="noreferrer">
+                      View PDF
+                    </a>
+                  ) : (
+                    <img
+                      src={doc.fileUrl}
+                      alt={doc.type}
+                      style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: 6,
+                        objectFit: 'cover',
+                        border: '1px solid #ddd',
+                      }}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Remove Button */}
+            <div className="col-md-2 d-flex justify-content-center align-items-center">
+              {docs.length > 1 && (
+                <Button danger onClick={() => removeDoc(i)}>
+                  Remove
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       ))}

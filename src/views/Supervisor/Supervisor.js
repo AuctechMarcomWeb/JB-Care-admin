@@ -30,12 +30,12 @@ const Supervisor = () => {
   useEffect(() => {
     setLoading(true)
     getRequest(
-      `supervisor?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
+      `supervisors?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
     )
       .then((res) => {
         const responseData = res?.data?.data
-        setData(responseData?.unitTypes || [])
-        setTotal(responseData?.totalUnitTypes || 0)
+        setData(responseData?.supervisors || [])
+        setTotal(responseData?.total || 0)
       })
       .catch((error) => {
         console.log('error', error)
@@ -45,7 +45,7 @@ const Supervisor = () => {
 
   // Delete handler
   const confirmDelete = () => {
-    deleteRequest(`unit-types/${selectedItem?._id}`)
+    deleteRequest(`supervisors/${selectedItem?._id}`)
       .then((res) => {
         toast.success(res?.data?.message)
         setSelectedItem(null)
@@ -186,7 +186,7 @@ const Supervisor = () => {
           // Loader when fetching data
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />
-            <div className="mt-4 text-blue-500 font-medium text-center">Loading Unit Type...</div>
+            <div className="mt-4 text-blue-500 font-medium text-center">Loading Supervisor...</div>
           </div>
         ) : !data || data.length === 0 ? (
           // Empty state when no data found
@@ -199,8 +199,12 @@ const Supervisor = () => {
               <thead>
                 <tr>
                   <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Title</th>
-                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Name</th>
+                  <th className="px-6 py-3">Phone</th>
+                  <th className="px-6 py-3">E-mail</th>
+                  <th className="px-6 py-3">Site Name</th>
+                  <th className="px-6 py-3">Project Name</th>
+                  <th className="px-6 py-3">Unit Number</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
@@ -211,10 +215,15 @@ const Supervisor = () => {
                       {(page - 1) * limit + (index + 1)}
                     </td>
 
-                    <td className="px-6 py-4">{item?.title}</td>
+                    <td className="px-6 py-4">{item?.name || '-'}</td>
+                    <td className="px-6 py-4">{item?.phone || '-'}</td>
+                    <td className="px-6 py-4">{item?.email || '-'}</td>
+                    <td className="px-6 py-4">{item?.siteId?.siteName || '-'}</td>
+                    <td className="px-6 py-4">{item?.projectId?.projectName || '-'}</td>
+                    <td className="px-6 py-4">{item?.unitId?.unitNumber || '-'}</td>
 
                     <td className="px-6 py-4">
-                      {item?.status ? (
+                      {item?.isActive ? (
                         <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
                       ) : (
                         <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
