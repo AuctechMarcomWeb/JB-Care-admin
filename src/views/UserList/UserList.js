@@ -217,7 +217,9 @@ const UserList = () => {
                     <td className="px-6 py-4">{item?.name}</td>
                     <td className="px-6 py-4">{item?.email}</td>
                     <td className="px-6 py-4">{item?.phone}</td>
-                    <td className="px-6 py-4">{item?.role}</td>
+                    <td className="px-6 py-4">
+                      {item?.role ? item.role.charAt(0).toUpperCase() + item.role.slice(1) : ''}
+                    </td>
 
                     {/* <td className="px-6 py-4">
                       {item?.status ? (
