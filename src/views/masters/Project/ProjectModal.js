@@ -132,21 +132,6 @@ const ProjectModal = ({
       onCancel={handleCancel}
     >
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
-        {/* Project Name */}
-        <div className="mb-3">
-          <label className="form-label fw-bold">
-            Project Name<span className="text-danger">*</span>
-          </label>
-          <input
-            type="text"
-            className={`form-control ${errors?.projectName ? 'is-invalid' : ''}`}
-            name="projectName"
-            value={formData?.projectName}
-            onChange={handleChange}
-          />
-          {errors?.projectName && <div className="invalid-feedback">{errors?.projectName}</div>}
-        </div>
-
         {/* Site Dropdown */}
         <div className="mb-3">
           <label className="form-label fw-bold">
@@ -166,6 +151,21 @@ const ProjectModal = ({
             ))}
           </select>
           {errors?.siteId && <div className="invalid-feedback">{errors?.siteId}</div>}
+        </div>
+
+        {/* Project Name */}
+        <div className="mb-3">
+          <label className="form-label fw-bold">
+            Project Name<span className="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            className={`form-control ${errors?.projectName ? 'is-invalid' : ''}`}
+            name="projectName"
+            value={formData?.projectName}
+            onChange={handleChange}
+          />
+          {errors?.projectName && <div className="invalid-feedback">{errors?.projectName}</div>}
         </div>
 
         {/* Project Address */}
