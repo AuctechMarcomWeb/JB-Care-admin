@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
 import { faL } from '@fortawesome/free-solid-svg-icons'
 import UnitTypeModal from './UnitTypeModal'
+import moment from 'moment'
 
 const UnitType = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -27,6 +28,9 @@ const UnitType = () => {
   //filters
   const [tempFromDate, setTempFromDate] = useState('')
   const [tempToDate, setTempToDate] = useState('')
+  const formatDate = (dateString) => {
+    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
+  }
   useEffect(() => {
     setLoading(true)
     getRequest(
@@ -201,6 +205,7 @@ const UnitType = () => {
                   <th className="px-6 py-3">Sr. No.</th>
                   <th className="px-6 py-3">Title</th>
                   <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
@@ -220,6 +225,7 @@ const UnitType = () => {
                         <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
                       )}
                     </td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
                     <td className="px-6 py-4 flex gap-2">
                       <button
                         onClick={() => {

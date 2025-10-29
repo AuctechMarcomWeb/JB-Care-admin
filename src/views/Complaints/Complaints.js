@@ -4,10 +4,11 @@ import { Search, Plus, Edit, Trash2, AlertTriangle } from 'lucide-react'
 import ExportButton from '../ExportButton'
 import { deleteRequest, getRequest } from '../../Helpers'
 import toast from 'react-hot-toast'
-import { Empty, Pagination, Spin } from 'antd'
+import { Empty, Pagination, Spin, Tooltip } from 'antd'
 import axios from 'axios'
 import ComplaintsModal from './ComplaintsModal'
 import { faL } from '@fortawesome/free-solid-svg-icons'
+import moment from 'moment'
 
 const Complaints = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -33,7 +34,9 @@ const Complaints = () => {
   const [selectedSite, setSelectedSite] = useState('')
   const [selectedProject, setSelectedProject] = useState('')
   const [selectedUnit, setSelectedUnit] = useState('')
-
+  const formatDate = (dateString) => {
+    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
+  }
   // Fetch Property Type with Pagination + Search
   useEffect(() => {
     setLoading(true)
@@ -55,7 +58,7 @@ const Complaints = () => {
         console.log('error', error)
       })
       .finally(() => setLoading(false))
-  }, [])
+  }, [updateStatus])
   // }, [
   //   page,
   //   limit,
@@ -90,8 +93,9 @@ const Complaints = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 max-w-md w-full mx-4">
             <div className="flex items-center mb-4">
-              <AlertTriangle className="w-6 h-6 text-red-500 mr-3" /> (Under Development )
-              <h3 className="text-lg font-semibold text-gray-900">Confirm Delete</h3>
+              <AlertTriangle className="w-6 h-6 text-red-500 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-900">Confirm Delete</h3> (Under
+              Development )
             </div>
             <p className="text-gray-600 mb-6">
               Are you sure you want to delete <strong>{selectedItem?.name}</strong>?
@@ -284,10 +288,21 @@ const Complaints = () => {
               <thead>
                 <tr>
                   <th className="px-6 py-3">Sr. No.</th>
+                  <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Title</th>
                   <th className="px-6 py-3">Description</th>
                   <th className="px-6 py-3">Image</th>
-                  {/* <th className="px-6 py-3">Comments</th> */}
+                  <th className="px-6 py-3">Supervisor Name</th>
+                  <th className="px-6 py-3">Supervisor Images</th>
+                  <th className="px-6 py-3">Supervisor Comments</th>
+                  {data.some((item) => item.status === 'Material Demand Raised') && (
+                    <>
+                      <th className="px-6 py-3">Material Name</th>
+                      <th className="px-6 py-3">Material Count</th>
+                      <th className="px-6 py-3">Reason</th>
+                    </>
+                  )}
+                  <th className="px-6 py-3">Verified Date</th>
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -298,24 +313,97 @@ const Complaints = () => {
                     <td className="px-6 py-4 text-sm text-gray-700">
                       {(page - 1) * limit + (index + 1)}
                     </td>
-
-                    <td className="px-6 py-4">{item?.complaintTitle}</td>
-                    <td className="px-6 py-4">{item?.complaintDescription}</td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
+                    <td className="px-6 py-4">{item?.complaintTitle || '-'}</td>
+                    <td className="px-6 py-4 max-w-[180px]">
+                      <Tooltip title={item?.complaintDescription || '-'} placement="topLeft">
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            width: '100%',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {item?.complaintDescription?.split(' ')?.slice(0, 2)?.join(' ') || '-'}
+                          {item?.complaintDescription?.split(' ')?.length > 2 ? '…' : ''}
+                        </span>
+                      </Tooltip>
+                    </td>
                     <td className="px-6 py-4">
                       <img
-                        src={item?.images}
+                        src={item?.images || '-'}
                         alt="Complaints"
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     </td>
-                    {/* <td className="px-6 py-4">{item?.supervisorComments}</td> */}
+                    <td className="px-6 py-4">{item?.supervisorId?.name || '-'}</td>
+
                     <td className="px-6 py-4">
-                      {item?.status ? (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Success</span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Pending</span>
-                      )}
+                      <img
+                        src={item?.supervisorImages || '-'}
+                        alt="Supervisor Images"
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
                     </td>
+                    <td className="px-6 py-4 max-w-[180px]">
+                      <Tooltip title={item?.supervisorComments || '-'} placement="topLeft">
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            width: '100%',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {item?.supervisorComments?.split(' ')?.slice(0, 2)?.join(' ') || '-'}
+                          {item?.supervisorComments?.split(' ')?.length > 2 ? '…' : ''}
+                        </span>
+                      </Tooltip>
+                    </td>
+
+                    {item?.status === 'Material Demand Raised' ? (
+                      <>
+                        <td className="px-6 py-4">{item?.materialDemand?.materialName || '-'}</td>
+                        <td className="px-6 py-4">{item?.materialDemand?.quantity || 0}</td>
+                        <td className="px-6 py-4 max-w-[180px]">
+                          <Tooltip title={item?.materialDemand?.reason || '-'} placement="topLeft">
+                            <span
+                              style={{
+                                display: 'inline-block',
+                                width: '100%',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              {item?.materialDemand?.reason?.split(' ')?.slice(0, 2)?.join(' ') ||
+                                '-'}
+                              {item?.materialDemand?.reason?.split(' ')?.length > 2 ? '…' : ''}
+                            </span>
+                          </Tooltip>
+                        </td>
+                      </>
+                    ) : (
+                      // Fill 3 empty cells so alignment remains correct
+                      <>
+                        {data.some((d) => d.status === 'Material Demand Raised') && (
+                          <>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                          </>
+                        )}
+                      </>
+                    )}
+                    <td className="px-6 py-4">{formatDate(item?.closedAt || '-')}</td>
+
+                    <td className="px-6 py-4">{item?.status}</td>
                     <td className="px-6 py-4 flex gap-2">
                       <button
                         onClick={() => {

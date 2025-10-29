@@ -203,6 +203,7 @@ const SiteLocation = () => {
                   <th className="px-6 py-3">Sr. No.</th>
                   <th className="px-6 py-3">Name</th>
                   <th className="px-6 py-3">Address</th>
+                  <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -215,6 +216,7 @@ const SiteLocation = () => {
                     </td>
                     <td className="px-6 py-4">{item?.siteName}</td>
                     <td className="px-6 py-4">{item?.siteAddress}</td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
                     <td className="px-6 py-4">
                       {item?.status ? (
                         <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>

@@ -6,6 +6,8 @@ import { deleteRequest, getRequest } from '../../../Helpers'
 import { Empty, Pagination, Spin } from 'antd'
 import ExportButton from '../../ExportButton'
 import UnitModal from '../Unit/UnitModal'
+import moment from 'moment'
+
 const Unit = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
@@ -31,6 +33,9 @@ const Unit = () => {
   const [selectedProject, setSelectedProject] = useState('')
   const [tempSelectedSite, setTempSelectedSite] = useState('')
   const [tempSelectedProject, setTempSelectedProject] = useState('')
+  const formatDate = (dateString) => {
+    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
+  }
 
   // 🔹 Fetch sites
   useEffect(() => {
@@ -276,6 +281,7 @@ const Unit = () => {
                   <th className="px-6 py-3">Site Name</th>
                   <th className="px-6 py-3">Project Name</th>
                   <th className="px-6 py-3">Unit Type</th>
+                  <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -294,6 +300,7 @@ const Unit = () => {
                     <td className="px-6 py-4">{item?.siteId?.siteName}</td>
                     <td className="px-6 py-4">{item?.projectId?.projectName}</td>
                     <td className="px-6 py-4">{item?.unitTypeId?.title}</td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
                     <td className="px-6 py-4">
                       {item?.status ? (
                         <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
