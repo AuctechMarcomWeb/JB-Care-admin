@@ -6,6 +6,7 @@ import { deleteRequest, getRequest } from '../../../Helpers'
 import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
 import ProjectModal from './ProjectModal'
+import moment from 'moment'
 
 const Project = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -28,6 +29,9 @@ const Project = () => {
   // 🔹 NEW: Site list and filter
   const [sites, setSites] = useState([])
   const [selectedSite, setSelectedSite] = useState('')
+  const formatDate = (dateString) => {
+    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
+  }
 
   // 🔹 Fetch Sites for Dropdown
   useEffect(() => {
@@ -231,10 +235,11 @@ const Project = () => {
               <thead>
                 <tr>
                   <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Project Name</th>
                   <th className="px-6 py-3">Site Name</th>
                   <th className="px-6 py-3">Site Address</th>
+                  <th className="px-6 py-3">Project Name</th>
                   <th className="px-6 py-3">Project Address</th>
+                  <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -245,10 +250,11 @@ const Project = () => {
                     <td className="px-6 py-4 text-sm text-gray-700">
                       {(page - 1) * limit + (index + 1)}
                     </td>
-                    <td className="px-6 py-4">{item?.projectName}</td>
                     <td className="px-6 py-4">{item?.siteId?.siteName}</td>
                     <td className="px-6 py-4">{item?.siteId?.siteAddress}</td>
+                    <td className="px-6 py-4">{item?.projectName}</td>
                     <td className="px-6 py-4">{item?.projectAddress}</td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
                     <td className="px-6 py-4">
                       {item?.status ? (
                         <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>

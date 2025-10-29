@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
 import { faL } from '@fortawesome/free-solid-svg-icons'
 import SupervisorModal from './SupervisorModal'
+import moment from 'moment'
 
 const Supervisor = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -27,6 +28,11 @@ const Supervisor = () => {
   //filters
   const [tempFromDate, setTempFromDate] = useState('')
   const [tempToDate, setTempToDate] = useState('')
+
+  const formatDate = (dateString) => {
+    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
+  }
+
   useEffect(() => {
     setLoading(true)
     getRequest(
@@ -205,6 +211,8 @@ const Supervisor = () => {
                   <th className="px-6 py-3">Site Name</th>
                   <th className="px-6 py-3">Project Name</th>
                   <th className="px-6 py-3">Unit Number</th>
+                  <th className="px-6 py-3">Date</th>
+                  <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
@@ -221,7 +229,7 @@ const Supervisor = () => {
                     <td className="px-6 py-4">{item?.siteId?.siteName || '-'}</td>
                     <td className="px-6 py-4">{item?.projectId?.projectName || '-'}</td>
                     <td className="px-6 py-4">{item?.unitId?.unitNumber || '-'}</td>
-
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
                     <td className="px-6 py-4">
                       {item?.isActive ? (
                         <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>

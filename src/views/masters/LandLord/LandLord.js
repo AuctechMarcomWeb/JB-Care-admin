@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
 import { faL } from '@fortawesome/free-solid-svg-icons'
 import LandLordModal from './LandLordModal'
+import moment from 'moment'
 
 const LandLord = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -36,7 +37,9 @@ const LandLord = () => {
   const [selectedSite, setSelectedSite] = useState('')
   const [selectedProject, setSelectedProject] = useState('')
   const [selectedUnit, setSelectedUnit] = useState('')
-
+  const formatDate = (dateString) => {
+    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
+  }
   // Fetch dropdown data for filters
   useEffect(() => {
     getRequest('sites?isPagination=false').then((res) => setSites(res?.data?.data?.sites || []))
@@ -295,6 +298,7 @@ const LandLord = () => {
                   <th className="px-6 py-3">Site</th>
                   <th className="px-6 py-3">Project</th>
                   <th className="px-6 py-3">Units</th>
+                  <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Active</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -343,6 +347,7 @@ const LandLord = () => {
                         ? item.unitIds.map((u) => u.unitNumber).join(', ')
                         : '-'}
                     </td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
 
                     {/* Active Status */}
                     <td className="px-6 py-4">

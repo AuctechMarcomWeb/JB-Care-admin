@@ -5,8 +5,7 @@ import ExportButton from '../../views/ExportButton'
 import { deleteRequest, getRequest } from '../../Helpers'
 import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
-import { faL } from '@fortawesome/free-solid-svg-icons'
-//import UnitTypeModal from './UnitTypeModal'
+import moment from 'moment'
 
 const UserList = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -25,6 +24,11 @@ const UserList = () => {
   //filters
   const [tempFromDate, setTempFromDate] = useState('')
   const [tempToDate, setTempToDate] = useState('')
+
+  const formatDate = (dateString) => {
+    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
+  }
+
   useEffect(() => {
     setLoading(true)
     getRequest(
@@ -203,6 +207,11 @@ const UserList = () => {
                   <th className="px-6 py-3">Email</th>
                   <th className="px-6 py-3">Phone</th>
                   <th className="px-6 py-3">Role</th>
+                  <th className="px-6 py-3">Date</th>
+                  <th className="px-6 py-3">Site Name</th>
+                  <th className="px-6 py-3">ProjectName</th>
+                  <th className="px-6 py-3">Unit Number</th>
+
                   {/* <th className="px-6 py-3">Status</th> */}
                   {/* <th className="px-6 py-3">Actions</th> */}
                 </tr>
@@ -214,12 +223,16 @@ const UserList = () => {
                       {(page - 1) * limit + (index + 1)}
                     </td>
 
-                    <td className="px-6 py-4">{item?.name}</td>
-                    <td className="px-6 py-4">{item?.email}</td>
-                    <td className="px-6 py-4">{item?.phone}</td>
+                    <td className="px-6 py-4">{item?.name || '-'}</td>
+                    <td className="px-6 py-4">{item?.email || '-'}</td>
+                    <td className="px-6 py-4">{item?.phone || '-'}</td>
                     <td className="px-6 py-4">
-                      {item?.role ? item.role.charAt(0).toUpperCase() + item.role.slice(1) : ''}
+                      {item?.role ? item.role.charAt(0).toUpperCase() + item.role.slice(1) : '-'}
                     </td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
+                    <td className="px-6 py-4">{item?.siteId?.siteName || '-'}</td>
+                    <td className="px-6 py-4">{item?.projectId?.projectName || '-'}</td>
+                    <td className="px-6 py-4">{item?.unitId?.unitNumber || '-'}</td>
 
                     {/* <td className="px-6 py-4">
                       {item?.status ? (

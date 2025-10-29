@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
 import { faL } from '@fortawesome/free-solid-svg-icons'
 import RentalModal from './Rentalmodal'
+import moment from 'moment'
 
 const Rental = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -28,7 +29,9 @@ const Rental = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false)
-
+  const formatDate = (dateString) => {
+    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
+  }
   useEffect(() => {
     setLoading(true)
     getRequest(`tenants?search=${searchTerm}&page=${page}&limit=${limit}&isActive=${isActive}`)
@@ -220,6 +223,7 @@ const Rental = () => {
                   <th className="px-6 py-3">Project</th>
                   <th className="px-6 py-3">Unit</th>
                   <th className="px-6 py-3">Image</th>
+                  <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -274,6 +278,7 @@ const Rental = () => {
                         </span>
                       )}
                     </td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
 
                     {/* Actions */}
                     <td className="px-6 py-4 flex gap-2">
