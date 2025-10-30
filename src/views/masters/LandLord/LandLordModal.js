@@ -4,6 +4,7 @@ import { Modal, Select } from 'antd'
 import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { fileUpload, getRequest, postRequest, putRequest } from '../../../Helpers'
+import {validateEmail} from '../../../Utils/index'
 
 const LandLordModal = ({
   setUpdateStatus,
@@ -153,6 +154,13 @@ const LandLordModal = ({
     if (!formData?.projectId) newErrors.projectId = 'Select a project'
     if (!formData?.unitId) newErrors.unitId = 'Select a unit'
     if (!formData?.profilePic) newErrors.profilePic = 'Profile image is required'
+
+    if (!formData.email?.trim()) {
+  newErrors.email = 'Email is required'
+} else if (!validateEmail(formData.email)) {
+  newErrors.email = 'Please enter a valid email address'
+}
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -238,50 +246,68 @@ const LandLordModal = ({
             {errors?.siteId && <div className="invalid-feedback">{errors?.siteId}</div>}
           </div>
 
+          {/* project */}
+
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Project<span className="text-danger">*</span>
             </label>
-            <select
-              name="projectId"
-              value={formData?.projectId}
-              onChange={handleChange}
-              className={`form-select ${errors?.projectId ? 'is-invalid' : ''}`}
+            <Select
+              showSearch
+              allowClear
+              placeholder="--Select Project--"
+              value={formData?.projectId || undefined}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, projectId: value }))
+                clearFieldError('projectId') // ✅ clear error on change
+              }}
               disabled={!formData?.siteId}
-            >
-              <option value="">Select Project</option>
-              {project.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.projectName}
-                </option>
-              ))}
-            </select>
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={project?.map((p) => ({
+                value: p?._id,
+                label: p?.projectName,
+              }))}
+              style={{ width: '100%', height: '38px' }} // match native select height
+              className={errors?.projectId ? 'is-invalid' : ''}
+            />
             {errors?.projectId && <div className="invalid-feedback">{errors?.projectId}</div>}
           </div>
+
         </div>
 
-        {/* Name & Email */}
+        {/* Unit */}
         <div className="row">
+          {/* 🔹 Unit Dropdown (AntD Select) */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Unit<span className="text-danger">*</span>
             </label>
-            <select
-              name="unitId"
-              value={formData?.unitId}
-              onChange={handleChange}
-              className={`form-select ${errors.unitId ? 'is-invalid' : ''}`}
+            <Select
+              showSearch
+              allowClear
+              placeholder="--Select Unit--"
+              value={formData?.unitId || undefined}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, unitId: value }))
+                clearFieldError('unitId') // ✅ clear validation error on change
+              }}
               disabled={!formData?.projectId}
-            >
-              <option value="">Select Unit</option>
-              {units.map((u) => (
-                <option key={u._id} value={u._id}>
-                  {u?.unitNumber}
-                </option>
-              ))}
-            </select>
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={units?.map((u) => ({
+                value: u?._id,
+                label: u?.unitNumber,
+              }))}
+              style={{ width: '100%', height: '38px' }} // match input height
+              className={errors?.unitId ? 'is-invalid' : ''}
+            />
             {errors?.unitId && <div className="invalid-feedback">{errors?.unitId}</div>}
           </div>
+
+          {/* 🔹 Name Input Field */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Name<span className="text-danger">*</span>
@@ -290,12 +316,16 @@ const LandLordModal = ({
               type="text"
               name="name"
               value={formData?.name}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e)
+                clearFieldError('name') // ✅ clear validation error on change
+              }}
               className={`form-control ${errors?.name ? 'is-invalid' : ''}`}
             />
             {errors?.name && <div className="invalid-feedback">{errors?.name}</div>}
           </div>
         </div>
+
 
         {/* Phone & Address */}
         <div className="row">
