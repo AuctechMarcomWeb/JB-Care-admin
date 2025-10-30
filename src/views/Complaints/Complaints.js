@@ -94,8 +94,7 @@ const Complaints = () => {
           <div className="bg-white p-6 max-w-md w-full mx-4">
             <div className="flex items-center mb-4">
               <AlertTriangle className="w-6 h-6 text-red-500 mr-3" />
-              <h3 className="text-lg font-semibold text-gray-900">Confirm Delete</h3> (Under
-              Development )
+              <h3 className="text-lg font-semibold text-gray-900">Confirm Delete</h3>
             </div>
             <p className="text-gray-600 mb-6">
               Are you sure you want to delete <strong>{selectedItem?.name}</strong>?
@@ -397,7 +396,7 @@ const Complaints = () => {
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => {
                           setSelectedItem(item)
                           setShowDeleteModal(true)
@@ -405,7 +404,7 @@ const Complaints = () => {
                         className="text-red-600 hover:text-red-800"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
+                      </button> */}
                     </td>
                   </tr>
                 ))}
