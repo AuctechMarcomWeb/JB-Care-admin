@@ -170,7 +170,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
         handleCancel()
       })
       .catch((error) => {
-        toast.error(error?.response?.data?.message || 'Something went wrong')
+        toast.error(error?.response?.data?.error || 'Something went wrong')
       })
       .finally(() => setLoading(false))
   }
@@ -202,6 +202,58 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     >
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
         <div className="row">
+          {/* Site Dropdown */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Select Site<span className="text-danger">*</span>
+            </label>
+            <select
+              className={`form-select ${errors?.siteId ? 'is-invalid' : ''}`}
+              name="siteId"
+              value={formData?.siteId}
+              onChange={handleChange}
+            >
+              <option value="">Select Site</option>
+              {siteOption}
+            </select>
+            {errors?.siteId && <div className="invalid-feedback">{errors?.siteId}</div>}
+          </div>
+
+          {/* Project Dropdown  */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Select Project<span className="text-danger">*</span>
+            </label>
+            <select
+              className={`form-select ${errors.projectId ? 'is-invalid' : ''}`}
+              name="projectId"
+              value={formData?.projectId}
+              onChange={handleChange}
+              disabled={!formData?.siteId}
+            >
+              <option value="">Select Project</option>
+              {projectOption}
+            </select>
+            {errors?.projectId && <div className="invalid-feedback">{errors?.projectId}</div>}
+          </div>
+
+          {/* Unit Type */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Select Unit Type<span className="text-danger">*</span>
+            </label>
+            <select
+              className={`form-select ${errors?.unitTypeId ? 'is-invalid' : ''}`}
+              name="unitTypeId"
+              value={formData?.unitTypeId}
+              onChange={handleChange}
+            >
+              <option value="">Select Unit Type</option>
+              {unitTypeOption}
+            </select>
+            {errors?.unitTypeId && <div className="invalid-feedback">{errors?.unitTypeId}</div>}
+          </div>
+
           {/* Unit Details */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -257,58 +309,6 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
               onChange={handleChange}
             />
             {errors?.areaSqFt && <div className="invalid-feedback">{errors?.areaSqFt}</div>}
-          </div>
-
-          {/* Site Dropdown */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Select Site<span className="text-danger">*</span>
-            </label>
-            <select
-              className={`form-select ${errors?.siteId ? 'is-invalid' : ''}`}
-              name="siteId"
-              value={formData?.siteId}
-              onChange={handleChange}
-            >
-              <option value="">Select Site</option>
-              {siteOption}
-            </select>
-            {errors?.siteId && <div className="invalid-feedback">{errors?.siteId}</div>}
-          </div>
-
-          {/* Project Dropdown  */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Select Project<span className="text-danger">*</span>
-            </label>
-            <select
-              className={`form-select ${errors.projectId ? 'is-invalid' : ''}`}
-              name="projectId"
-              value={formData?.projectId}
-              onChange={handleChange}
-              disabled={!formData?.siteId}
-            >
-              <option value="">Select Project</option>
-              {projectOption}
-            </select>
-            {errors?.projectId && <div className="invalid-feedback">{errors?.projectId}</div>}
-          </div>
-
-          {/* Unit Type */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Select Unit Type<span className="text-danger">*</span>
-            </label>
-            <select
-              className={`form-select ${errors?.unitTypeId ? 'is-invalid' : ''}`}
-              name="unitTypeId"
-              value={formData?.unitTypeId}
-              onChange={handleChange}
-            >
-              <option value="">Select Unit Type</option>
-              {unitTypeOption}
-            </select>
-            {errors?.unitTypeId && <div className="invalid-feedback">{errors?.unitTypeId}</div>}
           </div>
 
           {/* Status */}

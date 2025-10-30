@@ -34,6 +34,8 @@ const LandLord = () => {
   const [sites, setSites] = useState([])
   const [projects, setProjects] = useState([])
   const [units, setUnits] = useState([])
+  console.log('units', units)
+
   const [selectedSite, setSelectedSite] = useState('')
   const [selectedProject, setSelectedProject] = useState('')
   const [selectedUnit, setSelectedUnit] = useState('')
@@ -46,7 +48,7 @@ const LandLord = () => {
     getRequest('projects?isPagination=false').then((res) =>
       setProjects(res?.data?.data?.projects || []),
     )
-    getRequest('units').then((res) => setUnits(res?.data?.data?.units || []))
+    getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
   }, [])
 
   // Fetch landlord list?
@@ -140,8 +142,8 @@ const LandLord = () => {
       </div>
 
       {/* Filters */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
+      <div className="px-6 py-4 border-b border-gray-200 bg-white">
+        <div className="grid grid-cols-1 md:grid-cols-8 gap-4 items-end">
           {/* Site Filter */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
@@ -177,7 +179,7 @@ const LandLord = () => {
           </div>
 
           {/* Unit Filter */}
-          {/* <div className="flex flex-col">
+          <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
             <select
               value={selectedUnit}
@@ -187,11 +189,11 @@ const LandLord = () => {
               <option value="">All Units</option>
               {units.map((u) => (
                 <option key={u._id} value={u._id}>
-                  {u.unitName}
+                  {u.unitNumber}
                 </option>
               ))}
             </select>
-          </div> */}
+          </div>
 
           {/* Date Filters */}
           <div className="flex flex-col">
@@ -229,8 +231,21 @@ const LandLord = () => {
             </div>
           </div>
 
+          {/* Active Checkbox */}
+          <div className="flex items-center gap-2 h-[42px] mt-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isActive}
+                onChange={(e) => setIsActive(e.target.checked)}
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700 select-none">Active</span>
+            </label>
+          </div>
+
           {/* Buttons */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+          <div className="flex flex-wrap items-center gap-2 md:col-span-8 justify-center mt-4">
             <button
               onClick={() => {
                 setFromDate(tempFromDate)
@@ -238,7 +253,7 @@ const LandLord = () => {
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-4 py-2 hover:bg-blue-700 rounded-md text-sm sm:text-base"
+              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 text-sm"
             >
               Apply
             </button>
@@ -262,7 +277,7 @@ const LandLord = () => {
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
-                className="bg-red-600 text-white px-4 py-2 hover:bg-red-700 rounded-md text-sm sm:text-base"
+                className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 text-sm"
               >
                 Clear
               </button>

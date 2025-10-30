@@ -56,7 +56,7 @@ const useNav = () => {
     },
     {
       component: CNavItem,
-      name: 'Rental',
+      name: 'Tenant',
       to: '/rentalMaster',
       icon: <MdOutlineDashboard className="me-3" />,
     },
@@ -72,7 +72,12 @@ const useNav = () => {
       to: '/supervisor',
       icon: <MdOutlineDashboard className="me-3" />,
     },
-
+    {
+      component: CNavItem,
+      name: 'Biling',
+      to: '/biling',
+      icon: <MdOutlineDashboard className="me-3" />,
+    },
     {
       component: CNavGroup,
       name: 'Stock Management',

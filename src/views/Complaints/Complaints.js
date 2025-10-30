@@ -34,43 +34,43 @@ const Complaints = () => {
   const [selectedSite, setSelectedSite] = useState('')
   const [selectedProject, setSelectedProject] = useState('')
   const [selectedUnit, setSelectedUnit] = useState('')
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
+
+  // Fetch dropdown data for filters
+  useEffect(() => {
+    getRequest('sites?isPagination=false').then((res) => setSites(res?.data?.data?.sites || []))
+    getRequest('projects?isPagination=false').then((res) =>
+      setProjects(res?.data?.data?.projects || []),
+    )
+    // getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
+  }, [])
+
   // Fetch Property Type with Pagination + Search
   useEffect(() => {
     setLoading(true)
-    // getRequest(
-    //   `complaints?search=${searchTerm}&page=${page}&limit=${limit}` +
-    //     +`${fromDate ? `&fromDate=${fromDate}` : ''}` +
-    //     `${toDate ? `&toDate=${toDate}` : ''}` +
-    //     `${selectedSite ? `&siteId=${selectedSite}` : ''}` +
-    //     `${selectedProject ? `&projectId=${selectedProject}` : ''}` +
-    //     `${selectedUnit ? `&unitId=${selectedUnit}` : ''}`,
-    // )
-    getRequest(`complaints`)
+
+    // Build query params dynamically
+    let query = `complaints?search=${searchTerm}&page=${page}&limit=${limit}`
+    if (fromDate) query += `&fromDate=${fromDate}`
+    if (toDate) query += `&toDate=${toDate}`
+    if (selectedSite) query += `&siteId=${selectedSite}`
+    if (selectedProject) query += `&projectId=${selectedProject}`
+
+    getRequest(query)
       .then((res) => {
         const responseData = res?.data?.data
         setData(responseData?.complaints || [])
         setTotal(responseData?.totalComplaints || 0)
       })
       .catch((error) => {
-        console.log('error', error)
+        console.error('Error fetching complaints:', error)
       })
       .finally(() => setLoading(false))
-  }, [updateStatus])
-  // }, [
-  //   page,
-  //   limit,
-  //   searchTerm,
-  //   fromDate,
-  //   toDate,
-  //   isActive,
-  //   selectedSite,
-  //   selectedProject,
-  //   selectedUnit,
-  //   updateStatus,
-  // ])
+  }, [page, limit, searchTerm, fromDate, toDate, selectedSite, selectedProject, updateStatus])
 
   // ✅ Delete handler
   const confirmDelete = () => {
@@ -174,23 +174,6 @@ const Complaints = () => {
             </select>
           </div>
 
-          {/* Unit Filter */}
-          {/* <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
-            <select
-              value={selectedUnit}
-              onChange={(e) => setSelectedUnit(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Units</option>
-              {units.map((u) => (
-                <option key={u._id} value={u._id}>
-                  {u.unitName}
-                </option>
-              ))}
-            </select>
-          </div> */}
-
           {/* Date Filters */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From</label>
@@ -228,7 +211,7 @@ const Complaints = () => {
           </div>
 
           {/* Buttons */}
-          {/* <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
             <button
               onClick={() => {
                 setFromDate(tempFromDate)
@@ -265,7 +248,7 @@ const Complaints = () => {
                 Clear
               </button>
             )}
-          </div> */}
+          </div>
         </div>
       </div>
 
