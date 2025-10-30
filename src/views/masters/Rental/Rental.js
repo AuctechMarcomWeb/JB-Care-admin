@@ -32,6 +32,26 @@ const Rental = () => {
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
+  // // Fetch rental list
+  // useEffect(() => {
+  //   setLoading(true)
+  //   getRequest(
+  //     `rentals?search=${searchTerm}&page=${page}&limit=${limit}&isActive=${isActive}` +
+  //       `${fromDate ? `&fromDate=${fromDate}` : ''}` +
+  //       `${toDate ? `&toDate=${toDate}` : ''}` +
+  //       `${selectedSite ? `&siteId=${selectedSite}` : ''}` +
+  //       `${selectedProject ? `&projectId=${selectedProject}` : ''}` +
+  //       `${selectedUnit ? `&unitId=${selectedUnit}` : ''}`
+  //   )
+  //     .then((res) => {
+  //       const responseData = res?.data?.data
+  //       setData(responseData?.data || [])
+  //       setTotal(responseData?.total || 0)
+  //     })
+  //     .catch((err) => console.error('Error fetching rentals:', err))
+  //     .finally(() => setLoading(false))
+  // }, [page, limit, searchTerm, fromDate, toDate, isActive, selectedSite, selectedProject, selectedUnit, updateStatus])
+
   useEffect(() => {
     setLoading(true)
     getRequest(`tenants?search=${searchTerm}&page=${page}&limit=${limit}&isActive=${isActive}`)

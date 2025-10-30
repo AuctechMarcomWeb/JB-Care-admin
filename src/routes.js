@@ -14,7 +14,7 @@ import Rental from './views/masters/Rental/Rental'
 import LandLord from './views/masters/LandLord/LandLord'
 import UserList from './views/UserList/UserList'
 import Supervisor from './views/Supervisor/Supervisor'
-
+import Biling from './views/Biling/Biling'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
 const routes = [
@@ -35,6 +35,7 @@ const routes = [
   { path: '/centralStock', name: 'ELM Profile', element: CentralStock },
   { path: '/stockTransfer', name: 'ELM Profile', element: StockTransfer },
   { path: '/stockConsumption', name: 'ELM Profile', element: StockConsumption },
+  { path: '/biling', name: 'Biling', element: Biling },
 ]
 
 export default routes

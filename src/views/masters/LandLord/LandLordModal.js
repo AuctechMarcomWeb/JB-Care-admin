@@ -211,67 +211,6 @@ const LandLordModal = ({
       onCancel={handleCancel}
     >
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
-        {/* Name & Email */}
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Name<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData?.name}
-              onChange={handleChange}
-              className={`form-control ${errors?.name ? 'is-invalid' : ''}`}
-            />
-            {errors?.name && <div className="invalid-feedback">{errors?.name}</div>}
-          </div>
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Email<span className="text-danger">*</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData?.email}
-              onChange={handleChange}
-              className={`form-control ${errors?.email ? 'is-invalid' : ''}`}
-            />
-            {errors?.email && <div className="invalid-feedback">{errors?.email}</div>}
-          </div>
-        </div>
-
-        {/* Phone & Address */}
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Phone<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="phone"
-              value={formData?.phone}
-              onChange={handleChange}
-              maxLength={10}
-              className={`form-control ${errors?.phone ? 'is-invalid' : ''}`}
-            />
-            {errors?.phone && <div className="invalid-feedback">{errors?.phone}</div>}
-          </div>
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Address<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData?.address}
-              onChange={handleChange}
-              className={`form-control ${errors?.address ? 'is-invalid' : ''}`}
-            />
-            {errors?.address && <div className="invalid-feedback">{errors?.address}</div>}
-          </div>
-        </div>
-
         {/* Site & Project */}
         <div className="row">
           <div className="col-md-6 mb-3">
@@ -319,7 +258,7 @@ const LandLordModal = ({
           </div>
         </div>
 
-        {/* Unit & Profile Image */}
+        {/* Name & Email */}
         <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -340,6 +279,67 @@ const LandLordModal = ({
               ))}
             </select>
             {errors?.unitId && <div className="invalid-feedback">{errors?.unitId}</div>}
+          </div>
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Name<span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData?.name}
+              onChange={handleChange}
+              className={`form-control ${errors?.name ? 'is-invalid' : ''}`}
+            />
+            {errors?.name && <div className="invalid-feedback">{errors?.name}</div>}
+          </div>
+        </div>
+
+        {/* Phone & Address */}
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Email<span className="text-danger">*</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData?.email}
+              onChange={handleChange}
+              className={`form-control ${errors?.email ? 'is-invalid' : ''}`}
+            />
+            {errors?.email && <div className="invalid-feedback">{errors?.email}</div>}
+          </div>
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Phone<span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={formData?.phone}
+              onChange={handleChange}
+              maxLength={10}
+              className={`form-control ${errors?.phone ? 'is-invalid' : ''}`}
+            />
+            {errors?.phone && <div className="invalid-feedback">{errors?.phone}</div>}
+          </div>
+        </div>
+
+        {/* Unit & Profile Image */}
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Address<span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={formData?.address}
+              onChange={handleChange}
+              className={`form-control ${errors?.address ? 'is-invalid' : ''}`}
+            />
+            {errors?.address && <div className="invalid-feedback">{errors?.address}</div>}
           </div>
 
           <div className="col-md-6 mb-3">
