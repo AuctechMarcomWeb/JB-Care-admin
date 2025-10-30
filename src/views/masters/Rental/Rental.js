@@ -285,6 +285,7 @@ const Rental = () => {
                         className="w-10 h-10 rounded-full object-cover border"
                       />
                     </td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
 
                     {/* Status */}
                     <td className="px-6 py-4">
@@ -298,7 +299,6 @@ const Rental = () => {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
 
                     {/* Actions */}
                     <td className="px-6 py-4 flex gap-2">
