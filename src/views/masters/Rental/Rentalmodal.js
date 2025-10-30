@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
-import { Modal } from 'antd'
+import { Modal, Select, Spin } from 'antd'
 import toast from 'react-hot-toast'
 import { fileUpload, getRequest, postRequest, putRequest } from '../../../Helpers'
 
@@ -12,7 +12,8 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
   const [sites, setSites] = useState([])
   const [projects, setProjects] = useState([])
   const [units, setUnits] = useState([])
-  const [selectedLandlord, setSelectedLandlord] = useState(null)
+  const imageInputRefs = React.useRef([])
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -23,25 +24,56 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     projectId: '',
     unitId: '',
     landlordId: '',
-    addedBy: 'landlord',
     billTo: 'tenant',
   })
 
-  //  Fetch landlord list only once
+  // 🔹 Fetch all sites when modal opens
   useEffect(() => {
-    const fetchLandlords = async () => {
-      try {
-        const res = await getRequest('landlords?isPagination=false')
-        console.log('landlords', res)
-        setLandlords(res?.data?.data?.data || [])
-      } catch (err) {
-        console.error('Error fetching landlords:', err)
-      }
+    if (isModalOpen) {
+      getRequest('sites?isPagination=false')
+        .then((res) => setSites(res?.data?.data?.sites || []))
+        .catch((err) => console.error('Error fetching sites:', err))
     }
-    fetchLandlords()
-  }, [])
+  }, [isModalOpen])
 
-  //  Prefill data in Edit Mode
+  // 🔹 Fetch projects based on selected site
+  useEffect(() => {
+    if (!formData.siteId) {
+      setProjects([])
+      setUnits([])
+      setFormData((prev) => ({ ...prev, projectId: '', unitId: '', landlordId: '' }))
+      return
+    }
+    getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
+      .then((res) => setProjects(res?.data?.data?.projects || []))
+      .catch((err) => console.error('Error fetching projects:', err))
+  }, [formData.siteId])
+
+  // 🔹 Fetch units based on selected project
+  useEffect(() => {
+    if (!formData.projectId || !formData.siteId) {
+      setUnits([])
+      setFormData((prev) => ({ ...prev, unitId: '', landlordId: '' }))
+      return
+    }
+    getRequest(`units?isPagination=false&siteId=${formData.siteId}&projectId=${formData.projectId}`)
+      .then((res) => setUnits(res?.data?.data?.units || []))
+      .catch((err) => console.error('Error fetching units:', err))
+  }, [formData.projectId, formData.siteId])
+
+  // 🔹 Fetch landlords based on selected unit
+  useEffect(() => {
+    if (!formData.unitId) {
+      setLandlords([])
+      setFormData((prev) => ({ ...prev, landlordId: '' }))
+      return
+    }
+    getRequest(`landlords?isPagination=false&unitId=${formData.unitId}`)
+      .then((res) => setLandlords(res?.data?.data?.data || []))
+      .catch((err) => console.error('Error fetching landlords:', err))
+  }, [formData.unitId])
+
+  // 🔹 Prefill for edit mode
   useEffect(() => {
     if (modalData) {
       setFormData({
@@ -54,149 +86,84 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
         projectId: modalData?.projectId?._id || '',
         unitId: modalData?.unitId?._id || '',
         landlordId: modalData?.landlordId?._id || '',
-        addedBy: modalData?.addedBy || 'landlord',
-        billTo: modalData?.billTo || '',
+        billTo: modalData?.billTo || 'tenant',
       })
-      const landlord = landlords.find((l) => l._id === modalData?.landlordId?._id)
-      if (landlord) setSelectedLandlord(landlord)
     }
-  }, [modalData, landlords])
+  }, [modalData])
 
-  // 🔹 Handle input changes
+  // 🔹 Handle Input Change
   const handleChange = (e) => {
     const { name, value } = e.target
 
-    // 🔸 Phone number logic
+    // Phone field restriction
     if (name === 'phone') {
-      const onlyNums = value.replace(/\D/g, '')
-      if (onlyNums.length <= 10) {
-        setFormData((prev) => ({ ...prev, phone: onlyNums }))
-      }
-
-      // Clear phone field error while typing
-      if (errors.phone) {
+      const onlyNums = value.replace(/\D/g, '').slice(0, 10)
+      setFormData((prev) => ({ ...prev, phone: onlyNums }))
+      if (errors.phone && /^\d{10}$/.test(onlyNums)) {
         setErrors((prev) => ({ ...prev, phone: '' }))
       }
       return
     }
 
-    // 🔸 Update field value
     setFormData((prev) => ({ ...prev, [name]: value }))
-
-    // 🔸 Auto-clear error for the field being edited
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }))
-    }
-
-    // 🔸 Landlord auto-fill logic
-    if (name === 'landlordId') {
-      const landlord = landlords.find((l) => l._id === value)
-      setSelectedLandlord(landlord || null)
-
-      if (landlord) {
-        // Auto-fill related fields
-        setFormData((prev) => ({
-          ...prev,
-          landlordId: value,
-          siteId: landlord?.siteId?._id || '',
-          projectId: landlord?.projectId?._id || '',
-          unitId: landlord?.unitIds[0]?._id || '',
-        }))
-      } else {
-        setSites([])
-        setProjects([])
-        setUnits([])
-      }
-    }
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
   }
+
+  // 🔹 Form Validation
+  const validateForm = () => {
+    const newErrors = {}
+    if (!formData.name?.trim()) newErrors.name = 'Name is required'
+    if (!formData.email?.trim()) newErrors.email = 'Email is required'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      newErrors.email = 'Invalid email format'
+    if (!formData.phone) newErrors.phone = 'Phone number is required'
+    else if (!/^\d{10}$/.test(formData.phone))
+      newErrors.phone = 'Enter a valid 10-digit phone number'
+    if (!formData.address?.trim()) newErrors.address = 'Address is required'
+    if (!formData.siteId) newErrors.siteId = 'Select site'
+    if (!formData.projectId) newErrors.projectId = 'Select project'
+    if (!formData.unitId) newErrors.unitId = 'Select unit'
+    if (!formData.landlordId) newErrors.landlordId = 'Select landlord'
+    if (!formData.profilePic) newErrors.profilePic = 'Profile image is required'
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const [imageLoading, setImageLoading] = useState(false)
 
   const handleImageUpload = (e) => {
     const image = e.target.files[0]
     if (!image) return
-    setLoading(true)
+    setErrors((prev) => ({ ...prev, profilePic: '' }))
+
+    setImageLoading(true)
     fileUpload({ url: 'upload', cred: { image } })
       .then((res) => {
         const uploadedUrl = res?.data?.imageUrl
         if (uploadedUrl) {
           setFormData((prev) => ({ ...prev, profilePic: uploadedUrl }))
-          toast.success('Profile image uploaded successfully')
-        } else toast.error('Image upload failed')
+          toast.success('Image uploaded successfully')
+        } else toast.error('Upload failed')
       })
       .catch(() => toast.error('Image upload failed'))
-      .finally(() => setLoading(false))
+      .finally(() => setImageLoading(false))
   }
 
-  const handleRemoveImage = () => setFormData((prev) => ({ ...prev, profilePic: '' }))
-  // ✅ Validation
-  const validateForm = () => {
-    const newErrors = {}
-
-    // Name
-    if (!formData?.name?.trim()) {
-      newErrors.name = 'Name is required'
-    } else if (formData?.name.length < 3) {
-      newErrors.name = 'Name must be at least 3 characters long'
+  const handleRemoveImage = () => {
+    setFormData((prev) => ({ ...prev, profilePic: '' }))
+    if (imageInputRefs.current[0]) {
+      imageInputRefs.current[0].value = ''
     }
-
-    // Email
-    if (!formData?.email?.trim()) {
-      newErrors.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData?.email)) {
-      newErrors.email = 'Enter a valid email address'
-    }
-
-    // Phone
-    if (!formData?.phone?.trim()) {
-      newErrors.phone = 'Phone number is required'
-    } else if (!/^\d{10}$/.test(formData?.phone)) {
-      newErrors.phone = 'Phone number must be exactly 10 digits'
-    }
-
-    // Address
-    if (!formData?.address?.trim()) {
-      newErrors.address = 'Address is required'
-    } else if (formData?.address.length < 5) {
-      newErrors.address = 'Address must be at least 5 characters long'
-    }
-
-    // Landlord
-    if (!formData?.landlordId) {
-      newErrors.landlordId = 'Select a landlord'
-    }
-
-    // Site / Project / Unit (auto-filled from landlord)
-    if (!formData?.siteId) {
-      newErrors.siteId = 'Site is required (auto-filled from landlord)'
-    }
-    if (!formData?.projectId) {
-      newErrors.projectId = 'Project is required (auto-filled from landlord)'
-    }
-    if (!formData?.unitId) {
-      newErrors.unitId = 'Unit is required (auto-filled from landlord)'
-    }
-
-    // Profile Image
-    if (!formData?.profilePic) {
-      newErrors.profilePic = 'Profile image is required'
-    }
-
-    // Bill To (radio)
-    if (!formData?.billTo) {
-      newErrors.billTo = 'Select who the bill is payable to'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
   }
 
-  //  Handle submit (Add)
+  // 🔹 Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validateForm()) return
     setLoading(true)
     try {
       const res = await postRequest({ url: 'tenants', cred: formData })
-      toast.success(res?.data?.message || 'Rental added successfully')
+      toast.success(res?.data?.message || 'Tenant added successfully')
       setUpdateStatus((prev) => !prev)
       handleCancel()
     } catch (err) {
@@ -206,14 +173,14 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     }
   }
 
-  //  Handle edit (Update)
+  // 🔹 Edit Existing Tenant
   const handleEdit = async (e) => {
     e.preventDefault()
     if (!validateForm()) return
     setLoading(true)
     try {
       const res = await putRequest({ url: `tenants/${modalData._id}`, cred: formData })
-      toast.success(res?.data?.message || 'Rental updated successfully')
+      toast.success(res?.data?.message || 'Tenant updated successfully')
       setUpdateStatus((prev) => !prev)
       handleCancel()
     } catch (err) {
@@ -223,21 +190,23 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     }
   }
 
-  // ✅ Handle cancel
+  // 🔹 Reset Modal
   const handleCancel = () => {
     setModalData(null)
     setIsModalOpen(false)
     setErrors({})
     setFormData({
-      landlordId: '',
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      profilePic: '',
       siteId: '',
       projectId: '',
       unitId: '',
+      landlordId: '',
+      billTo: 'tenant',
     })
-    setSelectedLandlord(null)
-    setSites([])
-    setProjects([])
-    setUnits([])
   }
 
   return (
@@ -246,245 +215,260 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
       open={isModalOpen}
       footer={null}
       onCancel={handleCancel}
+      width={900}
     >
-      <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
-        {/* Landlord & Site */}
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Landlord<span className="text-danger">*</span>
-            </label>
-            <select
-              name="landlordId"
-              value={formData?.landlordId}
-              onChange={handleChange}
-              className={`form-select ${errors?.landlordId ? 'is-invalid' : ''}`}
-              required
-            >
-              <option value="">Select Landlord</option>
-              {landlords.map((l) => (
-                <option key={l._id} value={l._id}>
-                  {l.name}
-                </option>
-              ))}
-            </select>
-            {errors?.landlordId && <div className="invalid-feedback">{errors?.landlordId}</div>}
+      <Spin spinning={loading}>
+        <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
+          {/* 🔹 Row 1: Site & Project */}
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Site<span className="text-danger">*</span>
+              </label>
+              <Select
+                showSearch
+                allowClear
+                placeholder="--Select Site--"
+                value={formData.siteId || undefined}
+                onChange={(value) =>
+                  setFormData((p) => ({
+                    ...p,
+                    siteId: value,
+                    projectId: '',
+                    unitId: '',
+                    landlordId: '',
+                  }))
+                }
+                options={sites.map((s) => ({ value: s._id, label: s.siteName }))}
+                className={errors.siteId ? 'is-invalid w-100' : 'w-100'}
+              />
+              {errors.siteId && <div className="text-danger small">{errors.siteId}</div>}
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Project<span className="text-danger">*</span>
+              </label>
+              <Select
+                showSearch
+                allowClear
+                placeholder="--Select Project--"
+                value={formData.projectId || undefined}
+                onChange={(value) =>
+                  setFormData((p) => ({ ...p, projectId: value, unitId: '', landlordId: '' }))
+                }
+                disabled={!formData.siteId}
+                options={projects.map((p) => ({ value: p._id, label: p.projectName }))}
+                className={errors.projectId ? 'is-invalid w-100' : 'w-100'}
+              />
+              {errors.projectId && <div className="text-danger small">{errors.projectId}</div>}
+            </div>
           </div>
 
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Site<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              value={selectedLandlord?.siteId?.siteName || ''}
-              disabled={!formData.landlordId} // ✅ Disable when no landlord is selected
-              required
-              readOnly
-            />
-          </div>
-        </div>
+          {/* 🔹 Row 2: Unit & Landlord */}
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Unit<span className="text-danger">*</span>
+              </label>
+              <Select
+                showSearch
+                allowClear
+                placeholder="--Select Unit--"
+                value={formData.unitId || undefined}
+                onChange={(value) => setFormData((p) => ({ ...p, unitId: value, landlordId: '' }))}
+                disabled={!formData.projectId}
+                options={units.map((u) => ({ value: u._id, label: u.unitNumber }))}
+                className={errors.unitId ? 'is-invalid w-100' : 'w-100'}
+              />
+              {errors.unitId && <div className="text-danger small">{errors.unitId}</div>}
+            </div>
 
-        {/* Project & Unit */}
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Project<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              value={selectedLandlord?.projectId?.projectName || ''}
-              disabled={!formData.landlordId} // ✅ Disable when no landlord is selected
-              required
-              readOnly
-            />
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Landlord<span className="text-danger">*</span>
+              </label>
+              <Select
+                showSearch
+                allowClear
+                placeholder="--Select Landlord--"
+                value={formData.landlordId || undefined}
+                onChange={(value) => setFormData((p) => ({ ...p, landlordId: value }))}
+                disabled={!formData.unitId}
+                options={landlords.map((l) => ({ value: l._id, label: l.name }))}
+                className={errors.landlordId ? 'is-invalid w-100' : 'w-100'}
+              />
+              {errors.landlordId && <div className="text-danger small">{errors.landlordId}</div>}
+            </div>
           </div>
 
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Unit<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              value={selectedLandlord?.unitIds[0]?.unitNumber || ''}
-              disabled={!formData?.landlordId} // ✅ Disable when no landlord is selected
-              required
-              readOnly
-            />
+          {/* 🔹 Row 3: Name & Email */}
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Name<span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+              />
+              {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+            </div>
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Email<span className="text-danger">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+              />
+              {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+            </div>
           </div>
-        </div>
 
-        {/* Name & Email */}
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Name<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData?.name}
-              onChange={handleChange}
-              className={`form-control ${errors?.name ? 'is-invalid' : ''}`}
-              required
-            />
-            {errors?.name && <div className="invalid-feedback">{errors?.name}</div>}
+          {/* 🔹 Row 4: Phone & Address */}
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Phone<span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                onBlur={() => {
+                  if (!/^\d{10}$/.test(formData.phone))
+                    setErrors((prev) => ({ ...prev, phone: 'Phone must be exactly 10 digits' }))
+                }}
+                className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+              />
+              {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
+            </div>
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Address<span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                className={`form-control ${errors.address ? 'is-invalid' : ''}`}
+              />
+              {errors.address && <div className="invalid-feedback">{errors.address}</div>}
+            </div>
           </div>
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Email<span className="text-danger">*</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData?.email}
-              onChange={handleChange}
-              className={`form-control ${errors?.email ? 'is-invalid' : ''}`}
-              required
-            />
-            {errors?.email && <div className="invalid-feedback">{errors?.email}</div>}
-          </div>
-        </div>
 
-        {/* Phone & Address */}
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Phone<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="phone"
-              value={formData?.phone}
-              onChange={handleChange}
-              className={`form-control ${errors?.phone ? 'is-invalid' : ''}`}
-              required
-            />
-            {errors?.phone && <div className="invalid-feedback">{errors?.phone}</div>}
-          </div>
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Address<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData?.address}
-              onChange={handleChange}
-              className={`form-control ${errors?.address ? 'is-invalid' : ''}`}
-              required
-            />
-            {errors?.address && <div className="invalid-feedback">{errors?.address}</div>}
-          </div>
-        </div>
+          {/* 🔹 Row 5: Profile Pic & Bill To */}
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Profile Image<span className="text-danger">*</span>
+              </label>
 
-        {/* Profile Pic */}
-        <div className="row">
-          <div className="col-md-12 mb-3">
-            <label className="form-label fw-bold">
-              Profile Image<span className="text-danger">*</span>
-            </label>
-            <input
-              type="file"
-              className={`form-control ${errors.profilePic ? 'is-invalid' : ''}`}
-              onChange={handleImageUpload}
-              required
-              disabled={loading}
-            />
-            {errors?.profilePic && <div className="invalid-feedback">{errors?.profilePic}</div>}
-            {formData?.profilePic && (
-              <div className="mt-2 position-relative d-inline-block">
-                <img
-                  src={formData?.profilePic}
-                  alt="Preview"
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '6px',
-                    objectFit: 'cover',
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={handleRemoveImage}
-                  style={{
-                    position: 'absolute',
-                    top: '-6px',
-                    right: '-6px',
-                    background: 'red',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '18px',
-                    height: '18px',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-        {/* Bill To (Payable Person) */}
-        <div className="row">
-          <div className="col-md-12 mb-3">
-            <label className="form-label fw-bold">Select Payable Person</label>
-            <div className="d-flex align-items-center gap-4 mt-2">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="billTo"
-                  id="billToTenant"
-                  value="tenant"
-                  checked={formData?.billTo === 'tenant'}
-                  onChange={handleChange}
-                  required
-                />
-                <label className="form-check-label" htmlFor="billToTenant">
-                  Tenant
-                </label>
-              </div>
+              <input
+                type="file"
+                className={`form-control ${errors.profilePic ? 'is-invalid' : ''}`}
+                onChange={handleImageUpload}
+                disabled={imageLoading} // disable only during upload
+                ref={(el) => (imageInputRefs.current[0] = el)}
+              />
+              {errors.profilePic && <div className="invalid-feedback">{errors.profilePic}</div>}
 
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="billTo"
-                  id="billToLandlord"
-                  value="landlord"
-                  checked={formData?.billTo === 'landlord'}
-                  onChange={handleChange}
-                />
-                <label className="form-check-label" htmlFor="billToLandlord">
-                  Landlord
-                </label>
+              {/* 🔹 Preview with loader */}
+              {formData.profilePic && (
+                <div className="mt-2 position-relative d-inline-block">
+                  <img
+                    src={formData.profilePic}
+                    alt="Preview"
+                    style={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: 6,
+                      objectFit: 'cover',
+                      opacity: imageLoading ? 0.5 : 1,
+                    }}
+                  />
+
+                  {/* 🔹 Loader overlay */}
+                  {imageLoading && (
+                    <div
+                      className="position-absolute top-50 start-50 translate-middle"
+                      style={{
+                        background: 'rgba(255,255,255,0.6)',
+                        width: 60,
+                        height: 60,
+                        borderRadius: 6,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <div className="spinner-border text-primary spinner-border-sm" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 🔹 Remove button */}
+                  {!imageLoading && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="btn btn-sm btn-danger position-absolute top-0 end-0"
+                      style={{ lineHeight: '10px', padding: '2px 6px' }}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">Select Payable Person</label>
+              <div className="d-flex align-items-center gap-4 mt-2">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="billTo"
+                    value="tenant"
+                    checked={formData.billTo === 'tenant'}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label">Tenant</label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="billTo"
+                    value="landlord"
+                    checked={formData.billTo === 'landlord'}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label">Landlord</label>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Buttons */}
-        <div className="d-flex justify-content-end gap-2">
-          <button type="button" className="btn btn-secondary" onClick={handleCancel}>
-            Cancel
-          </button>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {modalData
-              ? loading
-                ? 'Updating...'
-                : 'Update Tenant'
-              : loading
-                ? 'Saving...'
-                : 'Save Tenant'}{' '}
-          </button>
-        </div>
-      </form>
+          {/* 🔹 Submit */}
+          <div className="text-end mt-3">
+            <button type="submit" className="btn btn-primary">
+              {modalData ? 'Update Tenant' : 'Add Tenant'}
+            </button>
+          </div>
+        </form>
+      </Spin>
     </Modal>
   )
 }
