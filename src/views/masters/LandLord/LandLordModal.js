@@ -30,6 +30,8 @@ const LandLordModal = ({
     unitId: '',
   })
 
+  console.log('fprmdata', formData)
+
   // Fetch all sites initially
   useEffect(() => {
     getRequest('sites?isPagination=false')

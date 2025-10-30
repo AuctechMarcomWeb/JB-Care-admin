@@ -242,76 +242,12 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
 
   return (
     <Modal
-      title={modalData ? 'Edit Rental' : 'Add Rental'}
+      title={modalData ? 'Edit Tenant' : 'Add Tenant'}
       open={isModalOpen}
       footer={null}
       onCancel={handleCancel}
     >
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
-        {/* Name & Email */}
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Name<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData?.name}
-              onChange={handleChange}
-              className={`form-control ${errors?.name ? 'is-invalid' : ''}`}
-              required
-            />
-            {errors?.name && <div className="invalid-feedback">{errors?.name}</div>}
-          </div>
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Email<span className="text-danger">*</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData?.email}
-              onChange={handleChange}
-              className={`form-control ${errors?.email ? 'is-invalid' : ''}`}
-              required
-            />
-            {errors?.email && <div className="invalid-feedback">{errors?.email}</div>}
-          </div>
-        </div>
-
-        {/* Phone & Address */}
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Phone<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="phone"
-              value={formData?.phone}
-              onChange={handleChange}
-              className={`form-control ${errors?.phone ? 'is-invalid' : ''}`}
-              required
-            />
-            {errors?.phone && <div className="invalid-feedback">{errors?.phone}</div>}
-          </div>
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Address<span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData?.address}
-              onChange={handleChange}
-              className={`form-control ${errors?.address ? 'is-invalid' : ''}`}
-              required
-            />
-            {errors?.address && <div className="invalid-feedback">{errors?.address}</div>}
-          </div>
-        </div>
-
         {/* Landlord & Site */}
         <div className="row">
           <div className="col-md-6 mb-3">
@@ -378,6 +314,70 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
               required
               readOnly
             />
+          </div>
+        </div>
+
+        {/* Name & Email */}
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Name<span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData?.name}
+              onChange={handleChange}
+              className={`form-control ${errors?.name ? 'is-invalid' : ''}`}
+              required
+            />
+            {errors?.name && <div className="invalid-feedback">{errors?.name}</div>}
+          </div>
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Email<span className="text-danger">*</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData?.email}
+              onChange={handleChange}
+              className={`form-control ${errors?.email ? 'is-invalid' : ''}`}
+              required
+            />
+            {errors?.email && <div className="invalid-feedback">{errors?.email}</div>}
+          </div>
+        </div>
+
+        {/* Phone & Address */}
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Phone<span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={formData?.phone}
+              onChange={handleChange}
+              className={`form-control ${errors?.phone ? 'is-invalid' : ''}`}
+              required
+            />
+            {errors?.phone && <div className="invalid-feedback">{errors?.phone}</div>}
+          </div>
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Address<span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={formData?.address}
+              onChange={handleChange}
+              className={`form-control ${errors?.address ? 'is-invalid' : ''}`}
+              required
+            />
+            {errors?.address && <div className="invalid-feedback">{errors?.address}</div>}
           </div>
         </div>
 
@@ -478,10 +478,10 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
             {modalData
               ? loading
                 ? 'Updating...'
-                : 'Update Rental'
+                : 'Update Tenant'
               : loading
                 ? 'Saving...'
-                : 'Save Rental'}{' '}
+                : 'Save Tenant'}{' '}
           </button>
         </div>
       </form>
