@@ -14,65 +14,93 @@ const SupervisorModal = ({
 }) => {
   // 🔹 States
   const [loading, setLoading] = useState(false)
-  const [uploadingDocs, setUploadingDocs] = useState([]) // ✅ loader per doc
+  const [uploading, setUploading] = useState(false)
   const [errors, setErrors] = useState({})
   const [sites, setSites] = useState([])
   const [projects, setProjects] = useState([])
   const [units, setUnits] = useState([])
+  const [uploadingIndex, setUploadingIndex] = useState(null)
 
-  const emptyForm = {
+  const [formData, setFormData] = useState({
     name: '',
-    phone: '',
     email: '',
-    verificationDocuments: [{ type: '', number: '', fileUrl: '' }],
+    phone: '',
     siteId: '',
     projectId: '',
     unitId: '',
     isActive: true,
-  }
-
-  const [formData, setFormData] = useState(modalData || emptyForm)
+    verificationDocuments: [{ type: '', number: '', fileUrl: '' }],
+  })
 
   // 🔹 Fetch Sites
   useEffect(() => {
     getRequest('sites?isPagination=false')
       .then((res) => setSites(res?.data?.data?.sites || []))
-      .catch((err) => console.error('Site fetch error:', err))
+      .catch((err) => console.error('Error fetching sites:', err))
   }, [])
 
-  // 🔹 Fetch Projects based on Site
+  // 🔹 Fetch Projects when site changes
   useEffect(() => {
-    if (!formData.siteId) {
+    if (formData.siteId) {
+      getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
+        .then((res) => setProjects(res?.data?.data?.projects || []))
+        .catch((err) => console.error('Error fetching projects:', err))
+    } else {
       setProjects([])
-      setUnits([])
       setFormData((prev) => ({ ...prev, projectId: '', unitId: '' }))
-      return
     }
-    getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
-      .then((res) => setProjects(res?.data?.data?.projects || []))
-      .catch((err) => console.error('Project fetch error:', err))
   }, [formData.siteId])
 
-  // 🔹 Fetch Units based on Project
+  // 🔹 Fetch Units when project changes
   useEffect(() => {
-    if (!formData.projectId) {
+    if (formData.projectId) {
+      getRequest(
+        `units?isPagination=false&siteId=${formData.siteId}&projectId=${formData.projectId}`,
+      )
+        .then((res) => setUnits(res?.data?.data?.units || []))
+        .catch((err) => console.error('Error fetching units:', err))
+    } else {
       setUnits([])
       setFormData((prev) => ({ ...prev, unitId: '' }))
-      return
     }
-    getRequest(`units?isPagination=false&siteId=${formData.siteId}&projectId=${formData.projectId}`)
-      .then((res) => setUnits(res?.data?.data?.units || []))
-      .catch((err) => console.error('Unit fetch error:', err))
   }, [formData.projectId])
 
-  // 🔹 Handlers
-  const handleCancel = () => {
-    setFormData(emptyForm)
-    setErrors({})
-    setModalData(null)
-    setIsModalOpen(false)
-  }
+  // 🔹 Pre-fill form for Edit
+  useEffect(() => {
+    if (modalData) {
+      setFormData({
+        name: modalData?.name || '',
+        email: modalData?.email || '',
+        phone: modalData?.phone || '',
+        siteId: modalData?.siteId?._id || modalData?.siteId || '',
+        projectId:
+          modalData?.projects?.[0]?._id ||
+          modalData?.projects?.[0] ||
+          modalData?.projectId?._id ||
+          modalData?.projectId ||
+          '',
+        unitId: modalData?.unitId?._id || modalData?.unitId || '',
+        isActive: modalData?.isActive ?? true,
+        verificationDocuments:
+          modalData?.verificationDocuments?.length > 0
+            ? modalData?.verificationDocuments
+            : [{ type: '', number: '', fileUrl: '' }],
+      })
+    } else {
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        siteId: '',
+        projectId: '',
+        unitId: '',
+        isActive: true,
+        verificationDocuments: [{ type: '', number: '', fileUrl: '' }],
+      })
+    }
+  }, [modalData])
 
+  // 🔹 Handle Input Change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     const newValue = type === 'checkbox' ? checked : value
@@ -82,35 +110,36 @@ const SupervisorModal = ({
       if (digits.length <= 10) {
         setFormData((prev) => ({ ...prev, phone: digits }))
       }
-      return
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: newValue }))
     }
 
-    setFormData((prev) => ({ ...prev, [name]: newValue }))
+    // Remove error when user types/selects
     setErrors((prev) => ({ ...prev, [name]: '' }))
   }
 
-  // ✅ Upload each doc with loader
+  // 🔹 Handle Document Upload
   const handleFileUpload = async (index, image) => {
     if (!image) return
-
-    setUploadingDocs((prev) => [...prev, index])
+    setUploadingIndex(index) // start loading spinner for this doc
     try {
       const res = await fileUpload({ url: 'upload', cred: { image } })
       const uploadedUrl = res?.data?.imageUrl
-      console.log('dfdfds', res?.data?.imageUrl)
-
       if (uploadedUrl) {
         const updatedDocs = [...formData.verificationDocuments]
         updatedDocs[index].fileUrl = uploadedUrl
         setFormData((prev) => ({ ...prev, verificationDocuments: updatedDocs }))
-        toast.success('File uploaded successfully')
+
+        //  remove error once uploaded
+        setErrors((prev) => ({ ...prev, [`docFile${index}`]: '' }))
+        toast.success(res?.data?.message || 'Document uploaded successfully')
       } else {
-        toast.error('File upload failed')
+        toast.error(res?.data?.error || 'Upload failed')
       }
     } catch {
-      toast.error('Upload failed')
+      toast.error(res?.data?.error || 'Upload failed')
     } finally {
-      setUploadingDocs((prev) => prev.filter((i) => i !== index))
+      setUploadingIndex(null) // stop loading spinner
     }
   }
 
@@ -119,152 +148,361 @@ const SupervisorModal = ({
     const newErrors = {}
     const { name, phone, email, siteId, projectId, unitId, verificationDocuments } = formData
 
-    if (!name.trim()) newErrors.name = 'Name is required'
+    if (!name) newErrors.name = 'Name is required'
     if (!/^\d{10}$/.test(phone)) newErrors.phone = 'Enter valid 10-digit phone'
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = 'Enter valid email'
+    if (!email) newErrors.email = 'Email is required'
     if (!siteId) newErrors.siteId = 'Select Site'
     if (!projectId) newErrors.projectId = 'Select Project'
     if (!unitId) newErrors.unitId = 'Select Unit'
 
     verificationDocuments.forEach((doc, i) => {
-      if (!doc.type) newErrors[`docType${i}`] = 'Required'
-      if (!doc.number) newErrors[`docNumber${i}`] = 'Required'
-      if (!doc.fileUrl) newErrors[`docFile${i}`] = 'Upload required'
+      if (!doc.type) newErrors[`docType${i}`] = 'Type required'
+      if (!doc.number) newErrors[`docNumber${i}`] = 'Number required'
+      if (!doc.fileUrl) newErrors[`docFile${i}`] = 'File required'
     })
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  // 🔹 Add/Edit Supervisor
-  const handleSubmit = async (e) => {
+  // 🔹 Add / Update Supervisor
+  const handleSubmit = (e) => {
     e.preventDefault()
     if (!validateForm()) return
     setLoading(true)
 
-    try {
-      const payload = { ...formData }
-      const res = modalData
-        ? await putRequest({ url: `supervisors/${modalData._id}`, cred: payload })
-        : await postRequest({ url: 'supervisors', cred: payload })
+    const payload = { ...formData }
 
-      toast.success(res?.data?.message || (modalData ? 'Supervisor updated' : 'Supervisor added'))
-      setUpdateStatus((prev) => !prev)
-      handleCancel()
-    } catch (err) {
-      toast.error(err?.response?.data?.message || 'Operation failed')
-    } finally {
-      setLoading(false)
-    }
+    const apiCall = modalData
+      ? putRequest({ url: `supervisors/${modalData._id}`, cred: payload })
+      : postRequest({ url: 'supervisors', cred: payload })
+
+    apiCall
+      .then((res) => {
+        toast.success(res?.data?.message || (modalData ? 'Supervisor updated' : 'Supervisor added'))
+        setUpdateStatus((prev) => !prev)
+        handleCancel()
+      })
+      .catch((err) => {
+        console.error(err?.response?.data?.error || err)
+        toast.error(err?.response?.data?.error || 'Something went wrong')
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
-  // 🔹 JSX
+  // 🔹 Handle Cancel
+  const handleCancel = () => {
+    setModalData(null)
+    setIsModalOpen(false)
+    setErrors({})
+  }
+
+  // 🔹 Manage Document List
+  const handleDocChange = (index, field, value) => {
+    const updated = [...formData.verificationDocuments]
+    updated[index][field] = value
+    setFormData((prev) => ({ ...prev, verificationDocuments: updated }))
+
+    // ✅ Clear related error instantly
+    setErrors((prev) => ({
+      ...prev,
+      [`doc${field.charAt(0).toUpperCase() + field.slice(1)}${index}`]: '',
+    }))
+  }
+
+  const addDoc = () =>
+    setFormData((prev) => ({
+      ...prev,
+      verificationDocuments: [...prev.verificationDocuments, { type: '', number: '', fileUrl: '' }],
+    }))
+
+  const removeDoc = (index) => {
+    const updated = formData.verificationDocuments.filter((_, i) => i !== index)
+    setFormData((prev) => ({ ...prev, verificationDocuments: updated }))
+  }
+
   return (
     <Modal
       title={modalData ? 'Edit Supervisor' : 'Add Supervisor'}
       open={isModalOpen}
-      onCancel={handleCancel}
       footer={null}
+      onCancel={handleCancel}
       width={800}
     >
       <form onSubmit={handleSubmit} noValidate>
         <Spin spinning={loading}>
-          {/* 🔸 Basic Info */}
+          {/* 🔹 Name & Email */}
           <div className="row">
-            <InputField
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              error={errors.name}
-              required
-            />
-            <InputField
-              label="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              error={errors.email}
-              required
-            />
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Name<span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter Name"
+                className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+              />
+              {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Email<span className="text-danger">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter Email"
+                className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+              />
+              {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+            </div>
           </div>
 
+          {/* 🔹 Phone & Site */}
           <div className="row">
-            <InputField
-              label="Phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              error={errors.phone}
-              required
-            />
-            <SelectField
-              label="Site"
-              name="siteId"
-              value={formData.siteId}
-              options={sites}
-              optionLabel="siteName"
-              optionValue="_id"
-              onChange={handleChange}
-              error={errors.siteId}
-              required
-            />
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Phone<span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                maxLength={10}
+                placeholder="Enter Mobile No."
+                className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+              />
+              {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Site<span className="text-danger">*</span>
+              </label>
+              <select
+                name="siteId"
+                value={formData.siteId}
+                onChange={handleChange}
+                className={`form-select ${errors.siteId ? 'is-invalid' : ''}`}
+              >
+                <option value="">Select Site</option>
+                {sites.map((s) => (
+                  <option key={s._id} value={s._id}>
+                    {s.siteName}
+                  </option>
+                ))}
+              </select>
+              {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
+            </div>
           </div>
 
+          {/* 🔹 Project & Unit */}
           <div className="row">
-            <SelectField
-              label="Project"
-              name="projectId"
-              value={formData.projectId}
-              options={projects}
-              optionLabel="projectName"
-              optionValue="_id"
-              onChange={handleChange}
-              error={errors.projectId}
-              required
-              disabled={!formData.siteId}
-            />
-            <SelectField
-              label="Unit"
-              name="unitId"
-              value={formData.unitId}
-              options={units}
-              optionLabel="unitNumber"
-              optionValue="_id"
-              onChange={handleChange}
-              error={errors.unitId}
-              required
-              disabled={!formData.projectId}
-            />
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Project<span className="text-danger">*</span>
+              </label>
+              <select
+                name="projectId"
+                value={formData.projectId}
+                onChange={handleChange}
+                className={`form-select ${errors.projectId ? 'is-invalid' : ''}`}
+                disabled={!formData.siteId}
+              >
+                <option value="">Select Project</option>
+                {projects.map((p) => (
+                  <option key={p._id} value={p._id}>
+                    {p.projectName}
+                  </option>
+                ))}
+              </select>
+              {errors.projectId && <div className="invalid-feedback">{errors.projectId}</div>}
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Unit<span className="text-danger">*</span>
+              </label>
+              <select
+                name="unitId"
+                value={formData.unitId}
+                onChange={handleChange}
+                className={`form-select ${errors.unitId ? 'is-invalid' : ''}`}
+                disabled={!formData.projectId}
+              >
+                <option value="">Select Unit</option>
+                {units.map((u) => (
+                  <option key={u._id} value={u._id}>
+                    {u.unitNumber}
+                  </option>
+                ))}
+              </select>
+              {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
+            </div>
           </div>
 
-          {/* 🔸 Verification Docs */}
-          <VerificationDocuments
-            docs={formData.verificationDocuments}
-            setFormData={setFormData}
-            handleFileUpload={handleFileUpload}
-            errors={errors}
-            uploadingDocs={uploadingDocs}
-          />
+          {/* 🔹 Verification Documents */}
+          <div className="mb-3">
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <label className="form-label fw-bold">
+                Verification Documents<span className="text-danger">*</span>
+              </label>
+              <Button type="dashed" size="small" onClick={addDoc}>
+                + Add More
+              </Button>
+            </div>
 
-          {/* 🔸 Active Status */}
-          <div className="form-check mt-3">
+            <div className="row">
+              {formData.verificationDocuments.map((doc, i) => (
+                <div key={i} className="col-12 mb-3">
+                  <div className="border rounded p-3 h-100">
+                    <div className="row g-3 align-items-end">
+                      {/* Document Type */}
+                      <div className="col-md-6">
+                        <label className="form-label">
+                          Document Type<span className="text-danger">*</span>
+                        </label>
+                        <select
+                          value={doc.type}
+                          onChange={(e) => handleDocChange(i, 'type', e.target.value)}
+                          className={`form-control ${errors[`docType${i}`] ? 'is-invalid' : ''}`}
+                        >
+                          <option value="">Select Type</option>
+                          <option value="Aadhar">Aadhar</option>
+                          <option value="PAN">PAN</option>
+                          <option value="Other">Other</option>
+                        </select>
+                        {errors[`docType${i}`] && (
+                          <div className="invalid-feedback">{errors[`docType${i}`]}</div>
+                        )}
+                      </div>
+
+                      {/* Document Number */}
+                      <div className="col-md-6">
+                        <label className="form-label">
+                          Document Number<span className="text-danger">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={doc.number}
+                          placeholder="Enter Document Number"
+                          onChange={(e) => handleDocChange(i, 'number', e.target.value)}
+                          className={`form-control ${errors[`docNumber${i}`] ? 'is-invalid' : ''}`}
+                        />
+                        {errors[`docNumber${i}`] && (
+                          <div className="invalid-feedback">{errors[`docNumber${i}`]}</div>
+                        )}
+                      </div>
+
+                      {/* File Upload */}
+                      <div className="col-12">
+                        <label className="form-label">
+                          Upload File<span className="text-danger">*</span>
+                        </label>
+                        <div className="d-flex align-items-center gap-3">
+                          <div style={{ flex: doc.fileUrl ? '0 0 70%' : '1 1 100%' }}>
+                            <input
+                              type="file"
+                              onChange={(e) => handleFileUpload(i, e.target.files[0])}
+                              className={`form-control ${errors[`docFile${i}`] ? 'is-invalid' : ''}`}
+                              disabled={uploadingIndex === i} // disable while uploading
+                            />
+                            {errors[`docFile${i}`] && (
+                              <div className="invalid-feedback">{errors[`docFile${i}`]}</div>
+                            )}
+                          </div>
+
+                          {/* ✅ Preview / Loader */}
+                          <div
+                            className="border rounded p-1 bg-light d-flex justify-content-center align-items-center"
+                            style={{ width: '80px', height: '80px' }}
+                          >
+                            {uploadingIndex === i ? (
+                              // 🌀 Show loader while uploading
+                              <div
+                                className="spinner-border text-primary"
+                                role="status"
+                                style={{ width: '30px', height: '30px' }}
+                              >
+                                <span className="visually-hidden">Loading...</span>
+                              </div>
+                            ) : doc.fileUrl ? (
+                              doc.fileUrl.endsWith('.pdf') ? (
+                                <a
+                                  href={doc.fileUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-decoration-none"
+                                >
+                                  📄 PDF
+                                </a>
+                              ) : (
+                                <img
+                                  src={doc.fileUrl}
+                                  alt="doc"
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    borderRadius: '4px',
+                                  }}
+                                />
+                              )
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Remove Button */}
+                      {formData.verificationDocuments.length > 1 && (
+                        <div className="col-12 text-end mt-2">
+                          <Button danger size="small" onClick={() => removeDoc(i)}>
+                            Remove
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 🔹 Active Checkbox */}
+          <div className="form-check mb-3">
             <input
               type="checkbox"
+              className="form-check-input me-2"
               name="isActive"
               checked={formData.isActive}
               onChange={handleChange}
-              className="form-check-input me-2"
             />
             <label className="form-check-label fw-bold">Active</label>
           </div>
 
-          {/* 🔸 Buttons */}
-          <div className="d-flex justify-content-end gap-2 mt-3">
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              {modalData ? 'Update Supervisor' : 'Save Supervisor'}
-            </Button>
+          {/* 🔹 Buttons */}
+          <div className="d-flex justify-content-end gap-2">
+            <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {modalData
+                ? loading
+                  ? 'Updating...'
+                  : 'Update Supervisor'
+                : loading
+                  ? 'Saving...'
+                  : 'Save Supervisor'}
+            </button>
           </div>
         </Spin>
       </form>
@@ -273,177 +511,3 @@ const SupervisorModal = ({
 }
 
 export default SupervisorModal
-
-// ✅ Reusable InputField
-const InputField = ({ label, name, value, onChange, error, required }) => (
-  <div className="col-md-6 mb-3">
-    <label className="form-label fw-bold">
-      {label} {required && <span className="text-danger">*</span>}
-    </label>
-    <input
-      type="text"
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={`form-control ${error ? 'is-invalid' : ''}`}
-    />
-    {error && <div className="invalid-feedback">{error}</div>}
-  </div>
-)
-
-// ✅ Reusable SelectField
-const SelectField = ({
-  label,
-  name,
-  value,
-  options,
-  optionLabel,
-  optionValue,
-  onChange,
-  error,
-  required,
-  disabled,
-}) => (
-  <div className="col-md-6 mb-3">
-    <label className="form-label fw-bold">
-      {label} {required && <span className="text-danger">*</span>}
-    </label>
-    <select
-      name={name}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      className={`form-select ${error ? 'is-invalid' : ''}`}
-    >
-      <option value="">Select {label}</option>
-      {options?.map((opt) => (
-        <option key={opt[optionValue]} value={opt[optionValue]}>
-          {opt[optionLabel]}
-        </option>
-      ))}
-    </select>
-    {error && <div className="invalid-feedback">{error}</div>}
-  </div>
-)
-
-// ✅ VerificationDocuments (with loader + remove)
-const VerificationDocuments = ({ docs, setFormData, handleFileUpload, errors, uploadingDocs }) => {
-  const handleChange = (index, field, value) => {
-    const updated = [...docs]
-    updated[index][field] = value
-    setFormData((prev) => ({ ...prev, verificationDocuments: updated }))
-  }
-
-  const addDoc = () => {
-    const updated = [...docs, { type: '', number: '', fileUrl: '' }]
-    setFormData((prev) => ({ ...prev, verificationDocuments: updated }))
-  }
-
-  const removeDoc = (index) => {
-    const updated = docs.filter((_, i) => i !== index)
-    setFormData((prev) => ({ ...prev, verificationDocuments: updated }))
-  }
-
-  return (
-    <div className="mb-3">
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <label className="form-label fw-bold mb-0">
-          Verification Documents <span className="text-danger">*</span>
-        </label>
-        <Button type="dashed" onClick={addDoc} size="small">
-          + Add More
-        </Button>
-      </div>
-
-      {docs.map((doc, i) => (
-        <div key={i} className="border rounded p-3 mb-3">
-          <div className="row g-3 align-items-end">
-            {/* Document Type */}
-            <div className="col-md-6">
-              <label className="form-label">Document Type</label>
-              <select
-                value={doc.type}
-                onChange={(e) => handleChange(i, 'type', e.target.value)}
-                className={`form-control ${errors[`docType${i}`] ? 'is-invalid' : ''}`}
-              >
-                <option value="">Select Document Type</option>
-                <option value="Aadhar">Aadhar</option>
-                <option value="PAN">PAN</option>
-                <option value="Other">Other</option>
-              </select>
-
-              {errors[`docType${i}`] && (
-                <div className="invalid-feedback">{errors[`docType${i}`]}</div>
-              )}
-            </div>
-
-            {/* Document Number */}
-            <div className="col-md-6">
-              <label className="form-label">Document Number</label>
-              <input
-                type="text"
-                placeholder="Enter Document Number"
-                value={doc.number}
-                onChange={(e) => handleChange(i, 'number', e.target.value)}
-                className={`form-control ${errors[`docNumber${i}`] ? 'is-invalid' : ''}`}
-              />
-              {errors[`docNumber${i}`] && (
-                <div className="invalid-feedback">{errors[`docNumber${i}`]}</div>
-              )}
-            </div>
-
-            {/* Document File Upload */}
-            <div className="col-md-6">
-              <label className="form-label">Upload Document</label>
-              <input
-                type="file"
-                accept="image/*,.pdf"
-                disabled={uploadingDocs.includes(i)}
-                onChange={(e) => handleFileUpload(i, e.target.files[0])}
-                className={`form-control ${errors[`docFile${i}`] ? 'is-invalid' : ''}`}
-              />
-              {uploadingDocs.includes(i) && <small className="text-primary">Uploading...</small>}
-              {errors[`docFile${i}`] && (
-                <div className="invalid-feedback">{errors[`docFile${i}`]}</div>
-              )}
-            </div>
-
-            {/* Uploaded Preview */}
-            <div className="col-md-4">
-              {doc.fileUrl && (
-                <div className="mt-2">
-                  {doc.fileUrl.endsWith('.pdf') ? (
-                    <a href={doc.fileUrl} target="_blank" rel="noreferrer">
-                      View PDF
-                    </a>
-                  ) : (
-                    <img
-                      src={doc.fileUrl}
-                      alt={doc.type}
-                      style={{
-                        width: 60,
-                        height: 60,
-                        borderRadius: 6,
-                        objectFit: 'cover',
-                        border: '1px solid #ddd',
-                      }}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Remove Button */}
-            <div className="col-md-2 d-flex justify-content-center align-items-center">
-              {docs.length > 1 && (
-                <Button danger onClick={() => removeDoc(i)}>
-                  Remove
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}

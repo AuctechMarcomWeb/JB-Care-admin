@@ -53,7 +53,9 @@ const Supervisor = () => {
   const confirmDelete = () => {
     deleteRequest(`supervisors/${selectedItem?._id}`)
       .then((res) => {
-        toast.success(res?.data?.message)
+        console.log(res)
+
+        toast.success(res?.data?.data)
         setSelectedItem(null)
         setUpdateStatus((prev) => !prev)
         setShowDeleteModal(false)
