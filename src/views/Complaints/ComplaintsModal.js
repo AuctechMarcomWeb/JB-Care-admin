@@ -126,19 +126,51 @@ const ComplaintsModal = ({
     }
   }
   //MaterialDemandChange
+  // const handleMaterialDemandChange = (e) => {
+  //   const { name, value } = e.target
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     materialDemand: {
+  //       ...prev.materialDemand,
+  //       [name]: value,
+  //     },
+  //   }))
+  //   if (errors[`materialDemand.${name}`]) {
+  //     setErrors((prev) => ({ ...prev, [`materialDemand.${name}`]: '' }))
+  //   }
+  // }
+
   const handleMaterialDemandChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      materialDemand: {
-        ...prev.materialDemand,
-        [name]: value,
-      },
-    }))
-    if (errors[`materialDemand.${name}`]) {
-      setErrors((prev) => ({ ...prev, [`materialDemand.${name}`]: '' }))
+  const { name, value } = e.target
+
+  // ✅ Update form data
+  setFormData((prev) => ({
+    ...prev,
+    materialDemand: {
+      ...prev.materialDemand,
+      [name]: value,
+    },
+  }))
+
+  // ✅ Clear nested error dynamically
+  setErrors((prev) => {
+    if (prev.materialDemand && prev.materialDemand[name]) {
+      const updated = { ...prev }
+      updated.materialDemand = { ...prev.materialDemand }
+      delete updated.materialDemand[name]
+
+      // Remove empty materialDemand object to keep error state clean
+      if (Object.keys(updated.materialDemand).length === 0) {
+        delete updated.materialDemand
+      }
+
+      return updated
     }
-  }
+    return prev
+  })
+}
+
+
   // ✅ Handle Resolved Image Upload
   const handleResolvedImageUpload = (e) => {
     const imageFiles = Array.from(e.target.files)
@@ -231,24 +263,83 @@ const ComplaintsModal = ({
   }
 
   // ✅ Validation
-  const validateForm = () => {
-    const newErrors = {}
+  // const validateForm = () => {
+  //   const newErrors = {}
 
-    if (!formData.userId) newErrors.userId = 'User is required'
-    if (!formData.siteId) newErrors.siteId = 'Site is required (auto-filled)'
-    if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
-    if (!formData.unitId) newErrors.unitId = 'Unit is required (auto-filled)'
+  //   if (!formData.userId) newErrors.userId = 'User is required'
+  //   if (!formData.siteId) newErrors.siteId = 'Site is required (auto-filled)'
+  //   if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
+  //   if (!formData.unitId) newErrors.unitId = 'Unit is required (auto-filled)'
 
-    if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
-    if (!formData.complaintDescription.trim())
-      newErrors.complaintDescription = 'Description is required'
+  //   if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
+  //   if (!formData.complaintDescription.trim())
+  //     newErrors.complaintDescription = 'Description is required'
 
-    if (!formData.images || formData.images.length === 0)
-      newErrors.images = 'At least one image is required'
+  //   if (!formData.images || formData.images.length === 0)
+  //     newErrors.images = 'At least one image is required'
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+  //   setErrors(newErrors)
+  //   return Object.keys(newErrors).length === 0
+  // }
+  // ✅ Validation
+const validateForm = () => {
+  const newErrors = {}
+
+  // ---- Common fields ----
+  if (!formData.userId) newErrors.userId = 'User is required'
+  if (!formData.siteId) newErrors.siteId = 'Site is required (auto-filled)'
+  if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
+  if (!formData.unitId) newErrors.unitId = 'Unit is required (auto-filled)'
+
+  if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
+  if (!formData.complaintDescription.trim())
+    newErrors.complaintDescription = 'Description is required'
+
+  if (!formData.images || formData.images.length === 0)
+    newErrors.images = 'At least one image is required'
+
+  // ---- Extra validation for edit mode ----
+  if (modalData) {
+    switch (formData.action) {
+      case 'review':
+        if (!formData.supervisorComments?.trim())
+          newErrors.supervisorComments = 'Supervisor comments are required'
+        if (!formData.supervisorImages?.length)
+          newErrors.supervisorImages = 'Supervisor images are required'
+        break
+
+      case 'raiseMaterialDemand':
+        newErrors.materialDemand = {}
+        if (!formData.materialDemand?.materialName?.trim())
+          newErrors.materialDemand.materialName = 'Material name is required'
+        if (!formData.materialDemand?.quantity)
+          newErrors.materialDemand.quantity = 'Quantity is required'
+        if (!formData.materialDemand?.reason?.trim())
+          newErrors.materialDemand.reason = 'Reason is required'
+        // Clean up empty nested object if no error
+        if (Object.keys(newErrors.materialDemand).length === 0) delete newErrors.materialDemand
+        break
+
+      case 'resolve':
+        if (!formData.resolvedImages?.length)
+          newErrors.resolvedImages = 'Resolved images are required'
+        break
+
+      case 'verifyResolution':
+        if (!formData.customerConfirmed)
+          newErrors.customerConfirmed = 'Customer confirmation is required'
+        break
+
+      default:
+        if (!formData.action) newErrors.action = 'Action is required'
+        break
+    }
   }
+
+  setErrors(newErrors)
+  return Object.keys(newErrors).length === 0
+}
+
 
   // ✅ Submit New Complaint
   const handleSubmit = async (e) => {
@@ -534,6 +625,7 @@ const ComplaintsModal = ({
                 value={formData.action || ''}
                 onChange={handleChange}
                 className={`form-select ${errors.action ? 'is-invalid' : ''}`}
+                required
               >
                 <option value="">Select Action</option>
                 <option value="review">Review</option>
