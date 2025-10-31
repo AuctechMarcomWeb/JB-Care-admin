@@ -235,79 +235,97 @@ const Rental = () => {
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Name</th>
-                  <th className="px-6 py-3">Email</th>
-                  <th className="px-6 py-3">Phone</th>
-                  <th className="px-6 py-3">Site</th>
-                  <th className="px-6 py-3">Project</th>
-                  <th className="px-6 py-3">Unit</th>
-                  <th className="px-6 py-3">Image</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Actions</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Sr. No.
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Site</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Project
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Units</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Tenant
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Profile
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Active
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Actions
+                  </th>
                 </tr>
               </thead>
 
               <tbody className="bg-white divide-y divide-gray-200">
                 {data.map((item, index) => (
-                  <tr key={item._id}>
+                  <tr key={item._id} className="hover:bg-gray-50 transition">
                     {/* Sr. No. */}
                     <td className="px-6 py-4 text-sm text-gray-700">
                       {(page - 1) * limit + (index + 1)}
                     </td>
 
-                    {/* Name */}
-                    <td className="px-6 py-4 font-medium text-gray-900">{item?.name}</td>
-
-                    {/* Email */}
-                    <td className="px-6 py-4 text-gray-700">{item?.email}</td>
-
-                    {/* Phone */}
-                    <td className="px-6 py-4 text-gray-700">{item?.phone}</td>
-
                     {/* Site */}
-                    <td className="px-6 py-4 text-gray-700">{item?.siteId?.siteName || '—'}</td>
+                    <td className="px-6 py-4 text-gray-600">{item?.siteId?.siteName || '-'}</td>
 
                     {/* Project */}
-                    <td className="px-6 py-4 text-gray-700">
-                      {item?.projectId?.projectName || '—'}
+                    <td className="px-6 py-4 text-gray-600">
+                      {item?.projectId?.projectName || '-'}
                     </td>
 
-                    {/* Unit */}
-                    <td className="px-6 py-4 text-gray-700">{item?.unitId?.unitNumber || '—'}</td>
+                    {/* Units */}
+                    <td className="px-6 py-4 text-gray-600">{item?.unitId?.unitNumber || '-'}</td>
 
-                    {/* Profile Image */}
+                    {/* Landlord (Name, Phone, Email, Address) */}
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-gray-800">{item?.name || '-'}</div>
+                      <div className="text-gray-600 text-sm">{item?.phone || '-'}</div>
+                      <div className="text-gray-600 text-sm truncate max-w-[180px]">
+                        {item?.email || '-'}
+                      </div>
+                      <div className="text-gray-500 text-xs truncate max-w-[180px]">
+                        {item?.address || '-'}
+                      </div>
+                    </td>
+
+                    {/* Profile */}
                     <td className="px-6 py-4">
                       <img
-                        src={item?.profilePic}
+                        src={item?.profilePic || '/default-avatar.png'}
                         alt={item?.name}
                         className="w-10 h-10 rounded-full object-cover border"
                       />
                     </td>
-                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
 
-                    {/* Status */}
+                    {/* Date */}
+                    <td className="px-6 py-4 text-gray-600">
+                      {formatDate(item?.createdAt || '-')}
+                    </td>
+
+                    {/* Active Status */}
                     <td className="px-6 py-4">
                       {item?.isActive ? (
-                        <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">
+                        <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
                           Active
                         </span>
                       ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">
+                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
                           Inactive
                         </span>
                       )}
                     </td>
 
                     {/* Actions */}
-                    <td className="px-6 py-4 flex gap-2">
+                    <td className="px-6 py-4 flex gap-3">
                       <button
                         onClick={() => {
                           setSelectedItem(item)
                           setIsModalOpen(true)
                         }}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-blue-600 hover:text-blue-800 transition"
+                        title="Edit"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -317,7 +335,8 @@ const Rental = () => {
                           setSelectedItem(item)
                           setShowDeleteModal(true)
                         }}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 hover:text-red-800 transition"
+                        title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

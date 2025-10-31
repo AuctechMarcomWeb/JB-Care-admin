@@ -10,6 +10,7 @@ import { Empty, Pagination, Spin } from 'antd'
 import { faL } from '@fortawesome/free-solid-svg-icons'
 import LandLordModal from './LandLordModal'
 import moment from 'moment'
+import LandlordFilter from './LandlordFilter'
 
 const LandLord = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -17,9 +18,9 @@ const LandLord = () => {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
-  const [fromDate, setFromDate] = useState('false')
+  const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
-  const [isActive, setIsActive] = useState(null)
+  const [isActive, setIsActive] = useState(false)
   const [updateStatus, setUpdateStatus] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -54,14 +55,21 @@ const LandLord = () => {
   // Fetch landlord list?
   useEffect(() => {
     setLoading(true)
-    getRequest(
-      `landlords?search=${searchTerm}&page=${page}&limit=${limit}&isActive=${isActive}` +
-        `${fromDate ? `&fromDate=${fromDate}` : ''}` +
-        `${toDate ? `&toDate=${toDate}` : ''}` +
-        `${selectedSite ? `&siteId=${selectedSite}` : ''}` +
-        `${selectedProject ? `&projectId=${selectedProject}` : ''}` +
-        `${selectedUnit ? `&unitId=${selectedUnit}` : ''}`,
-    )
+    const query = [
+      `search=${searchTerm}`,
+      `page=${page}`,
+      `limit=${limit}`,
+      fromDate && `fromDate=${fromDate}`,
+      toDate && `toDate=${toDate}`,
+      selectedSite && `siteId=${selectedSite}`,
+      selectedProject && `projectId=${selectedProject}`,
+      selectedUnit && `unitId=${selectedUnit}`,
+      isActive !== null && `isActive=${isActive}`,
+    ]
+      .filter(Boolean)
+      .join('&')
+
+    getRequest(`landlords?${query}`)
       .then((res) => {
         const responseData = res?.data?.data
         setData(responseData?.data || [])
@@ -144,7 +152,6 @@ const LandLord = () => {
       {/* Filters */}
       <div className="px-6 py-4 border-b border-gray-200 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-8 gap-4 items-end">
-          {/* Site Filter */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
             <select
@@ -161,7 +168,6 @@ const LandLord = () => {
             </select>
           </div>
 
-          {/* Project Filter */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Project</label>
             <select
@@ -178,7 +184,6 @@ const LandLord = () => {
             </select>
           </div>
 
-          {/* Unit Filter */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
             <select
@@ -195,7 +200,6 @@ const LandLord = () => {
             </select>
           </div>
 
-          {/* Date Filters */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From</label>
             <input
@@ -216,7 +220,6 @@ const LandLord = () => {
             />
           </div>
 
-          {/* Search */}
           <div className="flex flex-col md:col-span-2">
             <label className="text-sm font-medium text-gray-700 mb-1">Search</label>
             <div className="relative">
@@ -231,7 +234,6 @@ const LandLord = () => {
             </div>
           </div>
 
-          {/* Active Checkbox */}
           <div className="flex items-center gap-2 h-[42px] mt-6">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -244,7 +246,6 @@ const LandLord = () => {
             </label>
           </div>
 
-          {/* Buttons */}
           <div className="flex flex-wrap items-center gap-2 md:col-span-8 justify-center mt-4">
             <button
               onClick={() => {
@@ -304,65 +305,78 @@ const LandLord = () => {
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Profile</th>
-                  <th className="px-6 py-3">Name</th>
-                  <th className="px-6 py-3">Phone</th>
-                  <th className="px-6 py-3">Email</th>
-                  <th className="px-6 py-3">Address</th>
-                  <th className="px-6 py-3">Site</th>
-                  <th className="px-6 py-3">Project</th>
-                  <th className="px-6 py-3">Units</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Active</th>
-                  <th className="px-6 py-3">Actions</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Sr. No.
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Site</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Project
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Units</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Landlord
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Profile
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Active
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                    Actions
+                  </th>
                 </tr>
               </thead>
 
               <tbody className="bg-white divide-y divide-gray-200">
                 {data.map((item, index) => (
-                  <tr key={item._id}>
-                    {/* Sr. No */}
+                  <tr key={item._id} className="hover:bg-gray-50 transition">
+                    {/* Sr. No. */}
                     <td className="px-6 py-4 text-sm text-gray-700">
                       {(page - 1) * limit + (index + 1)}
                     </td>
 
-                    {/* Profile */}
-                    <td className="px-6 py-4">
-                      <img
-                        src={item?.profilePic}
-                        alt={item?.name}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    </td>
-
-                    {/* Name */}
-                    <td className="px-6 py-4 text-gray-800 font-medium">{item?.name}</td>
-
-                    {/* Phone */}
-                    <td className="px-6 py-4 text-gray-600">{item?.phone}</td>
-
-                    {/* Email */}
-                    <td className="px-6 py-4 text-gray-600">{item?.email}</td>
-
-                    {/* Address */}
-                    <td className="px-6 py-4 text-gray-600">{item?.address}</td>
-
-                    {/* Site Name */}
+                    {/* Site */}
                     <td className="px-6 py-4 text-gray-600">{item?.siteId?.siteName || '-'}</td>
 
-                    {/* Project Name */}
+                    {/* Project */}
                     <td className="px-6 py-4 text-gray-600">
                       {item?.projectId?.projectName || '-'}
                     </td>
 
-                    {/* Unit Numbers */}
+                    {/* Units */}
                     <td className="px-6 py-4 text-gray-600">
                       {item?.unitIds?.length > 0
                         ? item.unitIds.map((u) => u.unitNumber).join(', ')
                         : '-'}
                     </td>
-                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
+
+                    {/* Landlord (Name, Phone, Email, Address) */}
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-gray-800">{item?.name || '-'}</div>
+                      <div className="text-gray-600 text-sm">{item?.phone || '-'}</div>
+                      <div className="text-gray-600 text-sm truncate max-w-[180px]">
+                        {item?.email || '-'}
+                      </div>
+                      <div className="text-gray-500 text-xs truncate max-w-[180px]">
+                        {item?.address || '-'}
+                      </div>
+                    </td>
+
+                    {/* Profile */}
+                    <td className="px-6 py-4">
+                      <img
+                        src={item?.profilePic || '/default-avatar.png'}
+                        alt={item?.name}
+                        className="w-10 h-10 rounded-full object-cover border"
+                      />
+                    </td>
+
+                    {/* Date */}
+                    <td className="px-6 py-4 text-gray-600">
+                      {formatDate(item?.createdAt || '-')}
+                    </td>
 
                     {/* Active Status */}
                     <td className="px-6 py-4">
@@ -378,13 +392,14 @@ const LandLord = () => {
                     </td>
 
                     {/* Actions */}
-                    <td className="px-6 py-4 flex gap-2">
+                    <td className="px-6 py-4 flex gap-3">
                       <button
                         onClick={() => {
                           setSelectedItem(item)
                           setIsModalOpen(true)
                         }}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-blue-600 hover:text-blue-800 transition"
+                        title="Edit"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -394,7 +409,8 @@ const LandLord = () => {
                           setSelectedItem(item)
                           setShowDeleteModal(true)
                         }}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 hover:text-red-800 transition"
+                        title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

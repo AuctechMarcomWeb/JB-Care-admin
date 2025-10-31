@@ -1,14 +1,14 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
 import { Search, Plus, Edit, Trash2, AlertTriangle, IndianRupee } from 'lucide-react'
-import ExportButton from '../ExportButton'
-import { deleteRequest, getRequest } from '../../Helpers'
+import ExportButton from '../../ExportButton'
+import { deleteRequest, getRequest } from '../../../Helpers'
 import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
-import BilingModal from './BilingModal'
+import MaintenceChargesModal from './MaintenceChargesModal'
 import moment from 'moment'
 
-const Biling = () => {
+const MaintenceCharges = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
   const [total, setTotal] = useState(0)
@@ -23,30 +23,42 @@ const Biling = () => {
   const [loading, setLoading] = useState(false)
   const [tempFromDate, setTempFromDate] = useState('')
   const [tempToDate, setTempToDate] = useState('')
+  const [tempSelectedSite, setTempSelectedSite] = useState('')
+  const [tempSelectedUnit, setTempSelectedUnit] = useState('')
+  const [sites, setSites] = useState([])
+  const [units, setUnits] = useState([])
+  const [selectedSite, setSelectedSite] = useState('')
+  const [selectedUnit, setSelectedUnit] = useState('')
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
+  // 🔹 Fetch Sites for Dropdown
+  useEffect(() => {
+    getRequest('sites?isPagination=false').then((res) => {
+      const responseData = res?.data?.data
+      setSites(responseData?.sites || [])
+    })
+    getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
+  }, [])
 
   // ✅ Fetch Data with Loader
   useEffect(() => {
     setLoading(true)
-    getRequest(`maintenance-bill`)
-      // getRequest(
-      //   `maintenance-bill?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
-      // )
+    getRequest(
+      `maintain-charges?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}${
+        selectedSite ? `&siteId=${selectedSite}` : ''
+      }${selectedUnit ? `&unitId=${selectedUnit}` : ''}`,
+    )
       .then((res) => {
         const responseData = res?.data?.data
-        console.log('dfdf', res)
-
         setData(responseData?.data || [])
-        setTotal(res?.data?.data?.total || 0)
+        setTotal(responseData?.total || 0)
       })
       .catch((error) => {
         console.log('error', error)
       })
       .finally(() => setLoading(false)) // ✅ stop loader
-  }, [updateStatus])
-  // }, [searchTerm, page, limit, fromDate, toDate, updateStatus])
+  }, [searchTerm, page, limit, fromDate, toDate, selectedSite, selectedUnit, updateStatus])
 
   // ✅ Delete handler
   const confirmDelete = () => {
@@ -96,18 +108,22 @@ const Biling = () => {
       {/* Header */}
       <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Biling</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Manage Biling</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Maintence Charges</h2>
+          <p className="text-gray-600 text-sm sm:text-base">Manage Maintence Charges</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <ExportButton data={data} fileName="Biling.xlsx" sheetName="Biling" />
+          <ExportButton
+            data={data}
+            fileName="Maintence Charges.xlsx"
+            sheetName="Maintence Charges"
+          />
           <button
             onClick={() => {
               setIsModalOpen(true)
             }}
             className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
           >
-            <Plus className="w-4 h-4 mr-2" /> Add Biling
+            <Plus className="w-4 h-4 mr-2" /> Add Maintence Charges
           </button>
         </div>
       </div>
@@ -115,7 +131,38 @@ const Biling = () => {
       {/* Filters Section */}
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-          {/* Site */}
+          {/* 🔹 Site Name Filter */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
+            <select
+              value={tempSelectedSite}
+              onChange={(e) => setTempSelectedSite(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Sites</option>
+              {sites.map((site) => (
+                <option key={site._id} value={site._id}>
+                  {site.siteName}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* 🔹 Unit Name Filter */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
+            <select
+              value={tempSelectedUnit}
+              onChange={(e) => setTempSelectedUnit(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Unit</option>
+              {units.map((unit) => (
+                <option key={unit._id} value={unit._id}>
+                  {unit.siteName}
+                </option>
+              ))}
+            </select>
+          </div>
           {/* From Date */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
@@ -159,6 +206,8 @@ const Biling = () => {
               onClick={() => {
                 setFromDate(tempFromDate)
                 setToDate(tempToDate)
+                setSelectedSite(tempSelectedSite)
+                setSelectedUnit(tempSelectedUnit)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
@@ -174,6 +223,10 @@ const Biling = () => {
                   setFromDate('')
                   setToDate('')
                   setSearchTerm('')
+                  setTempSelectedSite('')
+                  setSelectedSite('')
+                  setTempSelectedUnit('')
+                  setSelectedUnit('')
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
@@ -191,7 +244,9 @@ const Biling = () => {
         {loading ? (
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />
-            <div className="mt-4 text-blue-500 font-medium text-center">Loading Biling...</div>
+            <div className="mt-4 text-blue-500 font-medium text-center">
+              Loading Maintence Chargess...
+            </div>
           </div>
         ) : !data || data.length === 0 ? (
           <div className="flex justify-center items-center py-20">
@@ -203,14 +258,13 @@ const Biling = () => {
               <thead>
                 <tr>
                   <th className="px-6 py-3 text-left">Sr. No.</th>
-                  <th className="px-6 py-3 text-left">LandLord</th>
                   <th className="px-6 py-3 text-left">Site Name</th>
                   <th className="px-6 py-3 text-left">Unit Number</th>
+                  <th className="px-6 py-3 text-left">Rate Type</th>
                   <th className="px-6 py-3 text-left flex items-center gap-1">
-                    Maintenance Amount
+                    Rate (<IndianRupee className="w-4 h-4 inline" />)
                   </th>
-                  <th className="px-6 py-3 text-left">Gst Amount</th>
-                  <th className="px-6 py-3 text-left">Total Amount</th>
+                  <th className="px-6 py-3 text-left">GST (%)</th>
                   <th className="px-6 py-3 text-left">Date</th>
                   <th className="px-6 py-3 text-left">Status</th>
                   <th className="px-6 py-3 text-left">Actions</th>
@@ -222,36 +276,22 @@ const Biling = () => {
                     <td className="px-6 py-4 text-sm text-gray-700">
                       {(page - 1) * limit + (index + 1)}
                     </td>
+                    <td className="px-6 py-4">{item?.siteId?.siteName}</td>
+                    <td className="px-6 py-4">{item?.unitId?.unitNumber}</td>
                     <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <div className="text-sm font-medium text-gray-900">
-                          {item?.landlord?.name}
-                        </div>
-                        <div
-                          className="text-sm text-gray-500 truncate"
-                          style={{ maxWidth: '200px' }}
-                        >
-                          {item?.landlord?.phone}
-                        </div>
-                        <div
-                          className="text-sm text-gray-500 truncate"
-                          style={{ maxWidth: '200px' }}
-                        >
-                          {item?.landlord?.address}
-                        </div>
-                      </div>
+                      {item?.rateType
+                        ? item.rateType.charAt(0).toUpperCase() +
+                          item.rateType.slice(1).toLowerCase()
+                        : ''}
                     </td>
-                    <td className="px-6 py-4">{item?.site?.siteName}</td>
-                    <td className="px-6 py-4">{item?.unit?.unitNumber}</td>
-                    <td className="px-6 py-4">{item?.maintenanceAmount}</td>
-                    <td className="px-6 py-4">{item?.gstAmount}</td>
-                    <td className="px-6 py-4">{item?.totalAmount}</td>
-                    <td className="px-6 py-4">{formatDate(item?.generatedOn || '-')}</td>
+                    <td className="px-6 py-4">{item?.rateValue}</td>
+                    <td className="px-6 py-4">{item?.gstPercent}</td>
+                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
                     <td className="px-6 py-4">
-                      {item?.status === 'Paid' ? (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Paid</span>
+                      {item?.isActive ? (
+                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
                       ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Unpaid</span>
+                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
                       )}
                     </td>
                     <td className="px-6 py-4 flex gap-2">
@@ -308,7 +348,7 @@ const Biling = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <BilingModal
+        <MaintenceChargesModal
           setUpdateStatus={setUpdateStatus}
           setModalData={setSelectedItem}
           modalData={selectedItem}
@@ -320,4 +360,4 @@ const Biling = () => {
   )
 }
 
-export default Biling
+export default MaintenceCharges
