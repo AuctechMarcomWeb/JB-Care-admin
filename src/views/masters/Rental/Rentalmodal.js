@@ -25,6 +25,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     unitId: '',
     landlordId: '',
     billTo: 'tenant',
+    addedBy: 'landlord',
   })
 
   // 🔹 Fetch all sites when modal opens
@@ -157,20 +158,24 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
   }
 
   // 🔹 Submit Form
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     if (!validateForm()) return
     setLoading(true)
-    try {
-      const res = await postRequest({ url: 'tenants', cred: formData })
-      toast.success(res?.data?.message || 'Tenant added successfully')
-      setUpdateStatus((prev) => !prev)
-      handleCancel()
-    } catch (err) {
-      toast.error(err?.response?.data?.message || 'Something went wrong')
-    } finally {
-      setLoading(false)
-    }
+
+    postRequest({ url: 'tenants', cred: formData })
+      .then((res) => {
+        toast.success(res?.data?.message || 'Tenant added successfully')
+        setUpdateStatus((prev) => !prev)
+        handleCancel()
+      })
+      .catch((err) => {
+        console.error('Error while adding tenant:', err)
+        toast.error(err?.response?.data?.error || err?.message || 'Something went wrong')
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   // 🔹 Edit Existing Tenant
@@ -230,7 +235,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
                 allowClear
                 placeholder="--Select Site--"
                 value={formData.siteId || undefined}
-                onChange={(value) =>
+                onChange={(value) => {
                   setFormData((p) => ({
                     ...p,
                     siteId: value,
@@ -238,7 +243,8 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
                     unitId: '',
                     landlordId: '',
                   }))
-                }
+                  if (value) setErrors((prev) => ({ ...prev, siteId: '' })) // ✅ clear error
+                }}
                 options={sites.map((s) => ({ value: s._id, label: s.siteName }))}
                 className={errors.siteId ? 'is-invalid w-100' : 'w-100'}
               />
@@ -254,9 +260,10 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
                 allowClear
                 placeholder="--Select Project--"
                 value={formData.projectId || undefined}
-                onChange={(value) =>
+                onChange={(value) => {
                   setFormData((p) => ({ ...p, projectId: value, unitId: '', landlordId: '' }))
-                }
+                  if (value) setErrors((prev) => ({ ...prev, projectId: '' })) // ✅ clear error
+                }}
                 disabled={!formData.siteId}
                 options={projects.map((p) => ({ value: p._id, label: p.projectName }))}
                 className={errors.projectId ? 'is-invalid w-100' : 'w-100'}
@@ -276,7 +283,10 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
                 allowClear
                 placeholder="--Select Unit--"
                 value={formData.unitId || undefined}
-                onChange={(value) => setFormData((p) => ({ ...p, unitId: value, landlordId: '' }))}
+                onChange={(value) => {
+                  setFormData((p) => ({ ...p, unitId: value, landlordId: '' }))
+                  if (value) setErrors((prev) => ({ ...prev, unitId: '' })) // ✅ clear error
+                }}
                 disabled={!formData.projectId}
                 options={units.map((u) => ({ value: u._id, label: u.unitNumber }))}
                 className={errors.unitId ? 'is-invalid w-100' : 'w-100'}
@@ -293,7 +303,10 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
                 allowClear
                 placeholder="--Select Landlord--"
                 value={formData.landlordId || undefined}
-                onChange={(value) => setFormData((p) => ({ ...p, landlordId: value }))}
+                onChange={(value) => {
+                  setFormData((p) => ({ ...p, landlordId: value }))
+                  if (value) setErrors((prev) => ({ ...prev, landlordId: '' })) // ✅ clear error
+                }}
                 disabled={!formData.unitId}
                 options={landlords.map((l) => ({ value: l._id, label: l.name }))}
                 className={errors.landlordId ? 'is-invalid w-100' : 'w-100'}
@@ -461,10 +474,19 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
             </div>
           </div>
 
-          {/* 🔹 Submit */}
-          <div className="text-end mt-3">
-            <button type="submit" className="btn btn-primary">
-              {modalData ? 'Update Tenant' : 'Add Tenant'}
+          {/* Buttons */}
+          <div className="d-flex justify-content-end gap-2">
+            <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {modalData
+                ? loading
+                  ? 'Updating...'
+                  : 'Update Tenant'
+                : loading
+                  ? 'Saving...'
+                  : 'Save Tenant'}
             </button>
           </div>
         </form>

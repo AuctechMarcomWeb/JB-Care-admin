@@ -115,6 +115,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
       setErrors((prev) => ({
         ...prev,
         [name]: '',
+        z,
       }))
     }
   }
