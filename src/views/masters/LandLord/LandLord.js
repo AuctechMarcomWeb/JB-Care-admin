@@ -33,13 +33,14 @@ const LandLord = () => {
 
   // NEW FILTER STATES
   const [sites, setSites] = useState([])
-  const [projects, setProjects] = useState([])
+  // const [projects, setProjects] = useState([])
   const [units, setUnits] = useState([])
-  console.log('units', units)
 
   const [selectedSite, setSelectedSite] = useState('')
-  const [selectedProject, setSelectedProject] = useState('')
+  // const [selectedProject, setSelectedProject] = useState('')
   const [selectedUnit, setSelectedUnit] = useState('')
+  const [tempSelectedSite, setTempSelectedSite] = useState('')
+  const [tempSelectedUnit, setTempSelectedUnit] = useState('')
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
@@ -62,7 +63,6 @@ const LandLord = () => {
       fromDate && `fromDate=${fromDate}`,
       toDate && `toDate=${toDate}`,
       selectedSite && `siteId=${selectedSite}`,
-      selectedProject && `projectId=${selectedProject}`,
       selectedUnit && `unitId=${selectedUnit}`,
       isActive !== null && `isActive=${isActive}`,
     ]
@@ -85,7 +85,6 @@ const LandLord = () => {
     toDate,
     isActive,
     selectedSite,
-    selectedProject,
     selectedUnit,
     updateStatus,
   ])
@@ -155,8 +154,8 @@ const LandLord = () => {
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
             <select
-              value={selectedSite}
-              onChange={(e) => setSelectedSite(e.target.value)}
+              value={tempSelectedSite}
+              onChange={(e) => setTempSelectedSite(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Sites</option>
@@ -168,7 +167,7 @@ const LandLord = () => {
             </select>
           </div>
 
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Project</label>
             <select
               value={selectedProject}
@@ -182,13 +181,13 @@ const LandLord = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
 
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
             <select
-              value={selectedUnit}
-              onChange={(e) => setSelectedUnit(e.target.value)}
+              value={tempSelectedUnit}
+              onChange={(e) => setTempSelectedUnit(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Units</option>
@@ -201,7 +200,7 @@ const LandLord = () => {
           </div>
 
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">From</label>
+            <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
               value={tempFromDate}
@@ -211,7 +210,7 @@ const LandLord = () => {
           </div>
 
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">To</label>
+            <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
               value={tempToDate}
@@ -251,6 +250,8 @@ const LandLord = () => {
               onClick={() => {
                 setFromDate(tempFromDate)
                 setToDate(tempToDate)
+                setSelectedSite(tempSelectedSite)
+                setSelectedUnit(tempSelectedUnit)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
@@ -259,12 +260,7 @@ const LandLord = () => {
               Apply
             </button>
 
-            {(fromDate ||
-              toDate ||
-              searchTerm ||
-              selectedSite ||
-              selectedProject ||
-              selectedUnit) && (
+            {(fromDate || toDate || searchTerm || selectedSite || selectedUnit) && (
               <button
                 onClick={() => {
                   setTempFromDate('')
@@ -272,13 +268,14 @@ const LandLord = () => {
                   setFromDate('')
                   setToDate('')
                   setSearchTerm('')
+                  setTempSelectedSite('')
                   setSelectedSite('')
-                  setSelectedProject('')
+                  setTempSelectedUnit('')
                   setSelectedUnit('')
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
-                className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 text-sm"
+                className="bg-red-600 text-white px-3 sm:px-4 py-2 hover:bg-red-700 rounded-md text-sm sm:text-base"
               >
                 Clear
               </button>
@@ -312,14 +309,14 @@ const LandLord = () => {
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                     Project
                   </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Units</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Unit</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                     Landlord
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                     Profile
                   </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date</th>
+                  {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date</th> */}
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                     Active
                   </th>
@@ -374,9 +371,9 @@ const LandLord = () => {
                     </td>
 
                     {/* Date */}
-                    <td className="px-6 py-4 text-gray-600">
+                    {/* <td className="px-6 py-4 text-gray-600">
                       {formatDate(item?.createdAt || '-')}
-                    </td>
+                    </td> */}
 
                     {/* Active Status */}
                     <td className="px-6 py-4">

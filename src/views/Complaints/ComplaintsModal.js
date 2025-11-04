@@ -31,7 +31,6 @@ const ComplaintsModal = ({
     action: '',
     supervisorComments: '',
     supervisorImages: [],
-    userId: '68fb36a54ece3467047be8e5',
     materialDemand: {
       materialName: '',
       quantity: '',
@@ -40,6 +39,8 @@ const ComplaintsModal = ({
     resolvedImages: [],
     customerConfirmed: true,
     status: '',
+    addedBy: 'Admin',
+    userRole: 'Admin',
   })
 
   // Fetch Users Once
@@ -91,6 +92,7 @@ const ComplaintsModal = ({
           materialName: '',
           quantity: '',
           reason: '',
+          images: [],
         },
         resolvedImages: modalData?.resolvedImages || [],
         customerConfirmed: modalData?.customerConfirmed || true,
@@ -141,36 +143,62 @@ const ComplaintsModal = ({
   // }
 
   const handleMaterialDemandChange = (e) => {
-  const { name, value } = e.target
+    const { name, value } = e.target
 
-  // ✅ Update form data
-  setFormData((prev) => ({
-    ...prev,
-    materialDemand: {
-      ...prev.materialDemand,
-      [name]: value,
-    },
-  }))
+    // ✅ Update form data
+    setFormData((prev) => ({
+      ...prev,
+      materialDemand: {
+        ...prev.materialDemand,
+        [name]: value,
+      },
+    }))
 
-  // ✅ Clear nested error dynamically
-  setErrors((prev) => {
-    if (prev.materialDemand && prev.materialDemand[name]) {
-      const updated = { ...prev }
-      updated.materialDemand = { ...prev.materialDemand }
-      delete updated.materialDemand[name]
+    // ✅ Clear nested error dynamically
+    setErrors((prev) => {
+      if (prev.materialDemand && prev.materialDemand[name]) {
+        const updated = { ...prev }
+        updated.materialDemand = { ...prev.materialDemand }
+        delete updated.materialDemand[name]
 
-      // Remove empty materialDemand object to keep error state clean
-      if (Object.keys(updated.materialDemand).length === 0) {
-        delete updated.materialDemand
+        // Remove empty materialDemand object to keep error state clean
+        if (Object.keys(updated.materialDemand).length === 0) {
+          delete updated.materialDemand
+        }
+
+        return updated
       }
+      return prev
+    })
+  }
+  // ✅ Handle Resolved Image Upload
+  const handleMaterialDemandImageUpload = (e) => {
+    const imageFiles = Array.from(e.target.files)
 
-      return updated
-    }
-    return prev
-  })
-}
+    if (errors.resolvedImages) setErrors((prev) => ({ ...prev, resolvedImages: null }))
 
+    imageFiles.forEach((image) => {
+      const tempId = URL.createObjectURL(image)
+      setUploadingResolvedImages((prev) => [...prev, tempId])
 
+      fileUpload({
+        url: `upload`,
+        cred: { image },
+      })
+        .then((res) => {
+          setFormData((prev) => ({
+            ...prev,
+            resolvedImages: [...(prev.resolvedImages || []), res.data?.imageUrl],
+          }))
+        })
+        .catch((error) => {
+          console.error('Resolved image upload failed:', error)
+        })
+        .finally(() => {
+          setUploadingResolvedImages((prev) => prev.filter((id) => id !== tempId))
+        })
+    })
+  }
   // ✅ Handle Resolved Image Upload
   const handleResolvedImageUpload = (e) => {
     const imageFiles = Array.from(e.target.files)
@@ -282,64 +310,65 @@ const ComplaintsModal = ({
   //   return Object.keys(newErrors).length === 0
   // }
   // ✅ Validation
-const validateForm = () => {
-  const newErrors = {}
+  const validateForm = () => {
+    const newErrors = {}
 
-  // ---- Common fields ----
-  if (!formData.userId) newErrors.userId = 'User is required'
-  if (!formData.siteId) newErrors.siteId = 'Site is required (auto-filled)'
-  if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
-  if (!formData.unitId) newErrors.unitId = 'Unit is required (auto-filled)'
+    // ---- Common fields ----
+    if (!formData.userId) newErrors.userId = 'User is required'
+    if (!formData.siteId) newErrors.siteId = 'Site is required (auto-filled)'
+    if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
+    if (!formData.unitId) newErrors.unitId = 'Unit is required (auto-filled)'
 
-  if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
-  if (!formData.complaintDescription.trim())
-    newErrors.complaintDescription = 'Description is required'
+    if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
+    if (!formData.complaintDescription.trim())
+      newErrors.complaintDescription = 'Description is required'
 
-  if (!formData.images || formData.images.length === 0)
-    newErrors.images = 'At least one image is required'
+    if (!formData.images || formData.images.length === 0)
+      newErrors.images = 'At least one image is required'
 
-  // ---- Extra validation for edit mode ----
-  if (modalData) {
-    switch (formData.action) {
-      case 'review':
-        if (!formData.supervisorComments?.trim())
-          newErrors.supervisorComments = 'Supervisor comments are required'
-        if (!formData.supervisorImages?.length)
-          newErrors.supervisorImages = 'Supervisor images are required'
-        break
+    // ---- Extra validation for edit mode ----
+    if (modalData) {
+      switch (formData.action) {
+        case 'review':
+          if (!formData.supervisorComments?.trim())
+            newErrors.supervisorComments = 'Supervisor comments are required'
+          if (!formData.supervisorImages?.length)
+            newErrors.supervisorImages = 'Supervisor images are required'
+          break
 
-      case 'raiseMaterialDemand':
-        newErrors.materialDemand = {}
-        if (!formData.materialDemand?.materialName?.trim())
-          newErrors.materialDemand.materialName = 'Material name is required'
-        if (!formData.materialDemand?.quantity)
-          newErrors.materialDemand.quantity = 'Quantity is required'
-        if (!formData.materialDemand?.reason?.trim())
-          newErrors.materialDemand.reason = 'Reason is required'
-        // Clean up empty nested object if no error
-        if (Object.keys(newErrors.materialDemand).length === 0) delete newErrors.materialDemand
-        break
+        case 'raiseMaterialDemand':
+          newErrors.materialDemand = {}
+          if (!formData.materialDemand?.materialName?.trim())
+            newErrors.materialDemand.materialName = 'Material name is required'
+          if (!formData.materialDemand?.quantity)
+            newErrors.materialDemand.quantity = 'Quantity is required'
+          if (!formData.materialDemand?.reason?.trim())
+            newErrors.materialDemand.reason = 'Reason is required'
+          if (!formData.materialDemand?.images?.trim())
+            newErrors.materialDemand.reason = 'Reason is required'
+          // Clean up empty nested object if no error
+          if (Object.keys(newErrors.materialDemand).length === 0) delete newErrors.materialDemand
+          break
 
-      case 'resolve':
-        if (!formData.resolvedImages?.length)
-          newErrors.resolvedImages = 'Resolved images are required'
-        break
+        case 'resolve':
+          if (!formData.resolvedImages?.length)
+            newErrors.resolvedImages = 'Resolved images are required'
+          break
 
-      case 'verifyResolution':
-        if (!formData.customerConfirmed)
-          newErrors.customerConfirmed = 'Customer confirmation is required'
-        break
+        case 'verifyResolution':
+          if (!formData.customerConfirmed)
+            newErrors.customerConfirmed = 'Customer confirmation is required'
+          break
 
-      default:
-        if (!formData.action) newErrors.action = 'Action is required'
-        break
+        default:
+          if (!formData.action) newErrors.action = 'Action is required'
+          break
+      }
     }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
-
-  setErrors(newErrors)
-  return Object.keys(newErrors).length === 0
-}
-
 
   // ✅ Submit New Complaint
   const handleSubmit = async (e) => {
@@ -372,7 +401,7 @@ const validateForm = () => {
     try {
       const res = await patchRequest({
         url: `complaints/${modalData._id}`,
-        cred: formData,
+        cred: { ...formData, userRole: 'Admin' },
       })
       console.log('dd', res?.data?.message)
 
@@ -405,7 +434,7 @@ const validateForm = () => {
 
   return (
     <Modal
-      title={modalData ? 'Edit Complaint (Under Development )' : 'Add Complaint'}
+      title={modalData ? 'Edit Complaint' : 'Add Complaint'}
       open={isModalOpen}
       footer={null}
       onCancel={handleCancel}

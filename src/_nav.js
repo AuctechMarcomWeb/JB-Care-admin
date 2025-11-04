@@ -30,11 +30,11 @@ const useNav = () => {
           name: 'Site/Location ',
           to: '/sitelocationMaster',
         },
-        {
-          component: CNavItem,
-          name: 'Project ',
-          to: '/projectMaster',
-        },
+        // {
+        //   component: CNavItem,
+        //   name: 'Project ',
+        //   to: '/projectMaster',
+        // },
         {
           component: CNavItem,
           name: 'Unit',

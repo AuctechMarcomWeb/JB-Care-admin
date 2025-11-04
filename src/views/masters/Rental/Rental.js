@@ -29,32 +29,43 @@ const Rental = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false)
+  // NEW FILTER STATES
+  const [sites, setSites] = useState([])
+  const [units, setUnits] = useState([])
+  const [selectedSite, setSelectedSite] = useState('')
+  const [selectedUnit, setSelectedUnit] = useState('')
+  const [tempSelectedSite, setTempSelectedSite] = useState('')
+  const [tempSelectedUnit, setTempSelectedUnit] = useState('')
+
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
-  // // Fetch rental list
-  // useEffect(() => {
-  //   setLoading(true)
-  //   getRequest(
-  //     `rentals?search=${searchTerm}&page=${page}&limit=${limit}&isActive=${isActive}` +
-  //       `${fromDate ? `&fromDate=${fromDate}` : ''}` +
-  //       `${toDate ? `&toDate=${toDate}` : ''}` +
-  //       `${selectedSite ? `&siteId=${selectedSite}` : ''}` +
-  //       `${selectedProject ? `&projectId=${selectedProject}` : ''}` +
-  //       `${selectedUnit ? `&unitId=${selectedUnit}` : ''}`
-  //   )
-  //     .then((res) => {
-  //       const responseData = res?.data?.data
-  //       setData(responseData?.data || [])
-  //       setTotal(responseData?.total || 0)
-  //     })
-  //     .catch((err) => console.error('Error fetching rentals:', err))
-  //     .finally(() => setLoading(false))
-  // }, [page, limit, searchTerm, fromDate, toDate, isActive, selectedSite, selectedProject, selectedUnit, updateStatus])
+
+  // Fetch dropdown data for filters
+  useEffect(() => {
+    getRequest('sites?isPagination=false').then((res) => setSites(res?.data?.data?.sites || []))
+    // getRequest('projects?isPagination=false').then((res) =>
+    //   setProjects(res?.data?.data?.projects || []),
+    // )
+    getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
+  }, [])
 
   useEffect(() => {
     setLoading(true)
-    getRequest(`tenants?search=${searchTerm}&page=${page}&limit=${limit}&isActive=${isActive}`)
+    const query = [
+      `search=${searchTerm}`,
+      `page=${page}`,
+      `limit=${limit}`,
+      isActive !== null && `isActive=${isActive}`,
+      fromDate && `fromDate=${fromDate}`,
+      toDate && `toDate=${toDate}`,
+      selectedSite && `siteId=${selectedSite}`,
+      selectedUnit && `unitId=${selectedUnit}`,
+    ]
+      .filter(Boolean)
+      .join('&')
+
+    getRequest(`tenants?${query}`)
       .then((res) => {
         const responseData = res?.data?.data
         console.log('res', res)
@@ -65,7 +76,17 @@ const Rental = () => {
         console.log('error', error)
       })
       .finally(() => setLoading(false))
-  }, [page, limit, searchTerm, fromDate, toDate, isActive, updateStatus])
+  }, [
+    page,
+    limit,
+    searchTerm,
+    fromDate,
+    toDate,
+    selectedSite,
+    selectedUnit,
+    isActive,
+    updateStatus,
+  ])
 
   // ✅ Delete handler
   const confirmDelete = () => {
@@ -131,32 +152,77 @@ const Rental = () => {
         </div>
       </div>
 
-      {/* Filters Section */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-          {/* From Date */}
+      {/* Filters */}
+      <div className="px-6 py-4 border-b border-gray-200 bg-white">
+        <div className="grid grid-cols-1 md:grid-cols-8 gap-4 items-end">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
+            <select
+              value={tempSelectedSite}
+              onChange={(e) => setTempSelectedSite(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Sites</option>
+              {sites.map((s) => (
+                <option key={s._id} value={s._id}>
+                  {s.siteName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* <div className="flex flex-col">
+                 <label className="text-sm font-medium text-gray-700 mb-1">Project</label>
+                 <select
+                   value={selectedProject}
+                   onChange={(e) => setSelectedProject(e.target.value)}
+                   className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                 >
+                   <option value="">All Projects</option>
+                   {projects.map((p) => (
+                     <option key={p._id} value={p._id}>
+                       {p.projectName}
+                     </option>
+                   ))}
+                 </select>
+               </div> */}
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
+            <select
+              value={tempSelectedUnit}
+              onChange={(e) => setTempSelectedUnit(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Units</option>
+              {units.map((u) => (
+                <option key={u._id} value={u._id}>
+                  {u.unitNumber}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
               value={tempFromDate}
               onChange={(e) => setTempFromDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* To Date */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
               value={tempToDate}
               onChange={(e) => setTempToDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Search Input */}
           <div className="flex flex-col md:col-span-2">
             <label className="text-sm font-medium text-gray-700 mb-1">Search</label>
             <div className="relative">
@@ -166,14 +232,13 @@ const Rental = () => {
                 placeholder="Search by name or address..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
+                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
-          {/* Active Filter */}
-          <div className="flex items-center h-[42px] mt-[24px]">
-            <label className="flex items-center gap-3 cursor-pointer">
+          <div className="flex items-center gap-2 h-[42px] mt-6">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={isActive}
@@ -184,20 +249,22 @@ const Rental = () => {
             </label>
           </div>
 
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+          <div className="flex flex-wrap items-center gap-2 md:col-span-8 justify-center mt-4">
             <button
               onClick={() => {
                 setFromDate(tempFromDate)
                 setToDate(tempToDate)
+                setSelectedSite(tempSelectedSite)
+                setSelectedUnit(tempSelectedUnit)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 rounded-md text-sm sm:text-base"
+              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 text-sm"
             >
               Apply
             </button>
-            {(fromDate || toDate || searchTerm) && (
+
+            {(fromDate || toDate || searchTerm || selectedSite || selectedUnit) && (
               <button
                 onClick={() => {
                   setTempFromDate('')
@@ -205,6 +272,10 @@ const Rental = () => {
                   setFromDate('')
                   setToDate('')
                   setSearchTerm('')
+                  setTempSelectedSite('')
+                  setSelectedSite('')
+                  setTempSelectedUnit('')
+                  setSelectedUnit('')
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
@@ -249,7 +320,7 @@ const Rental = () => {
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                     Profile
                   </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date</th>
+                  {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date</th> */}
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
                     Active
                   </th>
@@ -300,9 +371,9 @@ const Rental = () => {
                     </td>
 
                     {/* Date */}
-                    <td className="px-6 py-4 text-gray-600">
+                    {/* <td className="px-6 py-4 text-gray-600">
                       {formatDate(item?.createdAt || '-')}
-                    </td>
+                    </td> */}
 
                     {/* Active Status */}
                     <td className="px-6 py-4">
