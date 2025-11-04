@@ -9,7 +9,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
   const [site, setSite] = useState([])
-  const [project, setProject] = useState([])
+  // const [project, setProject] = useState([])
   const [unitType, setunitType] = useState([])
 
   const [formData, setFormData] = useState({
@@ -18,7 +18,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     floor: '',
     areaSqFt: '',
     siteId: '',
-    projectId: '',
+    // projectId: '',
     unitTypeId: '',
     status: true,
   })
@@ -42,22 +42,23 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
       })
   }, [])
 
-  useEffect(() => {
-    if (formData?.siteId) {
-      getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
-        .then((res) => {
-          setProject(res?.data?.data?.projects || [])
-        })
-        .catch((error) => {
-          console.log('Error fetching projects:', error)
-        })
-    } else {
-      setProject([])
-      setFormData((prev) => ({ ...prev, projectId: '' }))
-    }
-  }, [formData?.siteId])
+  // useEffect(() => {
+  //   if (formData?.siteId) {
+  //     getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
+  //       .then((res) => {
+  //         setProject(res?.data?.data?.projects || [])
+  //       })
+  //       .catch((error) => {
+  //         console.log('Error fetching projects:', error)
+  //       })
+  //   } else {
+  //     setProject([])
+  //     setFormData((prev) => ({ ...prev, projectId: '' }))
+  //   }
+  // }, [formData?.siteId])
 
   //  Pre-fill form if editing
+
   useEffect(() => {
     if (modalData) {
       setFormData({
@@ -66,7 +67,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
         floor: modalData?.floor || '',
         areaSqFt: modalData?.areaSqFt || '',
         siteId: modalData?.siteId?._id || '',
-        projectId: modalData?.projectId?._id || '',
+        // projectId: modalData?.projectId?._id || '',
         unitTypeId: modalData?.unitTypeId?._id || '',
         status: modalData?.status ?? true,
       })
@@ -77,7 +78,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
         floor: '',
         areaSqFt: '',
         siteId: '',
-        projectId: '',
+        // projectId: '',
         unitTypeId: '',
         status: true,
       })
@@ -91,7 +92,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
       floor: '',
       areaSqFt: '',
       siteId: '',
-      projectId: '',
+      // projectId: '',
       unitTypeId: '',
       status: true,
     })
@@ -115,7 +116,6 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
       setErrors((prev) => ({
         ...prev,
         [name]: '',
-        z,
       }))
     }
   }
@@ -128,7 +128,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     if (!formData?.floor) newErrors.floor = 'Floor is required'
     if (!formData?.areaSqFt) newErrors.areaSqFt = 'Area is required'
     if (!formData?.siteId) newErrors.siteId = 'Site is required'
-    if (!formData?.projectId) newErrors.projectId = 'Project is required'
+    // if (!formData?.projectId) newErrors.projectId = 'Project is required'
     if (!formData?.unitTypeId) newErrors.unitTypeId = 'Unit Type is required'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -182,11 +182,11 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     </option>
   ))
 
-  const projectOption = project?.map((item) => (
-    <option key={item?._id} value={item?._id}>
-      {item?.projectName}
-    </option>
-  ))
+  // const projectOption = project?.map((item) => (
+  //   <option key={item?._id} value={item?._id}>
+  //     {item?.projectName}
+  //   </option>
+  // ))
 
   const unitTypeOption = unitType?.map((item) => (
     <option key={item?._id} value={item?._id}>
@@ -221,7 +221,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
           </div>
 
           {/* Project Dropdown  */}
-          <div className="col-md-6 mb-3">
+          {/* <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Select Project<span className="text-danger">*</span>
             </label>
@@ -236,7 +236,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
               {projectOption}
             </select>
             {errors?.projectId && <div className="invalid-feedback">{errors?.projectId}</div>}
-          </div>
+          </div> */}
 
           {/* Unit Type */}
           <div className="col-md-6 mb-3">

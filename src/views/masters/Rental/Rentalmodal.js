@@ -10,7 +10,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
   const [errors, setErrors] = useState({})
   const [landlords, setLandlords] = useState([])
   const [sites, setSites] = useState([])
-  const [projects, setProjects] = useState([])
+  // const [projects, setProjects] = useState([])
   const [units, setUnits] = useState([])
   const imageInputRefs = React.useRef([])
 
@@ -21,12 +21,58 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     address: '',
     profilePic: '',
     siteId: '',
-    projectId: '',
+    // projectId: '',
     unitId: '',
     landlordId: '',
     billTo: 'tenant',
     addedBy: 'landlord',
   })
+
+  // // 🔹 Fetch all sites when modal opens
+  // useEffect(() => {
+  //   if (isModalOpen) {
+  //     getRequest('sites?isPagination=false')
+  //       .then((res) => setSites(res?.data?.data?.sites || []))
+  //       .catch((err) => console.error('Error fetching sites:', err))
+  //   }
+  // }, [isModalOpen])
+
+  // // // 🔹 Fetch projects based on selected site
+  // // useEffect(() => {
+  // //   if (!formData.siteId) {
+  // //     setProjects([])
+  // //     setUnits([])
+  // //     setFormData((prev) => ({ ...prev, projectId: '', unitId: '', landlordId: '' }))
+  // //     return
+  // //   }
+  // //   getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
+  // //     .then((res) => setProjects(res?.data?.data?.projects || []))
+  // //     .catch((err) => console.error('Error fetching projects:', err))
+  // // }, [formData.siteId])
+
+  // // 🔹 Fetch units based on selected project
+  // useEffect(() => {
+  //   if (!formData.siteId) {
+  //     setUnits([])
+  //     setFormData((prev) => ({ ...prev, unitId: '', landlordId: '' }))
+  //     return
+  //   }
+  //   getRequest(`units?isPagination=false&siteId=${formData.siteId}`)
+  //     .then((res) => setUnits(res?.data?.data?.units || []))
+  //     .catch((err) => console.error('Error fetching units:', err))
+  // }, [formData.siteId])
+
+  // // 🔹 Fetch landlords based on selected unit
+  // useEffect(() => {
+  //   if (!formData.unitId) {
+  //     setLandlords([])
+  //     setFormData((prev) => ({ ...prev, landlordId: '' }))
+  //     return
+  //   }
+  //   getRequest(`landlords?isPagination=false&unitId=${formData.unitId}`)
+  //     .then((res) => setLandlords(res?.data?.data?.data || []))
+  //     .catch((err) => console.error('Error fetching landlords:', err))
+  // }, [formData.unitId])
 
   // 🔹 Fetch all sites when modal opens
   useEffect(() => {
@@ -37,30 +83,19 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     }
   }, [isModalOpen])
 
-  // 🔹 Fetch projects based on selected site
+  // 🔹 Fetch units based on selected site
   useEffect(() => {
     if (!formData.siteId) {
-      setProjects([])
       setUnits([])
-      setFormData((prev) => ({ ...prev, projectId: '', unitId: '', landlordId: '' }))
-      return
-    }
-    getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
-      .then((res) => setProjects(res?.data?.data?.projects || []))
-      .catch((err) => console.error('Error fetching projects:', err))
-  }, [formData.siteId])
-
-  // 🔹 Fetch units based on selected project
-  useEffect(() => {
-    if (!formData.projectId || !formData.siteId) {
-      setUnits([])
+      setLandlords([])
       setFormData((prev) => ({ ...prev, unitId: '', landlordId: '' }))
       return
     }
-    getRequest(`units?isPagination=false&siteId=${formData.siteId}&projectId=${formData.projectId}`)
+
+    getRequest(`units?isPagination=false&siteId=${formData.siteId}`)
       .then((res) => setUnits(res?.data?.data?.units || []))
       .catch((err) => console.error('Error fetching units:', err))
-  }, [formData.projectId, formData.siteId])
+  }, [formData.siteId])
 
   // 🔹 Fetch landlords based on selected unit
   useEffect(() => {
@@ -69,6 +104,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
       setFormData((prev) => ({ ...prev, landlordId: '' }))
       return
     }
+
     getRequest(`landlords?isPagination=false&unitId=${formData.unitId}`)
       .then((res) => setLandlords(res?.data?.data?.data || []))
       .catch((err) => console.error('Error fetching landlords:', err))
@@ -84,7 +120,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
         address: modalData?.address || '',
         profilePic: modalData?.profilePic || '',
         siteId: modalData?.siteId?._id || '',
-        projectId: modalData?.projectId?._id || '',
+        // projectId: modalData?.projectId?._id || '',
         unitId: modalData?.unitId?._id || '',
         landlordId: modalData?.landlordId?._id || '',
         billTo: modalData?.billTo || 'tenant',
@@ -122,7 +158,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
       newErrors.phone = 'Enter a valid 10-digit phone number'
     if (!formData.address?.trim()) newErrors.address = 'Address is required'
     if (!formData.siteId) newErrors.siteId = 'Select site'
-    if (!formData.projectId) newErrors.projectId = 'Select project'
+    // if (!formData.projectId) newErrors.projectId = 'Select project'
     if (!formData.unitId) newErrors.unitId = 'Select unit'
     if (!formData.landlordId) newErrors.landlordId = 'Select landlord'
     if (!formData.profilePic) newErrors.profilePic = 'Profile image is required'
@@ -207,7 +243,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
       address: '',
       profilePic: '',
       siteId: '',
-      projectId: '',
+      // projectId: '',
       unitId: '',
       landlordId: '',
       billTo: 'tenant',
@@ -251,7 +287,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
               {errors.siteId && <div className="text-danger small">{errors.siteId}</div>}
             </div>
 
-            <div className="col-md-6 mb-3">
+            {/* <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">
                 Project<span className="text-danger">*</span>
               </label>
@@ -269,11 +305,10 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
                 className={errors.projectId ? 'is-invalid w-100' : 'w-100'}
               />
               {errors.projectId && <div className="text-danger small">{errors.projectId}</div>}
-            </div>
-          </div>
+            </div> */}
 
-          {/* 🔹 Row 2: Unit & Landlord */}
-          <div className="row">
+            {/* 🔹 Row 2: Unit & Landlord */}
+
             <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">
                 Unit<span className="text-danger">*</span>
@@ -287,7 +322,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
                   setFormData((p) => ({ ...p, unitId: value, landlordId: '' }))
                   if (value) setErrors((prev) => ({ ...prev, unitId: '' })) // ✅ clear error
                 }}
-                disabled={!formData.projectId}
+                disabled={!formData.siteId}
                 options={units.map((u) => ({ value: u._id, label: u.unitNumber }))}
                 className={errors.unitId ? 'is-invalid w-100' : 'w-100'}
               />
@@ -313,10 +348,9 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
               />
               {errors.landlordId && <div className="text-danger small">{errors.landlordId}</div>}
             </div>
-          </div>
 
-          {/* 🔹 Row 3: Name & Email */}
-          <div className="row">
+            {/* 🔹 Row 3: Name & Email */}
+
             <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">
                 Name<span className="text-danger">*</span>
@@ -343,10 +377,9 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
               />
               {errors.email && <div className="invalid-feedback">{errors.email}</div>}
             </div>
-          </div>
 
-          {/* 🔹 Row 4: Phone & Address */}
-          <div className="row">
+            {/* 🔹 Row 4: Phone & Address */}
+
             <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">
                 Phone<span className="text-danger">*</span>
@@ -377,10 +410,9 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
               />
               {errors.address && <div className="invalid-feedback">{errors.address}</div>}
             </div>
-          </div>
 
-          {/* 🔹 Row 5: Profile Pic & Bill To */}
-          <div className="row">
+            {/* 🔹 Row 5: Profile Pic & Bill To */}
+
             <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">
                 Profile Image<span className="text-danger">*</span>

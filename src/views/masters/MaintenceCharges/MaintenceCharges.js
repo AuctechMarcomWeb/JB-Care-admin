@@ -259,13 +259,14 @@ const MaintenceCharges = () => {
                 <tr>
                   <th className="px-6 py-3 text-left">Sr. No.</th>
                   <th className="px-6 py-3 text-left">Site Name</th>
-                  <th className="px-6 py-3 text-left">Unit Number</th>
+                  <th className="px-6 py-3 text-left">Unit </th>
                   <th className="px-6 py-3 text-left">Rate Type</th>
                   <th className="px-6 py-3 text-left flex items-center gap-1">
-                    Rate (<IndianRupee className="w-4 h-4 inline" />)
+                    Rate(
+                    <IndianRupee className="w-4 h-4 inline" />)
                   </th>
                   <th className="px-6 py-3 text-left">GST (%)</th>
-                  <th className="px-6 py-3 text-left">Date</th>
+                  {/* <th className="px-6 py-3 text-left">Date</th> */}
                   <th className="px-6 py-3 text-left">Status</th>
                   <th className="px-6 py-3 text-left">Actions</th>
                 </tr>
@@ -286,7 +287,7 @@ const MaintenceCharges = () => {
                     </td>
                     <td className="px-6 py-4">{item?.rateValue}</td>
                     <td className="px-6 py-4">{item?.gstPercent}</td>
-                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
+                    {/* <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td> */}
                     <td className="px-6 py-4">
                       {item?.isActive ? (
                         <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>

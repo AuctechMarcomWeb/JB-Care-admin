@@ -28,11 +28,11 @@ const Unit = () => {
 
   // 🔹 Site & Project filters
   const [sites, setSites] = useState([])
-  const [projects, setProjects] = useState([])
+  // const [projects, setProjects] = useState([])
   const [selectedSite, setSelectedSite] = useState('')
-  const [selectedProject, setSelectedProject] = useState('')
+  // const [selectedProject, setSelectedProject] = useState('')
   const [tempSelectedSite, setTempSelectedSite] = useState('')
-  const [tempSelectedProject, setTempSelectedProject] = useState('')
+  // const [tempSelectedProject, setTempSelectedProject] = useState('')
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
@@ -48,18 +48,18 @@ const Unit = () => {
   }, [])
 
   // 🔹 Fetch projects (filtered by selected site)
-  useEffect(() => {
-    if (!tempSelectedSite) {
-      setProjects([])
-      return
-    }
-    getRequest(`projects?isPagination=false&siteId=${tempSelectedSite}`)
-      .then((res) => {
-        const responseData = res?.data?.data
-        setProjects(responseData?.projects || [])
-      })
-      .catch((error) => console.error('Error fetching projects:', error))
-  }, [tempSelectedSite])
+  // useEffect(() => {
+  //   if (!tempSelectedSite) {
+  //     setProjects([])
+  //     return
+  //   }
+  //   getRequest(`projects?isPagination=false&siteId=${tempSelectedSite}`)
+  //     .then((res) => {
+  //       const responseData = res?.data?.data
+  //       setProjects(responseData?.projects || [])
+  //     })
+  //     .catch((error) => console.error('Error fetching projects:', error))
+  // }, [tempSelectedSite])
 
   // 🔹 Fetch Units (with filters)
   useEffect(() => {
@@ -67,7 +67,7 @@ const Unit = () => {
     getRequest(
       `units?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}${
         selectedSite ? `&siteId=${selectedSite}` : ''
-      }${selectedProject ? `&projectId=${selectedProject}` : ''}`,
+      }`,
     )
       .then((res) => {
         const responseData = res?.data?.data
@@ -76,9 +76,9 @@ const Unit = () => {
       })
       .catch((error) => console.error('Error fetching units:', error))
       .finally(() => setLoading(false))
-  }, [page, limit, searchTerm, fromDate, toDate, selectedSite, selectedProject, updateStatus])
+  }, [page, limit, searchTerm, fromDate, toDate, selectedSite, updateStatus])
 
-  // ✅ Delete handler
+  //  Delete handler
   const confirmDelete = () => {
     deleteRequest(`units/${selectedItem?._id}`)
       .then((res) => {
@@ -161,7 +161,7 @@ const Unit = () => {
           </div>
 
           {/* 🔹 Project Filter */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Project</label>
             <select
               value={tempSelectedProject}
@@ -176,7 +176,7 @@ const Unit = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
 
           {/* From Date */}
           <div className="flex flex-col">
@@ -222,7 +222,6 @@ const Unit = () => {
                 setFromDate(tempFromDate)
                 setToDate(tempToDate)
                 setSelectedSite(tempSelectedSite)
-                setSelectedProject(tempSelectedProject)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
@@ -231,7 +230,7 @@ const Unit = () => {
               Apply
             </button>
 
-            {(fromDate || toDate || searchTerm || selectedSite || selectedProject) && (
+            {(fromDate || toDate || searchTerm || selectedSite) && (
               <button
                 onClick={() => {
                   setTempFromDate('')
@@ -240,9 +239,7 @@ const Unit = () => {
                   setToDate('')
                   setSearchTerm('')
                   setTempSelectedSite('')
-                  setTempSelectedProject('')
                   setSelectedSite('')
-                  setSelectedProject('')
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
@@ -274,12 +271,12 @@ const Unit = () => {
               <thead>
                 <tr>
                   <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Unit Number</th>
+                  <th className="px-6 py-3">Unit</th>
                   <th className="px-6 py-3">Block</th>
                   <th className="px-6 py-3">Floor</th>
                   <th className="px-6 py-3">Area Sqft</th>
                   <th className="px-6 py-3">Site Name</th>
-                  <th className="px-6 py-3">Project Name</th>
+                  {/* <th className="px-6 py-3">Project Name</th> */}
                   <th className="px-6 py-3">Unit Type</th>
                   <th className="px-6 py-3">Date</th>
                   <th className="px-6 py-3">Status</th>

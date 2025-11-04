@@ -30,10 +30,10 @@ const Biling = () => {
   // ✅ Fetch Data with Loader
   useEffect(() => {
     setLoading(true)
-    getRequest(`maintenance-bill`)
-      // getRequest(
-      //   `maintenance-bill?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
-      // )
+    // getRequest(`maintenance-bill`)
+    getRequest(
+      `maintenance-bill?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
+    )
       .then((res) => {
         const responseData = res?.data?.data
         console.log('dfdf', res)
@@ -45,8 +45,7 @@ const Biling = () => {
         console.log('error', error)
       })
       .finally(() => setLoading(false)) // ✅ stop loader
-  }, [updateStatus])
-  // }, [searchTerm, page, limit, fromDate, toDate, updateStatus])
+  }, [searchTerm, page, limit, fromDate, toDate, updateStatus])
 
   // ✅ Delete handler
   const confirmDelete = () => {
@@ -264,15 +263,15 @@ const Biling = () => {
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => {
                           setSelectedItem(item)
-                          setShowDeleteModal(true)
+                          setShowDeleteModal(true) 
                         }}
                         className="text-red-600 hover:text-red-800"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
+                      </button> */}
                     </td>
                   </tr>
                 ))}
