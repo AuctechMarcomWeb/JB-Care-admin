@@ -29,8 +29,10 @@ const ComplaintsModal = ({
     complaintDescription: '',
     images: [],
     action: '',
-    supervisorComments: '',
-    supervisorImages: [],
+    supervisorDetails: {
+      comments: '',
+      images: [],
+    },
     materialDemand: {
       materialName: '',
       quantity: '',
@@ -86,8 +88,11 @@ const ComplaintsModal = ({
         complaintDescription: modalData?.complaintDescription || '',
         images: modalData?.images || [],
         action: actionFromStatus || '',
-        supervisorComments: modalData?.supervisorComments || '',
-        supervisorImages: modalData?.supervisorImages || [],
+        comment: modalData?.comment || '',
+        supervisorDetails: modalData?.supervisorDetail || {
+          comments: '',
+          images: [],
+        },
         materialDemand: modalData?.materialDemand || {
           materialName: '',
           quantity: '',
@@ -96,6 +101,7 @@ const ComplaintsModal = ({
         },
         resolvedImages: modalData?.resolvedImages || [],
         customerConfirmed: modalData?.customerConfirmed || true,
+        supervisorId: '690316e65ea1a583e2aee8b6',
       })
 
       console.log('foormdata on edit mode', formData)
@@ -229,15 +235,42 @@ const ComplaintsModal = ({
   }
 
   //supervisor image upload
+  const handleSupervisorDetailsChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      supervisorDetails: {
+        ...prev.supervisorDetails,
+        [name]: value,
+      },
+    }))
+
+    // Clear error dynamically if exists
+    setErrors((prev) => {
+      if (prev.supervisorDetails?.[name]) {
+        const updated = { ...prev }
+        updated.supervisorDetails = { ...prev.supervisorDetails }
+        delete updated.supervisorDetails[name]
+        if (Object.keys(updated.supervisorDetails).length === 0) {
+          delete updated.supervisorDetails
+        }
+        return updated
+      }
+      return prev
+    })
+  }
+
   const handleSupervisorImageUpload = (e) => {
     const images = Array.from(e.target.files)
 
-    // 🔹 Clear previous error if any
-    if (errors.supervisorImages) setErrors((prev) => ({ ...prev, supervisorImages: null }))
+    if (errors.supervisorDetails?.images)
+      setErrors((prev) => ({
+        ...prev,
+        supervisorDetails: { ...prev.supervisorDetails, images: null },
+      }))
 
     images.forEach((image) => {
       const tempId = URL.createObjectURL(image)
-      // Add temporary preview (loading placeholder)
       setUploadingSupervisorImages((prev) => [...prev, tempId])
 
       fileUpload({
@@ -247,16 +280,14 @@ const ComplaintsModal = ({
         .then((res) => {
           setFormData((prev) => ({
             ...prev,
-            supervisorImages: [...(prev.supervisorImages || []), res.data?.imageUrl],
+            supervisorDetails: {
+              ...prev.supervisorDetails,
+              images: [...(prev.supervisorDetails.images || []), res.data?.imageUrl], // ✅ correct path
+            },
           }))
         })
-        .catch((error) => {
-          console.error('Supervisor image upload failed:', error)
-        })
-        .finally(() => {
-          // remove tempId once upload done
-          setUploadingSupervisorImages((prev) => prev.filter((id) => id !== tempId))
-        })
+        .catch((error) => console.error('Supervisor image upload failed:', error))
+        .finally(() => setUploadingSupervisorImages((prev) => prev.filter((id) => id !== tempId)))
     })
   }
 
@@ -290,26 +321,7 @@ const ComplaintsModal = ({
     })
   }
 
-  // ✅ Validation
-  // const validateForm = () => {
-  //   const newErrors = {}
-
-  //   if (!formData.userId) newErrors.userId = 'User is required'
-  //   if (!formData.siteId) newErrors.siteId = 'Site is required (auto-filled)'
-  //   if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
-  //   if (!formData.unitId) newErrors.unitId = 'Unit is required (auto-filled)'
-
-  //   if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
-  //   if (!formData.complaintDescription.trim())
-  //     newErrors.complaintDescription = 'Description is required'
-
-  //   if (!formData.images || formData.images.length === 0)
-  //     newErrors.images = 'At least one image is required'
-
-  //   setErrors(newErrors)
-  //   return Object.keys(newErrors).length === 0
-  // }
-  // ✅ Validation
+  // Validation
   const validateForm = () => {
     const newErrors = {}
 
@@ -330,10 +342,14 @@ const ComplaintsModal = ({
     if (modalData) {
       switch (formData.action) {
         case 'review':
-          if (!formData.supervisorComments?.trim())
-            newErrors.supervisorComments = 'Supervisor comments are required'
-          if (!formData.supervisorImages?.length)
-            newErrors.supervisorImages = 'Supervisor images are required'
+          newErrors.supervisorDetails = {}
+          if (!formData.supervisorDetails?.comments?.trim())
+            newErrors.supervisorDetails.comments = 'comments  is required'
+          if (!formData.supervisorDetails?.images?.length)
+            newErrors.supervisorDetails.images = 'Images is required'
+          // Clean up empty nested object if no error
+          if (Object.keys(newErrors.supervisorDetails).length === 0)
+            delete newErrors.supervisorDetails
           break
 
         case 'raiseMaterialDemand':
@@ -345,7 +361,7 @@ const ComplaintsModal = ({
           if (!formData.materialDemand?.reason?.trim())
             newErrors.materialDemand.reason = 'Reason is required'
           if (!formData.materialDemand?.images?.trim())
-            newErrors.materialDemand.reason = 'Reason is required'
+            newErrors.materialDemand.images = 'Images is required'
           // Clean up empty nested object if no error
           if (Object.keys(newErrors.materialDemand).length === 0) delete newErrors.materialDemand
           break
@@ -671,20 +687,35 @@ const ComplaintsModal = ({
         {formData.action === 'review' && (
           <div className="row">
             {/* Supervisor Comments */}
-            <div className="col-md-6 mb-3">
+            {/* <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">
-                Supervisor Comments <span className="text-danger">*</span>
+                Comment <span className="text-danger">*</span>
               </label>
               <textarea
-                name="supervisorComments"
+                name="comments"
                 rows="2"
-                value={formData.supervisorComments || ''}
-                onChange={handleChange}
-                className={`form-control ${errors.supervisorComments ? 'is-invalid' : ''}`}
+                value={formData?.comment || ''}
+                onChange={handleSupervisorDetailsChange}
+                className={`form-control ${errors.comment ? 'is-invalid' : ''}`}
                 placeholder="Enter comments here..."
               />
-              {errors.supervisorComments && (
-                <div className="invalid-feedback">{errors.supervisorComments}</div>
+              {errors.comment && <div className="invalid-feedback">{errors.comment}</div>}
+            </div> */}
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Comments <span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                name="comments"
+                value={formData?.supervisorDetails?.comments || ''}
+                onChange={handleSupervisorDetailsChange}
+                required
+                className={`form-control ${errors.supervisorDetails?.comments ? 'is-invalid' : ''}`}
+                placeholder="Enter material name (e.g. Pipe)"
+              />
+              {errors.supervisorDetails?.comments && (
+                <div className="invalid-feedback">{errors.supervisorDetails.comments}</div>
               )}
             </div>
 
@@ -698,19 +729,20 @@ const ComplaintsModal = ({
                 type="file"
                 multiple
                 onChange={handleSupervisorImageUpload}
-                className={`form-control ${errors.supervisorImages ? 'is-invalid' : ''}`}
+                className={`form-control ${errors.supervisorDetails?.images ? 'is-invalid' : ''}`}
                 ref={(el) => (imagesInputRefs.current[1] = el)}
               />
 
-              {errors.supervisorImages && (
-                <div className="invalid-feedback">{errors.supervisorImages}</div>
+              {errors.supervisorDetails?.images && (
+                <div className="invalid-feedback">{errors?.supervisorDetails?.images}</div>
               )}
 
-              {(formData?.supervisorImages?.length > 0 || uploadingSupervisorImages.length > 0) && (
+              {(formData?.supervisorDetails?.images?.length > 0 ||
+                uploadingSupervisorImages.length > 0) && (
                 <div className="col-md-12 mt-2">
                   <div className="d-flex flex-wrap gap-2">
                     {/* Uploaded Supervisor Images */}
-                    {formData.supervisorImages?.map((item, index) => (
+                    {formData.supervisorDetails.images.map((item, index) => (
                       <div
                         key={`sup-uploaded-${index}`}
                         style={{
@@ -737,7 +769,10 @@ const ComplaintsModal = ({
                           onClick={() => {
                             setFormData((prev) => ({
                               ...prev,
-                              supervisorImages: prev.supervisorImages.filter((_, i) => i !== index),
+                              supervisorDetails: {
+                                ...prev.supervisorDetails,
+                                images: prev.supervisorDetails.images.filter((_, i) => i !== index),
+                              },
                             }))
                             if (imagesInputRefs.current[1]) imagesInputRefs.current[1].value = ''
                           }}
