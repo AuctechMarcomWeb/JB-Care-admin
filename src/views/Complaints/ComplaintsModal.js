@@ -4,6 +4,10 @@ import React, { useState, useEffect } from 'react'
 import { Modal } from 'antd'
 import toast from 'react-hot-toast'
 import { fileUpload, getRequest, patchRequest, postRequest, putRequest } from '../../Helpers'
+import SupervisorReviewSection from './SupervisorReviewSection'
+import MaterialDemandSection from './MaterialDemandSection'
+import ResolutionSection from './ResolutionSection'
+import VerifyResolutionSection from './VerifyResolutionSection'
 
 const ComplaintsModal = ({
   setUpdateStatus,
@@ -16,6 +20,9 @@ const ComplaintsModal = ({
   const [uploadingImages, setUploadingImages] = useState([])
   const [uploadingSupervisorImages, setUploadingSupervisorImages] = useState([])
   const [uploadingResolvedImages, setUploadingResolvedImages] = useState([])
+  const [uploadingMaterialImages, setUploadingMaterialImages] = useState([])
+  const [uploadingClosedImages, setUploadingClosedImages] = useState([])
+
   const [errors, setErrors] = useState({})
   const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(null)
@@ -37,13 +44,21 @@ const ComplaintsModal = ({
       materialName: '',
       quantity: '',
       reason: '',
+      images: [],
     },
-    resolvedImages: [],
-    customerConfirmed: true,
+    // resolvedImages: [],
+    resolution: {
+      resolvedBy: '671fc84a3c29f9a5f1b23456',
+      remarks: 'Leak fixed and area cleaned',
+      images: ['https://example.com/resolution.jpg'],
+    },
+    comment: '',
+    closedImages: [],
     status: '',
     addedBy: 'Admin',
     userRole: 'Admin',
   })
+  console.log('formData', formData)
 
   // Fetch Users Once
   useEffect(() => {
@@ -61,8 +76,26 @@ const ComplaintsModal = ({
   // Prefill Edit Mode
   useEffect(() => {
     if (modalData) {
-      let actionFromStatus = ''
+      // 🧩 Step 1: Find latest entry from statusHistory matching current status
+      const latestStatusEntry = [...(modalData.statusHistory || [])]
+        .reverse()
+        .find((entry) => entry.status === modalData.status)
 
+      // 🧩 Step 2: Prepare default form data
+      const defaultSupervisorDetails = { supervisorId: '', comments: '', images: [] }
+      const defaultMaterialDemand = { materialName: '', quantity: '', reason: '', images: [] }
+      const defaultResolution = { resolvedBy: '671fc84a3c29f9a5f1b23456', remarks: '', images: [] }
+
+      // 🧩 Step 3: Extract details from matched history entry
+      const supervisorDetails = latestStatusEntry?.supervisorDetails || defaultSupervisorDetails
+      const materialDemand = latestStatusEntry?.materialDemand || defaultMaterialDemand
+      const resolution = latestStatusEntry?.resolution || defaultResolution
+      const comment = latestStatusEntry?.comment || ''
+      const closedImages = latestStatusEntry?.closedImages || []
+      // const closedBy = latestStatusEntry?.closedBy || ''
+
+      // 🧩 Step 4: Determine which action corresponds to current status
+      let actionFromStatus = ''
       switch (modalData.status) {
         case 'Under Review':
           actionFromStatus = 'review'
@@ -79,6 +112,8 @@ const ComplaintsModal = ({
         default:
           actionFromStatus = ''
       }
+
+      // 🧩 Step 5: Update the formData with everything prefilled
       setFormData({
         userId: modalData?.userId?._id || '',
         siteId: modalData?.siteId?._id || '',
@@ -87,29 +122,67 @@ const ComplaintsModal = ({
         complaintTitle: modalData?.complaintTitle || '',
         complaintDescription: modalData?.complaintDescription || '',
         images: modalData?.images || [],
-        action: actionFromStatus || '',
-        comment: modalData?.comment || '',
-        supervisorDetails: modalData?.supervisorDetail || {
-          comments: '',
-          images: [],
-        },
-        materialDemand: modalData?.materialDemand || {
-          materialName: '',
-          quantity: '',
-          reason: '',
-          images: [],
-        },
-        resolvedImages: modalData?.resolvedImages || [],
-        customerConfirmed: modalData?.customerConfirmed || true,
-        supervisorId: '690316e65ea1a583e2aee8b6',
+        action: actionFromStatus,
+        supervisorDetails,
+        materialDemand,
+        resolution,
+        comment,
+        closedImages,
+        //  closedBy: '671fc84a3c29f9a5f1b99999',
+        userRole: 'Admin',
       })
 
-      console.log('foormdata on edit mode', formData)
-
+      // 🧩 Step 6: Also preselect the related user (optional)
       const user = users.find((u) => u._id === modalData?.userId?._id)
       if (user) setSelectedUser(user)
     }
   }, [modalData, users])
+
+  // // ✅ Auto-prefill action-specific sections before update
+  // useEffect(() => {
+  //   if (!modalData || !formData.action) return
+
+  //   switch (formData.action) {
+  //     case 'review':
+  //       if (modalData.supervisorDetails) {
+  //         setFormData((prev) => ({
+  //           ...prev,
+  //           supervisorDetails: modalData.supervisorDetails,
+  //         }))
+  //       }
+  //       break
+
+  //     case 'raiseMaterialDemand':
+  //       if (modalData.materialDemand) {
+  //         setFormData((prev) => ({
+  //           ...prev,
+  //           materialDemand: modalData.materialDemand,
+  //         }))
+  //       }
+  //       break
+
+  //     case 'resolve':
+  //       if (modalData.resolution) {
+  //         setFormData((prev) => ({
+  //           ...prev,
+  //           resolution: modalData.resolution,
+  //         }))
+  //       }
+  //       break
+
+  //     case 'verifyResolution':
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         comment: modalData.comment || '',
+  //         closedImages: modalData.closedImages || [],
+  //       }))
+  //       break
+
+  //     default:
+  //       break
+  //   }
+  // }, [modalData, formData.action])
+  // console.log('modalData.supervisorDetails', modalData?.supervisorDetails?.comment)
 
   // ✅ Handle Change
   const handleChange = (e) => {
@@ -132,163 +205,6 @@ const ComplaintsModal = ({
         }))
       }
     }
-  }
-  //MaterialDemandChange
-  // const handleMaterialDemandChange = (e) => {
-  //   const { name, value } = e.target
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     materialDemand: {
-  //       ...prev.materialDemand,
-  //       [name]: value,
-  //     },
-  //   }))
-  //   if (errors[`materialDemand.${name}`]) {
-  //     setErrors((prev) => ({ ...prev, [`materialDemand.${name}`]: '' }))
-  //   }
-  // }
-
-  const handleMaterialDemandChange = (e) => {
-    const { name, value } = e.target
-
-    // ✅ Update form data
-    setFormData((prev) => ({
-      ...prev,
-      materialDemand: {
-        ...prev.materialDemand,
-        [name]: value,
-      },
-    }))
-
-    // ✅ Clear nested error dynamically
-    setErrors((prev) => {
-      if (prev.materialDemand && prev.materialDemand[name]) {
-        const updated = { ...prev }
-        updated.materialDemand = { ...prev.materialDemand }
-        delete updated.materialDemand[name]
-
-        // Remove empty materialDemand object to keep error state clean
-        if (Object.keys(updated.materialDemand).length === 0) {
-          delete updated.materialDemand
-        }
-
-        return updated
-      }
-      return prev
-    })
-  }
-  // ✅ Handle Resolved Image Upload
-  const handleMaterialDemandImageUpload = (e) => {
-    const imageFiles = Array.from(e.target.files)
-
-    if (errors.resolvedImages) setErrors((prev) => ({ ...prev, resolvedImages: null }))
-
-    imageFiles.forEach((image) => {
-      const tempId = URL.createObjectURL(image)
-      setUploadingResolvedImages((prev) => [...prev, tempId])
-
-      fileUpload({
-        url: `upload`,
-        cred: { image },
-      })
-        .then((res) => {
-          setFormData((prev) => ({
-            ...prev,
-            resolvedImages: [...(prev.resolvedImages || []), res.data?.imageUrl],
-          }))
-        })
-        .catch((error) => {
-          console.error('Resolved image upload failed:', error)
-        })
-        .finally(() => {
-          setUploadingResolvedImages((prev) => prev.filter((id) => id !== tempId))
-        })
-    })
-  }
-  // ✅ Handle Resolved Image Upload
-  const handleResolvedImageUpload = (e) => {
-    const imageFiles = Array.from(e.target.files)
-
-    if (errors.resolvedImages) setErrors((prev) => ({ ...prev, resolvedImages: null }))
-
-    imageFiles.forEach((image) => {
-      const tempId = URL.createObjectURL(image)
-      setUploadingResolvedImages((prev) => [...prev, tempId])
-
-      fileUpload({
-        url: `upload`,
-        cred: { image },
-      })
-        .then((res) => {
-          setFormData((prev) => ({
-            ...prev,
-            resolvedImages: [...(prev.resolvedImages || []), res.data?.imageUrl],
-          }))
-        })
-        .catch((error) => {
-          console.error('Resolved image upload failed:', error)
-        })
-        .finally(() => {
-          setUploadingResolvedImages((prev) => prev.filter((id) => id !== tempId))
-        })
-    })
-  }
-
-  //supervisor image upload
-  const handleSupervisorDetailsChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      supervisorDetails: {
-        ...prev.supervisorDetails,
-        [name]: value,
-      },
-    }))
-
-    // Clear error dynamically if exists
-    setErrors((prev) => {
-      if (prev.supervisorDetails?.[name]) {
-        const updated = { ...prev }
-        updated.supervisorDetails = { ...prev.supervisorDetails }
-        delete updated.supervisorDetails[name]
-        if (Object.keys(updated.supervisorDetails).length === 0) {
-          delete updated.supervisorDetails
-        }
-        return updated
-      }
-      return prev
-    })
-  }
-
-  const handleSupervisorImageUpload = (e) => {
-    const images = Array.from(e.target.files)
-
-    if (errors.supervisorDetails?.images)
-      setErrors((prev) => ({
-        ...prev,
-        supervisorDetails: { ...prev.supervisorDetails, images: null },
-      }))
-
-    images.forEach((image) => {
-      const tempId = URL.createObjectURL(image)
-      setUploadingSupervisorImages((prev) => [...prev, tempId])
-
-      fileUpload({
-        url: `upload`,
-        cred: { image },
-      })
-        .then((res) => {
-          setFormData((prev) => ({
-            ...prev,
-            supervisorDetails: {
-              ...prev.supervisorDetails,
-              images: [...(prev.supervisorDetails.images || []), res.data?.imageUrl], // ✅ correct path
-            },
-          }))
-        })
-        .catch((error) => console.error('Supervisor image upload failed:', error))
-        .finally(() => setUploadingSupervisorImages((prev) => prev.filter((id) => id !== tempId)))
-    })
   }
 
   // ✅ Handle Image Upload
@@ -345,7 +261,7 @@ const ComplaintsModal = ({
           newErrors.supervisorDetails = {}
           if (!formData.supervisorDetails?.comments?.trim())
             newErrors.supervisorDetails.comments = 'comments  is required'
-          if (!formData.supervisorDetails?.images?.length)
+          if (!formData.supervisorDetails?.images?.trim())
             newErrors.supervisorDetails.images = 'Images is required'
           // Clean up empty nested object if no error
           if (Object.keys(newErrors.supervisorDetails).length === 0)
@@ -411,13 +327,15 @@ const ComplaintsModal = ({
   // ✅ Update Complaint
   const handleEdit = async (e) => {
     e.preventDefault()
-    if (!validateForm()) return
-
+    console.log('button hits')
+    // if (!validateForm()) return
     setLoading(true)
     try {
+      console.log('button hits 2')
+
       const res = await patchRequest({
         url: `complaints/${modalData._id}`,
-        cred: { ...formData, userRole: 'Admin' },
+        cred: { ...formData },
       })
       console.log('dd', res?.data?.message)
 
@@ -685,337 +603,57 @@ const ComplaintsModal = ({
 
         {/* 🔹 Show only when Action = "review" */}
         {formData.action === 'review' && (
-          <div className="row">
-            {/* Supervisor Comments */}
-            {/* <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Comment <span className="text-danger">*</span>
-              </label>
-              <textarea
-                name="comments"
-                rows="2"
-                value={formData?.comment || ''}
-                onChange={handleSupervisorDetailsChange}
-                className={`form-control ${errors.comment ? 'is-invalid' : ''}`}
-                placeholder="Enter comments here..."
-              />
-              {errors.comment && <div className="invalid-feedback">{errors.comment}</div>}
-            </div> */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Comments <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                name="comments"
-                value={formData?.supervisorDetails?.comments || ''}
-                onChange={handleSupervisorDetailsChange}
-                required
-                className={`form-control ${errors.supervisorDetails?.comments ? 'is-invalid' : ''}`}
-                placeholder="Enter material name (e.g. Pipe)"
-              />
-              {errors.supervisorDetails?.comments && (
-                <div className="invalid-feedback">{errors.supervisorDetails.comments}</div>
-              )}
-            </div>
-
-            {/* Supervisor Images */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Supervisor Images <span className="text-danger">*</span>
-              </label>
-
-              <input
-                type="file"
-                multiple
-                onChange={handleSupervisorImageUpload}
-                className={`form-control ${errors.supervisorDetails?.images ? 'is-invalid' : ''}`}
-                ref={(el) => (imagesInputRefs.current[1] = el)}
-              />
-
-              {errors.supervisorDetails?.images && (
-                <div className="invalid-feedback">{errors?.supervisorDetails?.images}</div>
-              )}
-
-              {(formData?.supervisorDetails?.images?.length > 0 ||
-                uploadingSupervisorImages.length > 0) && (
-                <div className="col-md-12 mt-2">
-                  <div className="d-flex flex-wrap gap-2">
-                    {/* Uploaded Supervisor Images */}
-                    {formData.supervisorDetails.images.map((item, index) => (
-                      <div
-                        key={`sup-uploaded-${index}`}
-                        style={{
-                          position: 'relative',
-                          width: '70px',
-                          height: '70px',
-                          borderRadius: '6px',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <img
-                          src={item}
-                          alt={`supervisor-${index}`}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            borderRadius: '6px',
-                            border: '1px solid #ddd',
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              supervisorDetails: {
-                                ...prev.supervisorDetails,
-                                images: prev.supervisorDetails.images.filter((_, i) => i !== index),
-                              },
-                            }))
-                            if (imagesInputRefs.current[1]) imagesInputRefs.current[1].value = ''
-                          }}
-                          style={{
-                            position: 'absolute',
-                            top: '-5px',
-                            right: '-5px',
-                            background: 'red',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '50%',
-                            width: '20px',
-                            height: '20px',
-                            fontSize: '12px',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-
-                    {/* Uploading Supervisor Images (Spinners) */}
-                    {uploadingSupervisorImages.map((img, index) => (
-                      <div
-                        key={`sup-loading-${index}`}
-                        style={{
-                          width: '70px',
-                          height: '70px',
-                          borderRadius: '6px',
-                          backgroundColor: '#f3f3f3',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          border: '1px solid #ddd',
-                        }}
-                      >
-                        <div
-                          className="spinner-border text-primary"
-                          role="status"
-                          style={{ width: '25px', height: '25px' }}
-                        >
-                          <span className="visually-hidden">Loading...</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          <SupervisorReviewSection
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+            setErrors={setErrors}
+            uploadingSupervisorImages={uploadingSupervisorImages}
+            setUploadingSupervisorImages={setUploadingSupervisorImages}
+            fileUpload={fileUpload}
+          />
         )}
 
+        {/* 🔹 Show only when Action = "raiseMaterialDemand" */}
         {formData.action === 'raiseMaterialDemand' && (
-          <div className="row">
-            {/* 🔹 Material Name */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Material Name <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                name="materialName"
-                value={formData.materialDemand?.materialName || ''}
-                onChange={handleMaterialDemandChange}
-                required
-                className={`form-control ${
-                  errors.materialDemand?.materialName ? 'is-invalid' : ''
-                }`}
-                placeholder="Enter material name (e.g. Pipe)"
-              />
-              {errors.materialDemand?.materialName && (
-                <div className="invalid-feedback">{errors.materialDemand.materialName}</div>
-              )}
-            </div>
-
-            {/* 🔹 Quantity */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Quantity <span className="text-danger">*</span>
-              </label>
-              <input
-                type="number"
-                name="quantity"
-                value={formData.materialDemand?.quantity || ''}
-                onChange={handleMaterialDemandChange}
-                required
-                className={`form-control ${errors.materialDemand?.quantity ? 'is-invalid' : ''}`}
-                placeholder="Enter quantity"
-                min="1"
-              />
-              {errors.materialDemand?.quantity && (
-                <div className="invalid-feedback">{errors.materialDemand.quantity}</div>
-              )}
-            </div>
-
-            {/* 🔹 Reason (Full width) */}
-            <div className="col-md-12 mb-3">
-              <label className="form-label fw-bold">
-                Reason <span className="text-danger">*</span>
-              </label>
-              <textarea
-                name="reason"
-                rows="2"
-                value={formData.materialDemand?.reason || ''}
-                onChange={handleMaterialDemandChange}
-                required
-                className={`form-control ${errors.materialDemand?.reason ? 'is-invalid' : ''}`}
-                placeholder="Enter reason (e.g. Damaged during maintenance)"
-              />
-              {errors.materialDemand?.reason && (
-                <div className="invalid-feedback">{errors.materialDemand.reason}</div>
-              )}
-            </div>
-          </div>
+          <MaterialDemandSection
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+            setErrors={setErrors}
+            fileUpload={fileUpload}
+            imagesInputRefs={imagesInputRefs}
+            uploadingMaterialImages={uploadingMaterialImages}
+            setUploadingMaterialImages={setUploadingMaterialImages}
+          />
         )}
 
         {/* Conditionally Show When Action = "resolve" */}
         {formData.action === 'resolve' && (
-          <div className="col-md-12 mb-3">
-            <label className="form-label fw-bold">
-              Resolved Images <span className="text-danger">*</span>
-            </label>
-
-            <div className="d-flex align-items-start gap-3 flex-wrap">
-              {/* File Input */}
-              <div style={{ flex: '0 0 auto' }}>
-                <input
-                  type="file"
-                  className={`form-control ${errors.resolvedImages ? 'is-invalid' : ''}`}
-                  onChange={handleResolvedImageUpload}
-                  multiple
-                  required={!(formData.resolvedImages && formData.resolvedImages.length > 0)}
-                  ref={(el) => (imagesInputRefs.current[1] = el)}
-                  style={{ width: '250px' }}
-                />
-                {errors.resolvedImages && (
-                  <div className="invalid-feedback">{errors.resolvedImages}</div>
-                )}
-              </div>
-
-              {/* Image Previews (right beside input) */}
-              {(formData?.resolvedImages?.length > 0 || uploadingResolvedImages.length > 0) && (
-                <div className="d-flex flex-wrap gap-2">
-                  {formData.resolvedImages?.map((item, index) => (
-                    <div
-                      key={`resolved-${index}`}
-                      style={{
-                        position: 'relative',
-                        width: '70px',
-                        height: '70px',
-                        borderRadius: '6px',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <img
-                        src={item}
-                        alt={`resolved-${index}`}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          borderRadius: '6px',
-                          border: '1px solid #ddd',
-                        }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            resolvedImages: prev.resolvedImages.filter((_, i) => i !== index),
-                          }))
-                          if (imagesInputRefs.current[1]) imagesInputRefs.current[1].value = ''
-                        }}
-                        style={{
-                          position: 'absolute',
-                          top: '-5px',
-                          right: '-5px',
-                          background: 'red',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '50%',
-                          width: '20px',
-                          height: '20px',
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-
-                  {uploadingResolvedImages.map((img, index) => (
-                    <div
-                      key={`resolved-loading-${index}`}
-                      style={{
-                        width: '70px',
-                        height: '70px',
-                        borderRadius: '6px',
-                        backgroundColor: '#f3f3f3',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        border: '1px solid #ddd',
-                      }}
-                    >
-                      <div
-                        className="spinner-border text-primary"
-                        role="status"
-                        style={{ width: '25px', height: '25px' }}
-                      >
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          <ResolutionSection
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+            setErrors={setErrors}
+            fileUpload={fileUpload}
+            imagesInputRefs={imagesInputRefs}
+            uploadingResolvedImages={uploadingResolvedImages}
+            setUploadingResolvedImages={setUploadingResolvedImages}
+          />
         )}
 
         {/* ✅ Conditionally show Customer Confirmed checkbox */}
         {formData.action === 'verifyResolution' && (
-          <div className="mb-3 form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="customerConfirmed"
-              checked={formData.customerConfirmed || true}
-              required
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  customerConfirmed: e.target.checked,
-                }))
-              }
-            />
-            <label className="form-check-label" htmlFor="customerConfirmed">
-              Customer Confirmed
-            </label>
-          </div>
+          <VerifyResolutionSection
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+            setErrors={setErrors}
+            fileUpload={fileUpload}
+            imagesInputRefs={imagesInputRefs}
+            uploadingClosedImages={uploadingClosedImages}
+            setUploadingClosedImages={setUploadingClosedImages}
+          />
         )}
 
         {/* 🔹 Buttons */}
