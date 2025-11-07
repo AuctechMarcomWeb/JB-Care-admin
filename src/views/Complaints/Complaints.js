@@ -274,17 +274,17 @@ const Complaints = () => {
                   <th className="px-6 py-3">Title</th>
                   <th className="px-6 py-3">Description</th>
                   <th className="px-6 py-3">Image</th>
-                  <th className="px-6 py-3">Supervisor Name</th>
+                  {/* <th className="px-6 py-3">Supervisor Name</th>
                   <th className="px-6 py-3">Supervisor Images</th>
-                  <th className="px-6 py-3">Supervisor Comments</th>
-                  {data.some((item) => item.status === 'Material Demand Raised') && (
+                  <th className="px-6 py-3">Supervisor Comments</th> */}
+                  {/* {data.some((item) => item.status === 'Material Demand Raised') && (
                     <>
                       <th className="px-6 py-3">Material Name</th>
                       <th className="px-6 py-3">Material Count</th>
                       <th className="px-6 py-3">Reason</th>
                     </>
-                  )}
-                  <th className="px-6 py-3">Verified Date</th>
+                  )} */}
+                  {/* <th className="px-6 py-3">Verified Date</th> */}
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
@@ -321,7 +321,7 @@ const Complaints = () => {
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     </td>
-                    <td className="px-6 py-4">{item?.supervisorId?.name || '-'}</td>
+                    {/* <td className="px-6 py-4">{item?.supervisorId?.name || '-'}</td>
 
                     <td className="px-6 py-4">
                       <img
@@ -346,9 +346,9 @@ const Complaints = () => {
                           {item?.supervisorComments?.split(' ')?.length > 2 ? '…' : ''}
                         </span>
                       </Tooltip>
-                    </td>
+                    </td> */}
 
-                    {item?.status === 'Material Demand Raised' ? (
+                    {/* {item?.status === 'Material Demand Raised' ? (
                       <>
                         <td className="px-6 py-4">{item?.materialDemand?.materialName || '-'}</td>
                         <td className="px-6 py-4">{item?.materialDemand?.quantity || 0}</td>
@@ -383,7 +383,7 @@ const Complaints = () => {
                         )}
                       </>
                     )}
-                    <td className="px-6 py-4">{formatDate(item?.closedAt || '-')}</td>
+                    <td className="px-6 py-4">{formatDate(item?.closedAt || '-')}</td> */}
 
                     <td className="px-6 py-4">{item?.status}</td>
                     <td className="px-6 py-4 flex gap-2">

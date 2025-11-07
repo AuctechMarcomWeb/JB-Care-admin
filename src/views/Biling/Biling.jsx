@@ -23,14 +23,27 @@ const Biling = () => {
   const [loading, setLoading] = useState(false)
   const [tempFromDate, setTempFromDate] = useState('')
   const [tempToDate, setTempToDate] = useState('')
+  const [bill, setBill] = useState([])
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
+  useEffect(() => {
+    getRequest(`maintenance-bill/byDay`)
+      .then((res) => {
+        const responseData = res?.data?.data
+        console.log('dfdf', res)
+
+        setBill(responseData?.data || [])
+        setTotal(res?.data?.data?.total || 0)
+      })
+      .catch((error) => {
+        console.log('error', error)
+      })
+  }, [])
 
   // ✅ Fetch Data with Loader
   useEffect(() => {
     setLoading(true)
-    // getRequest(`maintenance-bill`)
     getRequest(
       `maintenance-bill?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
     )
@@ -208,6 +221,7 @@ const Biling = () => {
                   <th className="px-6 py-3 text-left flex items-center gap-1">
                     Maintenance Amount
                   </th>
+                  <th className="px-6 py-3 text-left">Current Amount</th>
                   <th className="px-6 py-3 text-left">Gst Amount</th>
                   <th className="px-6 py-3 text-left">Total Amount</th>
                   <th className="px-6 py-3 text-left">Date</th>
@@ -240,11 +254,12 @@ const Biling = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">{item?.site?.siteName}</td>
-                    <td className="px-6 py-4">{item?.unit?.unitNumber}</td>
-                    <td className="px-6 py-4">{item?.maintenanceAmount}</td>
-                    <td className="px-6 py-4">{item?.gstAmount}</td>
-                    <td className="px-6 py-4">{item?.totalAmount}</td>
+                    <td className="px-6 py-4">{item?.site?.siteName || '-'}</td>
+                    <td className="px-6 py-4">{item?.unit?.unitNumber || '-'}</td>
+                    <td className="px-6 py-4">{item?.maintenanceAmount || '-'}</td>
+                    <td className="px-6 py-4">{item?.billingAmount || '-'}</td>
+                    <td className="px-6 py-4">{item?.gstAmount || '-'}</td>
+                    <td className="px-6 py-4">{item?.totalAmount || '-'}</td>
                     <td className="px-6 py-4">{formatDate(item?.generatedOn || '-')}</td>
                     <td className="px-6 py-4">
                       {item?.status === 'Paid' ? (
