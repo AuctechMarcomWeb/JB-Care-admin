@@ -199,57 +199,90 @@ const UnitType = () => {
           </div>
         ) : (
           <>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Title</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.map((item, index) => (
-                  <tr key={item._id}>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {(page - 1) * limit + (index + 1)}
-                    </td>
-
-                    <td className="px-6 py-4">{item?.title}</td>
-
-                    <td className="px-6 py-4">
-                      {item?.status ? (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
-                    <td className="px-6 py-4 flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setIsModalOpen(true)
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setShowDeleteModal(true)
-                        }}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-max border border-gray-200 text-center">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Sr. No.
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Title
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="bg-white">
+                  {data?.map((item, index) => (
+                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                      {/* Sr. No. */}
+                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                        {(page - 1) * limit + (index + 1)}
+                      </td>
+
+                      {/* Title */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.title || '-'}
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        {item?.status ? (
+                          <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                            Inactive
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Date */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {formatDate(item?.createdAt || '-')}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        <div className="flex justify-center gap-3">
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setIsModalOpen(true)
+                            }}
+                            className="text-blue-600 hover:text-blue-800 transition"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setShowDeleteModal(true)
+                            }}
+                            className="text-red-600 hover:text-red-800 transition"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>
@@ -271,7 +304,7 @@ const UnitType = () => {
                 setLimit(size)
                 setPage(1)
               }}
-              showQuickJumper
+              // showQuickJumper
             />
           </div>
         </div>

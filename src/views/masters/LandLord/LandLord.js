@@ -245,7 +245,7 @@ const LandLord = () => {
             </label>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 md:col-span-8 justify-center mt-4">
+          <div className="flex flex-wrap items-center gap-2 md:col-span-8 justify-center mt-1">
             <button
               onClick={() => {
                 setFromDate(tempFromDate)
@@ -299,123 +299,119 @@ const LandLord = () => {
           </div>
         ) : (
           <>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                    Sr. No.
-                  </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Site</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                    Project
-                  </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Unit</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                    Landlord
-                  </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                    Profile
-                  </th>
-                  {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date</th> */}
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                    Active
-                  </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.map((item, index) => (
-                  <tr key={item._id} className="hover:bg-gray-50 transition">
-                    {/* Sr. No. */}
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {(page - 1) * limit + (index + 1)}
-                    </td>
-
-                    {/* Site */}
-                    <td className="px-6 py-4 text-gray-600">{item?.siteId?.siteName || '-'}</td>
-
-                    {/* Project */}
-                    <td className="px-6 py-4 text-gray-600">
-                      {item?.projectId?.projectName || '-'}
-                    </td>
-
-                    {/* Units */}
-                    <td className="px-6 py-4 text-gray-600">
-                      {item?.unitIds?.length > 0
-                        ? item.unitIds.map((u) => u.unitNumber).join(', ')
-                        : '-'}
-                    </td>
-
-                    {/* Landlord (Name, Phone, Email, Address) */}
-                    <td className="px-6 py-4">
-                      <div className="font-semibold text-gray-800">{item?.name || '-'}</div>
-                      <div className="text-gray-600 text-sm">{item?.phone || '-'}</div>
-                      <div className="text-gray-600 text-sm truncate max-w-[180px]">
-                        {item?.email || '-'}
-                      </div>
-                      <div className="text-gray-500 text-xs truncate max-w-[180px]">
-                        {item?.address || '-'}
-                      </div>
-                    </td>
-
-                    {/* Profile */}
-                    <td className="px-6 py-4">
-                      <img
-                        src={item?.profilePic || '/default-avatar.png'}
-                        alt={item?.name}
-                        className="w-10 h-10 rounded-full object-cover border"
-                      />
-                    </td>
-
-                    {/* Date */}
-                    {/* <td className="px-6 py-4 text-gray-600">
-                      {formatDate(item?.createdAt || '-')}
-                    </td> */}
-
-                    {/* Active Status */}
-                    <td className="px-6 py-4">
-                      {item?.isActive ? (
-                        <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                          Active
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                          Inactive
-                        </span>
-                      )}
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-6 py-4 flex gap-3">
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setIsModalOpen(true)
-                        }}
-                        className="text-blue-600 hover:text-blue-800 transition"
-                        title="Edit"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setShowDeleteModal(true)
-                        }}
-                        className="text-red-600 hover:text-red-800 transition"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-max border border-gray-200 text-center">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Sr. No.
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Site
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Units
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200 text-left w-[240px]">
+                      Landlord
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Profile
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Active
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="bg-white">
+                  {data.map((item, index) => (
+                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                      {/* Sr. No. */}
+                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                        {(page - 1) * limit + (index + 1)}
+                      </td>
+
+                      {/* Site */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {item?.siteId?.siteName || '-'}
+                      </td>
+
+                      {/* Units */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {item?.unitIds?.length > 0
+                          ? item.unitIds.map((u) => u.unitNumber).join(', ')
+                          : '-'}
+                      </td>
+
+                      {/* Landlord (restricted width) */}
+                      <td className="px-6 py-4 border border-gray-200 text-left align-middle w-[240px] max-w-[240px]">
+                        <div className="font-semibold text-gray-800 truncate">
+                          {item?.name || '-'}
+                        </div>
+                        <div className="text-gray-600 text-sm truncate">{item?.phone || '-'}</div>
+                        <div className="text-gray-600 text-sm truncate">{item?.email || '-'}</div>
+                        <div className="text-gray-500 text-xs truncate">{item?.address || '-'}</div>
+                      </td>
+
+                      {/* Profile */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        <div className="flex justify-center">
+                          <img
+                            src={item?.profilePic || '/default-avatar.png'}
+                            alt={item?.name}
+                            className="w-10 h-10 rounded-full object-cover border border-gray-300"
+                          />
+                        </div>
+                      </td>
+
+                      {/* Active Status */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        {item?.isActive ? (
+                          <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                            Inactive
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        <div className="flex justify-center gap-3">
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setIsModalOpen(true)
+                            }}
+                            className="text-blue-600 hover:text-blue-800 transition"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setShowDeleteModal(true)
+                            }}
+                            className="text-red-600 hover:text-red-800 transition"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>
@@ -437,7 +433,6 @@ const LandLord = () => {
                 setLimit(size)
                 setPage(1)
               }}
-              showQuickJumper
             />
           </div>
         </div>

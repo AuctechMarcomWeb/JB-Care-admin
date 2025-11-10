@@ -26,6 +26,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     landlordId: '',
     billTo: 'tenant',
     addedBy: 'landlord',
+    isActive: '',
   })
 
   // // 🔹 Fetch all sites when modal opens
@@ -124,6 +125,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
         unitId: modalData?.unitId?._id || '',
         landlordId: modalData?.landlordId?._id || '',
         billTo: modalData?.billTo || 'tenant',
+        isActive: modalData?.isActive ?? '',
       })
     }
   }, [modalData])
@@ -131,6 +133,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
   // 🔹 Handle Input Change
   const handleChange = (e) => {
     const { name, value } = e.target
+    console.log('name and value', name, value)
 
     // Phone field restriction
     if (name === 'phone') {
@@ -220,7 +223,10 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     if (!validateForm()) return
     setLoading(true)
     try {
-      const res = await putRequest({ url: `tenants/${modalData._id}`, cred: formData })
+      const res = await putRequest({
+        url: `tenants/${modalData._id}`,
+        cred: { ...formData, isActive: formData.isActive === 'on' && true },
+      })
       toast.success(res?.data?.message || 'Tenant updated successfully')
       setUpdateStatus((prev) => !prev)
       handleCancel()
@@ -364,6 +370,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
               />
               {errors.name && <div className="invalid-feedback">{errors.name}</div>}
             </div>
+
             <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">
                 Email<span className="text-danger">*</span>
@@ -397,6 +404,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
               />
               {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
             </div>
+
             <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">
                 Address<span className="text-danger">*</span>
@@ -477,7 +485,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
               )}
             </div>
 
-            <div className="col-md-6 mb-3">
+            <div className="col-md-6 mb-3 ">
               <label className="form-label fw-bold">Select Payable Person</label>
               <div className="d-flex align-items-center gap-4 mt-2">
                 <div className="form-check">
@@ -491,6 +499,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
                   />
                   <label className="form-check-label">Tenant</label>
                 </div>
+
                 <div className="form-check">
                   <input
                     className="form-check-input"
@@ -502,6 +511,21 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
                   />
                   <label className="form-check-label">Landlord</label>
                 </div>
+              </div>
+            </div>
+
+            <div className="col-md-6 mb-3 ">
+              <label className="form-label fw-bold">&nbsp;</label>
+              <div className="d-flex align-items-center gap-4 mt-2"></div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  name="isActive"
+                  checked={formData.isActive}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label fw-bold">Active</label>
               </div>
             </div>
           </div>

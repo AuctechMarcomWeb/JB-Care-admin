@@ -11,6 +11,8 @@ import moment from 'moment'
 const Biling = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
+  console.log('data', data)
+
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
@@ -28,10 +30,10 @@ const Biling = () => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
   useEffect(() => {
-    getRequest(`maintenance-bill/byDay`)
+    getRequest(`billing/billingSummary`)
       .then((res) => {
-        const responseData = res?.data?.data
-        console.log('dfdf', res)
+        const responseData = res?.data
+        console.log('dfdf', responseData?.data)
 
         setBill(responseData?.data || [])
         setTotal(res?.data?.data?.total || 0)
@@ -205,93 +207,81 @@ const Biling = () => {
             <Spin size="large" />
             <div className="mt-4 text-blue-500 font-medium text-center">Loading Biling...</div>
           </div>
-        ) : !data || data.length === 0 ? (
+        ) : !bill || bill.length === 0 ? (
           <div className="flex justify-center items-center py-20">
             <Empty description="No records found" />
           </div>
         ) : (
           <>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3 text-left">Sr. No.</th>
-                  <th className="px-6 py-3 text-left">LandLord</th>
-                  <th className="px-6 py-3 text-left">Site Name</th>
-                  <th className="px-6 py-3 text-left">Unit Number</th>
-                  <th className="px-6 py-3 text-left flex items-center gap-1">
-                    Maintenance Amount
-                  </th>
-                  <th className="px-6 py-3 text-left">Current Amount</th>
-                  <th className="px-6 py-3 text-left">Gst Amount</th>
-                  <th className="px-6 py-3 text-left">Total Amount</th>
-                  <th className="px-6 py-3 text-left">Date</th>
-                  <th className="px-6 py-3 text-left">Status</th>
-                  <th className="px-6 py-3 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data?.map((item, index) => (
-                  <tr key={item._id}>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {(page - 1) * limit + (index + 1)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <div className="text-sm font-medium text-gray-900">
-                          {item?.landlord?.name}
-                        </div>
-                        <div
-                          className="text-sm text-gray-500 truncate"
-                          style={{ maxWidth: '200px' }}
-                        >
-                          {item?.landlord?.phone}
-                        </div>
-                        <div
-                          className="text-sm text-gray-500 truncate"
-                          style={{ maxWidth: '200px' }}
-                        >
-                          {item?.landlord?.address}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">{item?.site?.siteName || '-'}</td>
-                    <td className="px-6 py-4">{item?.unit?.unitNumber || '-'}</td>
-                    <td className="px-6 py-4">{item?.maintenanceAmount || '-'}</td>
-                    <td className="px-6 py-4">{item?.billingAmount || '-'}</td>
-                    <td className="px-6 py-4">{item?.gstAmount || '-'}</td>
-                    <td className="px-6 py-4">{item?.totalAmount || '-'}</td>
-                    <td className="px-6 py-4">{formatDate(item?.generatedOn || '-')}</td>
-                    <td className="px-6 py-4">
-                      {item?.status === 'Paid' ? (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Paid</span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Unpaid</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setIsModalOpen(true)
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      {/* <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setShowDeleteModal(true) 
-                        }}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button> */}
-                    </td>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-max border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-6 py-3 text-left border border-gray-200">Sr. No.</th>
+                    <th className="px-6 py-3 text-left border border-gray-200">Landlord</th>
+                    <th className="px-6 py-3 text-left border border-gray-200">
+                      Maintenance Amount
+                    </th>
+                    <th className="px-6 py-3 text-left border border-gray-200">Current Billing</th>
+                    <th className="px-6 py-3 text-left border border-gray-200">GST Amount</th>
+                    <th className="px-6 py-3 text-left border border-gray-200">Total Amount</th>
+                    <th className="px-6 py-3 text-left border border-gray-200">
+                      Billing Till Today
+                    </th>
+                    <th className="px-6 py-3 text-left border border-gray-200">Previous Unpaid</th>
+                    <th className="px-6 py-3 text-left border border-gray-200">From Date</th>
+                    <th className="px-6 py-3 text-left border border-gray-200"> To Date </th>
+
+                    <th className="px-6 py-3 text-left border border-gray-200">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white">
+                  {bill?.map((item, index) => (
+                    <tr key={item.landlordId} className="whitespace-nowrap">
+                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200">
+                        {index + 1}
+                      </td>
+                      <td className="px-6 py-4 border border-gray-200">{item.landlordName}</td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {item.totalMaintenance}
+                      </td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {item.totalBillingAmount}
+                      </td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {item.totalGST}
+                      </td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {item.totalBillingAmount}
+                      </td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {item.billingTillToday}
+                      </td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {item.previousUnpaidBill}
+                      </td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {new Date(item.fromDate).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {new Date(item.toDate).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {item.unpaidCount === 0 ? (
+                          <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                            Paid
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">
+                            Unpaid
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>
@@ -314,7 +304,7 @@ const Biling = () => {
                 setLimit(size)
                 setPage(1)
               }}
-              showQuickJumper
+              // showQuickJumper
             />
           </div>
         </div>

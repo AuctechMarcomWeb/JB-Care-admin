@@ -72,7 +72,7 @@ const VerifyResolutionSection = ({
       {/* 🔹 Comment & Images in One Row */}
       <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
-          Comment <span className="text-danger">*</span>
+          Comment <span className="text-danger"></span>
         </label>
         <textarea
           name="comment"
@@ -90,7 +90,7 @@ const VerifyResolutionSection = ({
 
       <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
-          Closed Images <span className="text-danger">*</span>
+          Closed Images <span className="text-danger"></span>
         </label>
         <div className="d-flex align-items-start gap-3 flex-wrap">
           {/* File Input */}

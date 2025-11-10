@@ -267,68 +267,138 @@ const Unit = () => {
           </div>
         ) : (
           <>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Unit</th>
-                  <th className="px-6 py-3">Block</th>
-                  <th className="px-6 py-3">Floor</th>
-                  <th className="px-6 py-3">Area Sqft</th>
-                  <th className="px-6 py-3">Site Name</th>
-                  {/* <th className="px-6 py-3">Project Name</th> */}
-                  <th className="px-6 py-3">Unit Type</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.map((item, index) => (
-                  <tr key={item._id}>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {(page - 1) * limit + (index + 1)}
-                    </td>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-max border border-gray-200 text-center">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Sr. No.
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Site Name
+                    </th>
+                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+          Project Name
+        </th> */}
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Unit Type
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Unit
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Block
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Floor
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Area (Sqft)
+                    </th>
 
-                    <td className="px-6 py-4">{item?.unitNumber}</td>
-                    <td className="px-6 py-4">{item?.block}</td>
-                    <td className="px-6 py-4">{item?.floor}</td>
-                    <td className="px-6 py-4">{item?.areaSqFt}</td>
-                    <td className="px-6 py-4">{item?.siteId?.siteName}</td>
-                    <td className="px-6 py-4">{item?.projectId?.projectName}</td>
-                    <td className="px-6 py-4">{item?.unitTypeId?.title}</td>
-                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
-                    <td className="px-6 py-4">
-                      {item?.status ? (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setIsModalOpen(true)
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setShowDeleteModal(true)
-                        }}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+          Date
+        </th> */}
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="bg-white">
+                  {data?.map((item, index) => (
+                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                      {/* Sr. No. */}
+                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                        {(page - 1) * limit + (index + 1)}
+                      </td>
+
+                      {/* Site */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.siteId?.siteName || '-'}
+                      </td>
+
+                      {/* Project (optional)
+          <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+            {item?.projectId?.projectName || '-'}
+          </td> */}
+                      {/* Unit Type */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.unitTypeId?.title || '-'}
+                      </td>
+
+                      {/* Unit */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.unitNumber || '-'}
+                      </td>
+
+                      {/* Block */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.block || '-'}
+                      </td>
+
+                      {/* Floor */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.floor || '-'}
+                      </td>
+
+                      {/* Area */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.areaSqFt || '-'}
+                      </td>
+
+                      {/* Date (optional)
+          <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+            {formatDate(item?.createdAt || '-')}
+          </td> */}
+
+                      {/* Status */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        {item?.status ? (
+                          <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                            Inactive
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        <div className="flex justify-center gap-3">
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setIsModalOpen(true)
+                            }}
+                            className="text-blue-600 hover:text-blue-800 transition"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setShowDeleteModal(true)
+                            }}
+                            className="text-red-600 hover:text-red-800 transition"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>
@@ -350,7 +420,7 @@ const Unit = () => {
                 setLimit(size)
                 setPage(1)
               }}
-              showQuickJumper
+              // showQuickJumper
             />
           </div>
         </div>

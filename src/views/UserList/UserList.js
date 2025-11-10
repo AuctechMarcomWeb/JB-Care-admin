@@ -199,72 +199,92 @@ const UserList = () => {
           </div>
         ) : (
           <>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Name</th>
-                  <th className="px-6 py-3">Email</th>
-                  <th className="px-6 py-3">Phone</th>
-                  <th className="px-6 py-3">Role</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Site Name</th>
-                  <th className="px-6 py-3">ProjectName</th>
-                  <th className="px-6 py-3">Unit Number</th>
-
-                  {/* <th className="px-6 py-3">Status</th> */}
-                  {/* <th className="px-6 py-3">Actions</th> */}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.map((item, index) => (
-                  <tr key={item._id}>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {(page - 1) * limit + (index + 1)}
-                    </td>
-
-                    <td className="px-6 py-4">{item?.name || '-'}</td>
-                    <td className="px-6 py-4">{item?.email || '-'}</td>
-                    <td className="px-6 py-4">{item?.phone || '-'}</td>
-                    <td className="px-6 py-4">
-                      {item?.role ? item.role.charAt(0).toUpperCase() + item.role.slice(1) : '-'}
-                    </td>
-                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
-                    <td className="px-6 py-4">{item?.siteId?.siteName || '-'}</td>
-                    <td className="px-6 py-4">{item?.projectId?.projectName || '-'}</td>
-                    <td className="px-6 py-4">{item?.unitId?.unitNumber || '-'}</td>
-
-                    {/* <td className="px-6 py-4">
-                      {item?.status ? (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
-                      )}
-                    </td> */}
-                    {/* <td className="px-6 py-4 flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setIsModalOpen(true)
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setShowDeleteModal(true)
-                        }}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td> */}
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-max border border-gray-200 text-center">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Sr. No.
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Email
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Phone
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Role
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Site Name
+                    </th>
+                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Project Name
+                    </th> */}
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Unit Number
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="bg-white">
+                  {data?.map((item, index) => (
+                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                      {/* Sr. No. */}
+                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                        {(page - 1) * limit + (index + 1)}
+                      </td>
+
+                      {/* Name */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.name || '-'}
+                      </td>
+
+                      {/* Email */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle truncate max-w-[200px] text-left">
+                        {item?.email || '-'}
+                      </td>
+
+                      {/* Phone */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {item?.phone || '-'}
+                      </td>
+
+                      {/* Role */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle capitalize">
+                        {item?.role ? item.role.charAt(0).toUpperCase() + item.role.slice(1) : '-'}
+                      </td>
+
+                      {/* Date */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {formatDate(item?.createdAt || '-')}
+                      </td>
+
+                      {/* Site Name */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.siteId?.siteName || '-'}
+                      </td>
+
+                      {/* Project Name */}
+                      {/* <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.projectId?.projectName || '-'}
+                      </td> */}
+
+                      {/* Unit Number */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.unitId?.unitNumber || '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>
@@ -286,7 +306,7 @@ const UserList = () => {
                 setLimit(size)
                 setPage(1)
               }}
-              showQuickJumper
+              // showQuickJumper
             />
           </div>
         </div>
