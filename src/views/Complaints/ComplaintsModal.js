@@ -31,7 +31,7 @@ const ComplaintsModal = ({
   const [formData, setFormData] = useState({
     userId: '',
     siteId: '',
-    projectId: '',
+    // projectId: '',
     unitId: '',
     complaintTitle: '',
     complaintDescription: '',
@@ -130,7 +130,7 @@ const ComplaintsModal = ({
       setFormData({
         userId: modalData?.userId?._id || '',
         siteId: modalData?.siteId?._id || '',
-        projectId: modalData?.projectId?._id || '',
+        // projectId: modalData?.projectId?._id || '',
         unitId: modalData?.unitId?._id || '',
         complaintTitle: modalData?.complaintTitle || '',
         complaintDescription: modalData?.complaintDescription || '',
@@ -258,7 +258,7 @@ const ComplaintsModal = ({
     // ---- Common fields ----
     if (!formData.userId) newErrors.userId = 'User is required'
     if (!formData.siteId) newErrors.siteId = 'Site is required (auto-filled)'
-    if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
+    // if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
     if (!formData.unitId) newErrors.unitId = 'Unit is required (auto-filled)'
 
     if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
@@ -428,7 +428,7 @@ const ComplaintsModal = ({
 
         {/* 🔹 Auto-Filled Site, Project, Unit */}
         <div className="row">
-          <div className="col-md-6 mb-3">
+          {/* <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Project <span className="text-danger">*</span>
             </label>
@@ -440,7 +440,7 @@ const ComplaintsModal = ({
               readOnly
             />
             {errors.projectId && <div className="invalid-feedback">{errors.projectId}</div>}
-          </div>
+          </div> */}
 
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -455,9 +455,7 @@ const ComplaintsModal = ({
             />
             {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
           </div>
-        </div>
 
-        <div className="row">
           {/* 🔹 Complaint Title */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -474,7 +472,9 @@ const ComplaintsModal = ({
               <div className="invalid-feedback">{errors.complaintTitle}</div>
             )}
           </div>
+        </div>
 
+        <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Description <span className="text-danger">*</span>
@@ -490,9 +490,6 @@ const ComplaintsModal = ({
               <div className="invalid-feedback">{errors.complaintDescription}</div>
             )}
           </div>
-        </div>
-
-        <div className="row">
           {/* Image Upload */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -590,7 +587,9 @@ const ComplaintsModal = ({
               </div>
             )}
           </div>
+        </div>
 
+        <div className="row">
           {/* Action Select (Only in Edit Mode) */}
           {modalData && (
             <div className="col-md-6 mb-3">

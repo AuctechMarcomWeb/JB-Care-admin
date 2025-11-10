@@ -232,7 +232,7 @@ const Biling = () => {
                     <th className="px-6 py-3 text-left border border-gray-200">From Date</th>
                     <th className="px-6 py-3 text-left border border-gray-200"> To Date </th>
 
-                    <th className="px-6 py-3 text-left border border-gray-200">Status</th>
+                    {/* <th className="px-6 py-3 text-left border border-gray-200">Status</th> */}
                   </tr>
                 </thead>
                 <tbody className="bg-white">
@@ -266,7 +266,7 @@ const Biling = () => {
                       <td className="px-6 py-4 text-center border border-gray-200">
                         {new Date(item.toDate).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      {/* <td className="px-6 py-4 text-center border border-gray-200">
                         {item.unpaidCount === 0 ? (
                           <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
                             Paid
@@ -276,7 +276,7 @@ const Biling = () => {
                             Unpaid
                           </span>
                         )}
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
                 </tbody>
