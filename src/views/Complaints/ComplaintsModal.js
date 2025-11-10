@@ -53,14 +53,15 @@ const ComplaintsModal = ({
       remarks: 'Leak fixed and area cleaned',
       images: ['https://example.com/resolution.jpg'],
     },
+    closureDetails: {
+      remarks: '',
+      images: [],
+    },
     repushedDetails: {
       count: '',
       reason: '',
     },
-    comment: '',
-    closedImages: [],
     status: '',
-
     addedBy: 'Admin',
     userRole: 'Admin',
   })
@@ -92,17 +93,15 @@ const ComplaintsModal = ({
       const defaultMaterialDemand = { materialName: '', quantity: '', reason: '', images: [] }
       const defaultResolution = { resolvedBy: '671fc84a3c29f9a5f1b23456', remarks: '', images: [] }
       const defaultrepushedDetails = { count: '', reason: '' }
+      const defaultclosureDetails = { remarks: '', images: [] }
 
       // 🧩 Step 3: Extract details from matched history entry
       const supervisorDetails = latestStatusEntry?.supervisorDetails || defaultSupervisorDetails
       const materialDemand = latestStatusEntry?.materialDemand || defaultMaterialDemand
       const resolution = latestStatusEntry?.resolution || defaultResolution
       const repushedDetails = latestStatusEntry?.repushedDetails || defaultrepushedDetails
-
-      const comment = latestStatusEntry?.comment || ''
-      const closedImages = latestStatusEntry?.closedImages || []
-      const closedBy = latestStatusEntry?.closedBy || ''
-      console.log('CGDFg', latestStatusEntry?.comment)
+      const closureDetails = latestStatusEntry?.closureDetails || defaultclosureDetails
+      console.log('CGDFg', latestStatusEntry?.closureDetails)
 
       // 🧩 Step 4: Determine which action corresponds to current status
       let actionFromStatus = ''
@@ -139,10 +138,8 @@ const ComplaintsModal = ({
         supervisorDetails,
         materialDemand,
         resolution,
-        comment,
-        closedImages,
+        closureDetails,
         repushedDetails,
-        // closedBy: '671fc84a3c29f9a5f1b99999',
         userRole: 'Admin',
       })
 
