@@ -115,11 +115,11 @@ const ComplaintsModal = ({
         case 'Resolved':
           actionFromStatus = 'resolve'
           break
-        case 'Closed':
-          actionFromStatus = 'verifyResolution'
-          break
         case 'Repushed':
           actionFromStatus = 'repush'
+          break
+            case 'Closed':
+          actionFromStatus = 'verifyResolution'
           break
         default:
           actionFromStatus = ''
@@ -339,7 +339,7 @@ const ComplaintsModal = ({
   const handleEdit = async (e) => {
     e.preventDefault()
     console.log('button hits')
-    // if (!validateForm()) return
+    if (!validateForm()) return
     setLoading(true)
     try {
       console.log('button hits 2')
@@ -604,8 +604,8 @@ const ComplaintsModal = ({
                 <option value="review">Review</option>
                 <option value="raiseMaterialDemand">Raise Material Demand</option>
                 <option value="resolve">Resolve</option>
-                <option value="verifyResolution">Verify Resolution</option>
                 <option value="repush">Repush</option>
+                <option value="verifyResolution">Verify Resolution</option>
               </select>
               {errors.action && <div className="invalid-feedback">{errors.action}</div>}
             </div>

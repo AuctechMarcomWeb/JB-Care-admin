@@ -11,8 +11,6 @@ import moment from 'moment'
 const Biling = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
-  console.log('data', data)
-
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
@@ -35,7 +33,7 @@ const Biling = () => {
         const responseData = res?.data
         console.log('dfdf', responseData?.data)
 
-        setBill(responseData?.data || [])
+        setData(responseData?.data || [])
         setTotal(res?.data?.data?.total || 0)
       })
       .catch((error) => {
@@ -44,23 +42,23 @@ const Biling = () => {
   }, [])
 
   // ✅ Fetch Data with Loader
-  useEffect(() => {
-    setLoading(true)
-    getRequest(
-      `maintenance-bill?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
-    )
-      .then((res) => {
-        const responseData = res?.data?.data
-        console.log('dfdf', res)
+  // useEffect(() => {
+  //   setLoading(true)
+  //   getRequest(
+  //     `maintenance-bill?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
+  //   )
+  //     .then((res) => {
+  //       const responseData = res?.data?.data
+  //       console.log('dfdf', res)
 
-        setData(responseData?.data || [])
-        setTotal(res?.data?.data?.total || 0)
-      })
-      .catch((error) => {
-        console.log('error', error)
-      })
-      .finally(() => setLoading(false)) // ✅ stop loader
-  }, [searchTerm, page, limit, fromDate, toDate, updateStatus])
+  //       setData(responseData?.data || [])
+  //       setTotal(res?.data?.data?.total || 0)
+  //     })
+  //     .catch((error) => {
+  //       console.log('error', error)
+  //     })
+  //     .finally(() => setLoading(false)) // ✅ stop loader
+  // }, [searchTerm, page, limit, fromDate, toDate, updateStatus])
 
   // ✅ Delete handler
   const confirmDelete = () => {
@@ -131,7 +129,7 @@ const Biling = () => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* Site */}
           {/* From Date */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
@@ -139,10 +137,10 @@ const Biling = () => {
               onChange={(e) => setTempFromDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           {/* To Date */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
@@ -150,7 +148,7 @@ const Biling = () => {
               onChange={(e) => setTempToDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           {/* Search Input */}
           <div className="flex flex-col md:col-span-2">
@@ -207,7 +205,7 @@ const Biling = () => {
             <Spin size="large" />
             <div className="mt-4 text-blue-500 font-medium text-center">Loading Biling...</div>
           </div>
-        ) : !bill || bill.length === 0 ? (
+        ) : !data || data.length === 0 ? (
           <div className="flex justify-center items-center py-20">
             <Empty description="No records found" />
           </div>
@@ -229,14 +227,14 @@ const Biling = () => {
                       Billing Till Today
                     </th>
                     <th className="px-6 py-3 text-left border border-gray-200">Previous Unpaid</th>
-                    <th className="px-6 py-3 text-left border border-gray-200">From Date</th>
-                    <th className="px-6 py-3 text-left border border-gray-200"> To Date </th>
+                    {/* <th className="px-6 py-3 text-left border border-gray-200">From Date</th>
+                    <th className="px-6 py-3 text-left border border-gray-200"> To Date </th> */}
 
                     {/* <th className="px-6 py-3 text-left border border-gray-200">Status</th> */}
                   </tr>
                 </thead>
                 <tbody className="bg-white">
-                  {bill?.map((item, index) => (
+                  {data?.map((item, index) => (
                     <tr key={item.landlordId} className="whitespace-nowrap">
                       <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200">
                         {index + 1}
@@ -260,12 +258,12 @@ const Biling = () => {
                       <td className="px-6 py-4 text-center border border-gray-200">
                         {item.previousUnpaidBill}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      {/* <td className="px-6 py-4 text-center border border-gray-200">
                         {new Date(item.fromDate).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-center border border-gray-200">
                         {new Date(item.toDate).toLocaleDateString()}
-                      </td>
+                      </td> */}
                       {/* <td className="px-6 py-4 text-center border border-gray-200">
                         {item.unpaidCount === 0 ? (
                           <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
