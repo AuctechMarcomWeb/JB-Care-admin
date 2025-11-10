@@ -26,7 +26,7 @@ const SupervisorModal = ({
     email: '',
     phone: '',
     siteId: '',
-    projectId: '',
+    // projectId: '',
     unitId: '',
     isActive: true,
     verificationDocuments: [{ type: '', number: '', fileUrl: '' }],
@@ -39,31 +39,29 @@ const SupervisorModal = ({
       .catch((err) => console.error('Error fetching sites:', err))
   }, [])
 
-  // 🔹 Fetch Projects when site changes
-  useEffect(() => {
-    if (formData.siteId) {
-      getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
-        .then((res) => setProjects(res?.data?.data?.projects || []))
-        .catch((err) => console.error('Error fetching projects:', err))
-    } else {
-      setProjects([])
-      setFormData((prev) => ({ ...prev, projectId: '', unitId: '' }))
-    }
-  }, [formData.siteId])
+  // // 🔹 Fetch Projects when site changes
+  // useEffect(() => {
+  //   if (formData.siteId) {
+  //     getRequest(`projects?isPagination=false&siteId=${formData.siteId}`)
+  //       .then((res) => setProjects(res?.data?.data?.projects || []))
+  //       .catch((err) => console.error('Error fetching projects:', err))
+  //   } else {
+  //     setProjects([])
+  //     setFormData((prev) => ({ ...prev, projectId: '', unitId: '' }))
+  //   }
+  // }, [formData.siteId])
 
   // 🔹 Fetch Units when project changes
   useEffect(() => {
-    if (formData.projectId) {
-      getRequest(
-        `units?isPagination=false&siteId=${formData.siteId}&projectId=${formData.projectId}`,
-      )
+    if (formData.siteId) {
+      getRequest(`units?isPagination=false&siteId=${formData.siteId}`)
         .then((res) => setUnits(res?.data?.data?.units || []))
         .catch((err) => console.error('Error fetching units:', err))
     } else {
       setUnits([])
       setFormData((prev) => ({ ...prev, unitId: '' }))
     }
-  }, [formData.projectId])
+  }, [formData.siteId])
 
   // 🔹 Pre-fill form for Edit
   useEffect(() => {
@@ -73,12 +71,12 @@ const SupervisorModal = ({
         email: modalData?.email || '',
         phone: modalData?.phone || '',
         siteId: modalData?.siteId?._id || modalData?.siteId || '',
-        projectId:
-          modalData?.projects?.[0]?._id ||
-          modalData?.projects?.[0] ||
-          modalData?.projectId?._id ||
-          modalData?.projectId ||
-          '',
+        // projectId:
+        //   modalData?.projects?.[0]?._id ||
+        //   modalData?.projects?.[0] ||
+        //   modalData?.projectId?._id ||
+        //   modalData?.projectId ||
+        //   '',
         unitId: modalData?.unitId?._id || modalData?.unitId || '',
         isActive: modalData?.isActive ?? true,
         verificationDocuments:
@@ -92,7 +90,7 @@ const SupervisorModal = ({
         email: '',
         phone: '',
         siteId: '',
-        projectId: '',
+        // projectId: '',
         unitId: '',
         isActive: true,
         verificationDocuments: [{ type: '', number: '', fileUrl: '' }],
@@ -152,7 +150,7 @@ const SupervisorModal = ({
     if (!/^\d{10}$/.test(phone)) newErrors.phone = 'Enter valid 10-digit phone'
     if (!email) newErrors.email = 'Email is required'
     if (!siteId) newErrors.siteId = 'Select Site'
-    if (!projectId) newErrors.projectId = 'Select Project'
+    // if (!projectId) newErrors.projectId = 'Select Project'
     if (!unitId) newErrors.unitId = 'Select Unit'
 
     verificationDocuments.forEach((doc, i) => {
@@ -233,6 +231,48 @@ const SupervisorModal = ({
     >
       <form onSubmit={handleSubmit} noValidate>
         <Spin spinning={loading}>
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Site<span className="text-danger">*</span>
+              </label>
+              <select
+                name="siteId"
+                value={formData.siteId}
+                onChange={handleChange}
+                className={`form-select ${errors.siteId ? 'is-invalid' : ''}`}
+              >
+                <option value="">Select Site</option>
+                {sites.map((s) => (
+                  <option key={s._id} value={s._id}>
+                    {s.siteName}
+                  </option>
+                ))}
+              </select>
+              {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label className="form-label fw-bold">
+                Unit<span className="text-danger">*</span>
+              </label>
+              <select
+                name="unitId"
+                value={formData.unitId}
+                onChange={handleChange}
+                className={`form-select ${errors.unitId ? 'is-invalid' : ''}`}
+                disabled={!formData.siteId}
+              >
+                <option value="">Select Unit</option>
+                {units.map((u) => (
+                  <option key={u._id} value={u._id}>
+                    {u.unitNumber}
+                  </option>
+                ))}
+              </select>
+              {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
+            </div>
+          </div>
           {/* 🔹 Name & Email */}
           <div className="row">
             <div className="col-md-6 mb-3">
@@ -283,30 +323,10 @@ const SupervisorModal = ({
               />
               {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
             </div>
-
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Site<span className="text-danger">*</span>
-              </label>
-              <select
-                name="siteId"
-                value={formData.siteId}
-                onChange={handleChange}
-                className={`form-select ${errors.siteId ? 'is-invalid' : ''}`}
-              >
-                <option value="">Select Site</option>
-                {sites.map((s) => (
-                  <option key={s._id} value={s._id}>
-                    {s.siteName}
-                  </option>
-                ))}
-              </select>
-              {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
-            </div>
           </div>
 
           {/* 🔹 Project & Unit */}
-          <div className="row">
+          {/* <div className="row">
             <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">
                 Project<span className="text-danger">*</span>
@@ -327,28 +347,7 @@ const SupervisorModal = ({
               </select>
               {errors.projectId && <div className="invalid-feedback">{errors.projectId}</div>}
             </div>
-
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Unit<span className="text-danger">*</span>
-              </label>
-              <select
-                name="unitId"
-                value={formData.unitId}
-                onChange={handleChange}
-                className={`form-select ${errors.unitId ? 'is-invalid' : ''}`}
-                disabled={!formData.projectId}
-              >
-                <option value="">Select Unit</option>
-                {units.map((u) => (
-                  <option key={u._id} value={u._id}>
-                    {u.unitNumber}
-                  </option>
-                ))}
-              </select>
-              {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
-            </div>
-          </div>
+          </div> */}
 
           {/* 🔹 Verification Documents */}
           <div className="mb-3">

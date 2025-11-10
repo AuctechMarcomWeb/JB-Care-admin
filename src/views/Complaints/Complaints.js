@@ -266,150 +266,120 @@ const Complaints = () => {
           </div>
         ) : (
           <>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Title</th>
-                  <th className="px-6 py-3">Description</th>
-                  <th className="px-6 py-3">Image</th>
-                  {/* <th className="px-6 py-3">Supervisor Name</th>
-                  <th className="px-6 py-3">Supervisor Images</th>
-                  <th className="px-6 py-3">Supervisor Comments</th> */}
-                  {/* {data.some((item) => item.status === 'Material Demand Raised') && (
-                    <>
-                      <th className="px-6 py-3">Material Name</th>
-                      <th className="px-6 py-3">Material Count</th>
-                      <th className="px-6 py-3">Reason</th>
-                    </>
-                  )} */}
-                  {/* <th className="px-6 py-3">Verified Date</th> */}
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.map((item, index) => (
-                  <tr key={item._id}>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {(page - 1) * limit + (index + 1)}
-                    </td>
-                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
-                    <td className="px-6 py-4">{item?.complaintTitle || '-'}</td>
-                    <td className="px-6 py-4 max-w-[180px]">
-                      <Tooltip title={item?.complaintDescription || '-'} placement="topLeft">
-                        <span
-                          style={{
-                            display: 'inline-block',
-                            width: '100%',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          {item?.complaintDescription?.split(' ')?.slice(0, 2)?.join(' ') || '-'}
-                          {item?.complaintDescription?.split(' ')?.length > 2 ? '…' : ''}
-                        </span>
-                      </Tooltip>
-                    </td>
-                    <td className="px-6 py-4">
-                      <img
-                        src={item?.images || '-'}
-                        alt="Complaints"
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    </td>
-                    {/* <td className="px-6 py-4">{item?.supervisorId?.name || '-'}</td>
-
-                    <td className="px-6 py-4">
-                      <img
-                        src={item?.supervisorImages || '-'}
-                        alt="Supervisor Images"
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    </td>
-                    <td className="px-6 py-4 max-w-[180px]">
-                      <Tooltip title={item?.supervisorComments || '-'} placement="topLeft">
-                        <span
-                          style={{
-                            display: 'inline-block',
-                            width: '100%',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          {item?.supervisorComments?.split(' ')?.slice(0, 2)?.join(' ') || '-'}
-                          {item?.supervisorComments?.split(' ')?.length > 2 ? '…' : ''}
-                        </span>
-                      </Tooltip>
-                    </td> */}
-
-                    {/* {item?.status === 'Material Demand Raised' ? (
-                      <>
-                        <td className="px-6 py-4">{item?.materialDemand?.materialName || '-'}</td>
-                        <td className="px-6 py-4">{item?.materialDemand?.quantity || 0}</td>
-                        <td className="px-6 py-4 max-w-[180px]">
-                          <Tooltip title={item?.materialDemand?.reason || '-'} placement="topLeft">
-                            <span
-                              style={{
-                                display: 'inline-block',
-                                width: '100%',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                cursor: 'pointer',
-                              }}
-                            >
-                              {item?.materialDemand?.reason?.split(' ')?.slice(0, 2)?.join(' ') ||
-                                '-'}
-                              {item?.materialDemand?.reason?.split(' ')?.length > 2 ? '…' : ''}
-                            </span>
-                          </Tooltip>
-                        </td>
-                      </>
-                    ) : (
-                      // Fill 3 empty cells so alignment remains correct
-                      <>
-                        {data.some((d) => d.status === 'Material Demand Raised') && (
-                          <>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                          </>
-                        )}
-                      </>
-                    )}
-                    <td className="px-6 py-4">{formatDate(item?.closedAt || '-')}</td> */}
-
-                    <td className="px-6 py-4">{item?.status}</td>
-                    <td className="px-6 py-4 flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setIsModalOpen(true)
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      {/* <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setShowDeleteModal(true)
-                        }}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button> */}
-                    </td>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-max border border-gray-200 text-center">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Sr. No.
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Title
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Description
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Image
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="bg-white">
+                  {data?.map((item, index) => (
+                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                      {/* Sr. No. */}
+                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                        {(page - 1) * limit + (index + 1)}
+                      </td>
+
+                      {/* Date */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {formatDate(item?.createdAt || '-')}
+                      </td>
+
+                      {/* Title */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.complaintTitle || '-'}
+                      </td>
+
+                      {/* Description with ellipsis & tooltip */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle max-w-[200px] text-left">
+                        <Tooltip title={item?.complaintDescription || '-'} placement="topLeft">
+                          <span className="inline-block w-full truncate cursor-pointer">
+                            {item?.complaintDescription?.split(' ')?.slice(0, 5)?.join(' ') || '-'}
+                            {item?.complaintDescription?.split(' ')?.length > 5 ? '…' : ''}
+                          </span>
+                        </Tooltip>
+                      </td>
+
+                      {/* Image */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        {item?.images ? (
+                          <img
+                            src={item?.images}
+                            alt="Complaint"
+                            className="w-10 h-10 rounded-full object-cover mx-auto"
+                          />
+                        ) : (
+                          '-'
+                        )}
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${
+                            item?.status === 'Closed'
+                              ? 'bg-red-100 text-red-700'
+                              : item?.status === 'Pending'
+                                ? 'bg-yellow-100 text-yellow-700'
+                                : item?.status === 'Under Review'
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-blue-100 text-blue-700'
+                          }`}
+                        >
+                          {item?.status || '-'}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4  border border-gray-200 align-middle">
+                        <button
+                          onClick={() => {
+                            setSelectedItem(item)
+                            setIsModalOpen(true)
+                          }}
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+
+                        {/* Optional Delete Button */}
+                        {/* <button
+              onClick={() => {
+                setSelectedItem(item);
+                setShowDeleteModal(true);
+              }}
+              className="text-red-600 hover:text-red-800"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button> */}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>
@@ -431,7 +401,7 @@ const Complaints = () => {
                 setLimit(size)
                 setPage(1)
               }}
-              showQuickJumper
+              // showQuickJumper
             />
           </div>
         </div>

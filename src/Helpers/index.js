@@ -72,6 +72,7 @@ export const postRequest = async (props) => {
 }
 
 export const putRequest = async (props) => {
+  console.log()
   try {
     const response = await axios?.put(
       `${import.meta.env.VITE_API_BASE_URL}${props?.url}`,

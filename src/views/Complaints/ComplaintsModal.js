@@ -8,6 +8,7 @@ import SupervisorReviewSection from './SupervisorReviewSection'
 import MaterialDemandSection from './MaterialDemandSection'
 import ResolutionSection from './ResolutionSection'
 import VerifyResolutionSection from './VerifyResolutionSection'
+import RepushedDetailsSection from './RepushedDetails'
 
 const ComplaintsModal = ({
   setUpdateStatus,
@@ -52,9 +53,14 @@ const ComplaintsModal = ({
       remarks: 'Leak fixed and area cleaned',
       images: ['https://example.com/resolution.jpg'],
     },
+    repushedDetails: {
+      count: '',
+      reason: '',
+    },
     comment: '',
     closedImages: [],
     status: '',
+
     addedBy: 'Admin',
     userRole: 'Admin',
   })
@@ -85,14 +91,18 @@ const ComplaintsModal = ({
       const defaultSupervisorDetails = { supervisorId: '', comments: '', images: [] }
       const defaultMaterialDemand = { materialName: '', quantity: '', reason: '', images: [] }
       const defaultResolution = { resolvedBy: '671fc84a3c29f9a5f1b23456', remarks: '', images: [] }
+      const defaultrepushedDetails = { count: '', reason: '' }
 
       // 🧩 Step 3: Extract details from matched history entry
       const supervisorDetails = latestStatusEntry?.supervisorDetails || defaultSupervisorDetails
       const materialDemand = latestStatusEntry?.materialDemand || defaultMaterialDemand
       const resolution = latestStatusEntry?.resolution || defaultResolution
+      const repushedDetails = latestStatusEntry?.repushedDetails || defaultrepushedDetails
+
       const comment = latestStatusEntry?.comment || ''
       const closedImages = latestStatusEntry?.closedImages || []
-      // const closedBy = latestStatusEntry?.closedBy || ''
+      const closedBy = latestStatusEntry?.closedBy || ''
+      console.log('CGDFg', latestStatusEntry?.comment)
 
       // 🧩 Step 4: Determine which action corresponds to current status
       let actionFromStatus = ''
@@ -108,6 +118,9 @@ const ComplaintsModal = ({
           break
         case 'Closed':
           actionFromStatus = 'verifyResolution'
+          break
+        case 'Repushed':
+          actionFromStatus = 'repush'
           break
         default:
           actionFromStatus = ''
@@ -128,7 +141,8 @@ const ComplaintsModal = ({
         resolution,
         comment,
         closedImages,
-        //  closedBy: '671fc84a3c29f9a5f1b99999',
+        repushedDetails,
+        // closedBy: '671fc84a3c29f9a5f1b99999',
         userRole: 'Admin',
       })
 
@@ -595,6 +609,7 @@ const ComplaintsModal = ({
                 <option value="raiseMaterialDemand">Raise Material Demand</option>
                 <option value="resolve">Resolve</option>
                 <option value="verifyResolution">Verify Resolution</option>
+                <option value="repush">Repush</option>
               </select>
               {errors.action && <div className="invalid-feedback">{errors.action}</div>}
             </div>
@@ -653,6 +668,15 @@ const ComplaintsModal = ({
             imagesInputRefs={imagesInputRefs}
             uploadingClosedImages={uploadingClosedImages}
             setUploadingClosedImages={setUploadingClosedImages}
+          />
+        )}
+
+        {formData.action === 'repush' && (
+          <RepushedDetailsSection
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+            setErrors={setErrors}
           />
         )}
 

@@ -74,7 +74,7 @@ const MaterialDemandSection = ({
       {/* 🔹 Row 1: Material Name + Quantity */}
       <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
-          Material Name <span className="text-danger">*</span>
+          Material Name <span className="text-danger"></span>
         </label>
         <input
           type="text"
@@ -92,7 +92,7 @@ const MaterialDemandSection = ({
 
       <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
-          Quantity <span className="text-danger">*</span>
+          Quantity <span className="text-danger"></span>
         </label>
         <input
           type="number"
@@ -112,7 +112,7 @@ const MaterialDemandSection = ({
       {/* 🔹 Row 2: Reason + Material Images */}
       <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
-          Reason <span className="text-danger">*</span>
+          Reason <span className="text-danger"></span>
         </label>
         <textarea
           name="reason"
@@ -130,7 +130,7 @@ const MaterialDemandSection = ({
 
       <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
-          Material Images <span className="text-danger">*</span>
+          Material Images <span className="text-danger"></span>
         </label>
         <input
           type="file"

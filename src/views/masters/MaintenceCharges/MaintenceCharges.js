@@ -254,71 +254,116 @@ const MaintenceCharges = () => {
           </div>
         ) : (
           <>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3 text-left">Sr. No.</th>
-                  <th className="px-6 py-3 text-left">Site Name</th>
-                  <th className="px-6 py-3 text-left">Unit </th>
-                  <th className="px-6 py-3 text-left">Rate Type</th>
-                  <th className="px-6 py-3 text-left flex items-center gap-1">
-                    Rate(
-                    <IndianRupee className="w-4 h-4 inline" />)
-                  </th>
-                  <th className="px-6 py-3 text-left">GST (%)</th>
-                  {/* <th className="px-6 py-3 text-left">Date</th> */}
-                  <th className="px-6 py-3 text-left">Status</th>
-                  <th className="px-6 py-3 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data?.map((item, index) => (
-                  <tr key={item._id}>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {(page - 1) * limit + (index + 1)}
-                    </td>
-                    <td className="px-6 py-4">{item?.siteId?.siteName}</td>
-                    <td className="px-6 py-4">{item?.unitId?.unitNumber}</td>
-                    <td className="px-6 py-4">
-                      {item?.rateType
-                        ? item.rateType.charAt(0).toUpperCase() +
-                          item.rateType.slice(1).toLowerCase()
-                        : ''}
-                    </td>
-                    <td className="px-6 py-4">{item?.rateValue}</td>
-                    <td className="px-6 py-4">{item?.gstPercent}</td>
-                    {/* <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td> */}
-                    <td className="px-6 py-4">
-                      {item?.isActive ? (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setIsModalOpen(true)
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setShowDeleteModal(true)
-                        }}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-max border border-gray-200 text-center">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Sr. No.
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Site Name
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Unit
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Rate Type
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Rate (₹)
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      GST (%)
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="bg-white">
+                  {data?.map((item, index) => (
+                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                      {/* Sr. No. */}
+                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                        {(page - 1) * limit + (index + 1)}
+                      </td>
+
+                      {/* Site Name */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {item?.siteId?.siteName || '-'}
+                      </td>
+
+                      {/* Unit */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {item?.unitId?.unitNumber || '-'}
+                      </td>
+
+                      {/* Rate Type */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.rateType
+                          ? item.rateType.charAt(0).toUpperCase() +
+                            item.rateType.slice(1).toLowerCase()
+                          : '-'}
+                      </td>
+
+                      {/* Rate (₹) */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        ₹{item?.rateValue || '0'}
+                      </td>
+
+                      {/* GST (%) */}
+                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                        {item?.gstPercent || '0'}%
+                      </td>
+                      {/* Active Status */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        {item?.isActive ? (
+                          <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                            Inactive
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        <div className="flex justify-center gap-3">
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setIsModalOpen(true)
+                            }}
+                            className="text-blue-600 hover:text-blue-800 transition"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setShowDeleteModal(true)
+                            }}
+                            className="text-red-600 hover:text-red-800 transition"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>
@@ -341,7 +386,7 @@ const MaintenceCharges = () => {
                 setLimit(size)
                 setPage(1)
               }}
-              showQuickJumper
+              // showQuickJumper
             />
           </div>
         </div>

@@ -4,7 +4,7 @@ import { Modal, Select } from 'antd'
 import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { fileUpload, getRequest, postRequest, putRequest } from '../../../Helpers'
-import {validateEmail} from '../../../Utils/index'
+import { validateEmail } from '../../../Utils/index'
 
 const LandLordModal = ({
   setUpdateStatus,
@@ -29,6 +29,7 @@ const LandLordModal = ({
     siteId: '',
     projectId: '',
     unitId: '',
+    isActive: 'true',
   })
 
   console.log('fprmdata', formData)
@@ -40,24 +41,22 @@ const LandLordModal = ({
       .catch((err) => console.error('Error fetching sites:', err))
   }, [])
 
-  // Fetch projects when site changes
-  useEffect(() => {
-    if (formData?.siteId) {
-      getRequest(`projects?isPagination=false&siteId=${formData?.siteId}`)
-        .then((res) => setProject(res?.data?.data?.projects || []))
-        .catch((err) => console.error('Error fetching projects:', err))
-    } else {
-      setProject([])
-      setFormData((prev) => ({ ...prev, projectId: '', unitId: '' }))
-    }
-  }, [formData?.siteId])
+  // // Fetch projects when site changes
+  // useEffect(() => {
+  //   if (formData?.siteId) {
+  //     getRequest(`projects?isPagination=false&siteId=${formData?.siteId}`)
+  //       .then((res) => setProject(res?.data?.data?.projects || []))
+  //       .catch((err) => console.error('Error fetching projects:', err))
+  //   } else {
+  //     setProject([])
+  //     setFormData((prev) => ({ ...prev, projectId: '', unitId: '' }))
+  //   }
+  // }, [formData?.siteId])
 
   // Fetch units when project changes
   useEffect(() => {
-    if (formData?.siteId && formData?.projectId) {
-      getRequest(
-        `units?isPagination=false&siteId=${formData?.siteId}&projectId=${formData?.projectId}`,
-      )
+    if (formData?.siteId) {
+      getRequest(`units?isPagination=false&siteId=${formData?.siteId}`)
         .then((res) => setUnits(res?.data?.data?.units || []))
 
         .catch((err) => console.error('Error fetching units:', err))
@@ -65,7 +64,7 @@ const LandLordModal = ({
       setUnits([])
       setFormData((prev) => ({ ...prev, unitId: '' }))
     }
-  }, [formData?.projectId, formData?.siteId])
+  }, [formData?.siteId])
 
   useEffect(() => {
     if (modalData) {
@@ -76,11 +75,12 @@ const LandLordModal = ({
         address: modalData?.address || '',
         profilePic: modalData?.profilePic || '',
         siteId: modalData?.siteId?._id || '',
-        projectId: modalData?.projectId?._id || '',
+        // projectId: modalData?.projectId?._id || '',
         unitId:
           Array.isArray(modalData?.unitIds) && modalData.unitIds.length > 0
             ? modalData.unitIds[0]?._id || modalData.unitIds[0]
             : '',
+        isActive: modalData?.isActive ?? '',
       })
     } else {
       setFormData({
@@ -90,8 +90,9 @@ const LandLordModal = ({
         address: '',
         profilePic: '',
         siteId: '',
-        projectId: '',
+        // projectId: '',
         unitId: '',
+        isActive: '',
       })
     }
   }, [modalData])
@@ -99,6 +100,7 @@ const LandLordModal = ({
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target
+    console.log('name and value', name, value)
 
     // Phone number validation
     if (name === 'phone') {
@@ -151,15 +153,15 @@ const LandLordModal = ({
     if (!formData?.phone) newErrors.phone = 'Phone number is required'
     if (!formData?.address) newErrors.address = 'Address is required'
     if (!formData?.siteId) newErrors.siteId = 'Select a site'
-    if (!formData?.projectId) newErrors.projectId = 'Select a project'
+    // if (!formData?.projectId) newErrors.projectId = 'Select a project'
     if (!formData?.unitId) newErrors.unitId = 'Select a unit'
     if (!formData?.profilePic) newErrors.profilePic = 'Profile image is required'
 
     if (!formData.email?.trim()) {
-  newErrors.email = 'Email is required'
-} else if (!validateEmail(formData.email)) {
-  newErrors.email = 'Please enter a valid email address'
-}
+      newErrors.email = 'Email is required'
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email address'
+    }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -195,6 +197,7 @@ const LandLordModal = ({
     const payload = {
       ...formData,
       unitIds: [formData.unitId],
+      isActive: formData.isActive === 'on' && 'true',
     }
 
     putRequest({ url: `landlords/${modalData._id}`, cred: payload })
@@ -248,7 +251,7 @@ const LandLordModal = ({
 
           {/* project */}
 
-          <div className="col-md-6 mb-3">
+          {/* <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Project<span className="text-danger">*</span>
             </label>
@@ -273,12 +276,9 @@ const LandLordModal = ({
               className={errors?.projectId ? 'is-invalid' : ''}
             />
             {errors?.projectId && <div className="invalid-feedback">{errors?.projectId}</div>}
-          </div>
+          </div> */}
 
-        </div>
-
-        {/* Unit */}
-        <div className="row">
+          {/* Unit */}
           {/* 🔹 Unit Dropdown (AntD Select) */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -293,7 +293,7 @@ const LandLordModal = ({
                 setFormData((prev) => ({ ...prev, unitId: value }))
                 clearFieldError('unitId') // ✅ clear validation error on change
               }}
-              disabled={!formData?.projectId}
+              disabled={!formData?.siteId}
               filterOption={(input, option) =>
                 (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
               }
@@ -306,7 +306,9 @@ const LandLordModal = ({
             />
             {errors?.unitId && <div className="invalid-feedback">{errors?.unitId}</div>}
           </div>
+        </div>
 
+        <div className="row">
           {/* 🔹 Name Input Field */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -324,11 +326,7 @@ const LandLordModal = ({
             />
             {errors?.name && <div className="invalid-feedback">{errors?.name}</div>}
           </div>
-        </div>
 
-
-        {/* Phone & Address */}
-        <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Email<span className="text-danger">*</span>
@@ -342,6 +340,10 @@ const LandLordModal = ({
             />
             {errors?.email && <div className="invalid-feedback">{errors?.email}</div>}
           </div>
+        </div>
+
+        {/* Phone & Address */}
+        <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Phone<span className="text-danger">*</span>
@@ -356,10 +358,7 @@ const LandLordModal = ({
             />
             {errors?.phone && <div className="invalid-feedback">{errors?.phone}</div>}
           </div>
-        </div>
 
-        {/* Unit & Profile Image */}
-        <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Address<span className="text-danger">*</span>
@@ -373,7 +372,10 @@ const LandLordModal = ({
             />
             {errors?.address && <div className="invalid-feedback">{errors?.address}</div>}
           </div>
+        </div>
 
+        {/* Unit & Profile Image */}
+        <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Profile Image<span className="text-danger">*</span>
@@ -414,6 +416,17 @@ const LandLordModal = ({
               </div>
             )}
           </div>
+        </div>
+        {/* 🔹 Active Checkbox */}
+        <div className="form-check mb-3">
+          <input
+            type="checkbox"
+            className="form-check-input me-2"
+            name="isActive"
+            checked={formData.isActive}
+            onChange={handleChange}
+          />
+          <label className="form-check-label fw-bold">Active</label>
         </div>
 
         {/* Buttons */}

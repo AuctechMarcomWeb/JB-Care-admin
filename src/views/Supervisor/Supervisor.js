@@ -203,66 +203,118 @@ const Supervisor = () => {
           </div>
         ) : (
           <>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3">Sr. No.</th>
-                  <th className="px-6 py-3">Name</th>
-                  <th className="px-6 py-3">Phone</th>
-                  <th className="px-6 py-3">E-mail</th>
-                  <th className="px-6 py-3">Site Name</th>
-                  <th className="px-6 py-3">Project Name</th>
-                  <th className="px-6 py-3">Unit Number</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.map((item, index) => (
-                  <tr key={item._id}>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {(page - 1) * limit + (index + 1)}
-                    </td>
-
-                    <td className="px-6 py-4">{item?.name || '-'}</td>
-                    <td className="px-6 py-4">{item?.phone || '-'}</td>
-                    <td className="px-6 py-4">{item?.email || '-'}</td>
-                    <td className="px-6 py-4">{item?.siteId?.siteName || '-'}</td>
-                    <td className="px-6 py-4">{item?.projectId?.projectName || '-'}</td>
-                    <td className="px-6 py-4">{item?.unitId?.unitNumber || '-'}</td>
-                    <td className="px-6 py-4">{formatDate(item?.createdAt || '-')}</td>
-                    <td className="px-6 py-4">
-                      {item?.isActive ? (
-                        <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">Active</span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800">Inactive</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setIsModalOpen(true)
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setShowDeleteModal(true)
-                        }}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-max border border-gray-200 text-center">
+                <thead className="bg-gray-100 font-semibold">
+                  <tr>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Sr. No.
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200 text-left">
+                      Supervisor
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Site Name
+                    </th>
+                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Project Name
+                    </th> */}
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Unit Number
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="bg-white">
+                  {data.map((item, index) => (
+                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                      {/* Sr. No. */}
+                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                        {(page - 1) * limit + (index + 1)}
+                      </td>
+
+                      {/* Supervisor (left-aligned stacked info) */}
+                      <td className="px-6 py-4 border border-gray-200 text-left">
+                        <div className="font-semibold text-gray-800">{item?.name || '-'}</div>
+                        <div className="text-gray-600 text-sm">{item?.phone || '-'}</div>
+                        <div className="text-gray-600 text-sm truncate max-w-[180px]">
+                          {item?.email || '-'}
+                        </div>
+                      </td>
+
+                      {/* Site Name */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {item?.siteId?.siteName || '-'}
+                      </td>
+
+                      {/* Project Name */}
+                      {/* <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {item?.projectId?.projectName || '-'}
+                      </td> */}
+
+                      {/* Unit Number */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {item?.unitId?.unitNumber || '-'}
+                      </td>
+
+                      {/* Date */}
+                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                        {formatDate(item?.createdAt || '-')}
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        {item?.isActive ? (
+                          <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                            Active
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                            Inactive
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                        <div className="flex justify-center gap-3">
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setIsModalOpen(true)
+                            }}
+                            className="text-blue-600 hover:text-blue-800 transition"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setSelectedItem(item)
+                              setShowDeleteModal(true)
+                            }}
+                            className="text-red-600 hover:text-red-800 transition"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>
@@ -284,7 +336,7 @@ const Supervisor = () => {
                 setLimit(size)
                 setPage(1)
               }}
-              showQuickJumper
+              // showQuickJumper
             />
           </div>
         </div>
