@@ -31,7 +31,7 @@ const RepushedDetailsSection = ({ formData, setFormData, errors, setErrors }) =>
   return (
     <div className="row">
       {/* 🔹 Count Field */}
-      <div className="col-md-6 mb-3">
+      {/* <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
           Repush Count <span className="text-danger">*</span>
         </label>
@@ -48,7 +48,7 @@ const RepushedDetailsSection = ({ formData, setFormData, errors, setErrors }) =>
         {errors.repushedDetails?.count && (
           <div className="invalid-feedback">{errors.repushedDetails.count}</div>
         )}
-      </div>
+      </div> */}
 
       {/* 🔹 Reason Field */}
       <div className="col-md-6 mb-3">
