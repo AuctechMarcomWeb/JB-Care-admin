@@ -9,6 +9,7 @@ import axios from 'axios'
 import ComplaintsModal from './ComplaintsModal'
 import { faL } from '@fortawesome/free-solid-svg-icons'
 import moment from 'moment'
+import { useNavigate } from 'react-router-dom'
 
 const Complaints = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -39,6 +40,7 @@ const Complaints = () => {
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
+  const navigate = useNavigate() // ✅ initialize navigation
 
   // Fetch dropdown data for filters
   useEffect(() => {
@@ -84,6 +86,11 @@ const Complaints = () => {
       .catch((error) => {
         console.log('error', error)
       })
+  }
+  const handleRowClick = (id) => {
+    console.log('fgdgdg', id)
+
+    navigate(`/complaint-view/${id}`) // Navigate to complaint view page with id
   }
 
   return (
@@ -296,7 +303,11 @@ const Complaints = () => {
 
                 <tbody className="bg-white">
                   {data?.map((item, index) => (
-                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                    <tr
+                      key={item._id}
+                      className="whitespace-nowrap cursor-pointer hover:bg-gray-50 transition"
+                      onClick={() => handleRowClick(item._id)} // ✅ call the navigate function
+                    >
                       {/* Sr. No. */}
                       <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
                         {(page - 1) * limit + (index + 1)}
@@ -355,7 +366,8 @@ const Complaints = () => {
                       {/* Actions */}
                       <td className="px-6 py-4  border border-gray-200 align-middle">
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation() // ✅ Stop the row click
                             setSelectedItem(item)
                             setIsModalOpen(true)
                           }}

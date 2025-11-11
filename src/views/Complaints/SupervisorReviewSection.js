@@ -84,7 +84,7 @@ const SupervisorReviewSection = ({
       {/* Supervisor Comments */}
       <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
-          Comments <span className="text-danger"></span>
+          Comments <span className="text-danger">*</span>
         </label>
         <input
           type="text"
@@ -103,7 +103,7 @@ const SupervisorReviewSection = ({
       {/* Supervisor Images */}
       <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
-          Images <span className="text-danger"></span>
+          Images <span className="text-danger">*</span>
         </label>
 
         <input
