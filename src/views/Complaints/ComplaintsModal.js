@@ -58,7 +58,7 @@ const ComplaintsModal = ({
       images: [],
     },
     repushedDetails: {
-      count: '',
+      // count: '',
       reason: '',
     },
     status: '',
@@ -92,7 +92,7 @@ const ComplaintsModal = ({
       const defaultSupervisorDetails = { supervisorId: '', comments: '', images: [] }
       const defaultMaterialDemand = { materialName: '', quantity: '', reason: '', images: [] }
       const defaultResolution = { resolvedBy: '671fc84a3c29f9a5f1b23456', remarks: '', images: [] }
-      const defaultrepushedDetails = { count: '', reason: '' }
+      const defaultrepushedDetails = { reason: '' }
       const defaultclosureDetails = { remarks: '', images: [] }
 
       // 🧩 Step 3: Extract details from matched history entry
@@ -118,7 +118,7 @@ const ComplaintsModal = ({
         case 'Repushed':
           actionFromStatus = 'repush'
           break
-            case 'Closed':
+        case 'Closed':
           actionFromStatus = 'verifyResolution'
           break
         default:
@@ -255,26 +255,22 @@ const ComplaintsModal = ({
     // ---- Common fields ----
     if (!formData.userId) newErrors.userId = 'User is required'
     if (!formData.siteId) newErrors.siteId = 'Site is required (auto-filled)'
-    // if (!formData.projectId) newErrors.projectId = 'Project is required (auto-filled)'
     if (!formData.unitId) newErrors.unitId = 'Unit is required (auto-filled)'
-
     if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
     if (!formData.complaintDescription.trim())
       newErrors.complaintDescription = 'Description is required'
-
     if (!formData.images || formData.images.length === 0)
       newErrors.images = 'At least one image is required'
 
     // ---- Extra validation for edit mode ----
-    if (modalData) {
+    if (modalData && formData.action) {
       switch (formData.action) {
         case 'review':
           newErrors.supervisorDetails = {}
           if (!formData.supervisorDetails?.comments?.trim())
-            newErrors.supervisorDetails.comments = 'comments  is required'
-          if (!formData.supervisorDetails?.images?.trim())
-            newErrors.supervisorDetails.images = 'Images is required'
-          // Clean up empty nested object if no error
+            newErrors.supervisorDetails.comments = 'Comments are required'
+          if (!formData.supervisorDetails?.images?.length)
+            newErrors.supervisorDetails.images = 'At least one image is required'
           if (Object.keys(newErrors.supervisorDetails).length === 0)
             delete newErrors.supervisorDetails
           break
@@ -287,20 +283,34 @@ const ComplaintsModal = ({
             newErrors.materialDemand.quantity = 'Quantity is required'
           if (!formData.materialDemand?.reason?.trim())
             newErrors.materialDemand.reason = 'Reason is required'
-          if (!formData.materialDemand?.images?.trim())
-            newErrors.materialDemand.images = 'Images is required'
-          // Clean up empty nested object if no error
+          if (!formData.materialDemand?.images?.length)
+            newErrors.materialDemand.images = 'At least one image is required'
           if (Object.keys(newErrors.materialDemand).length === 0) delete newErrors.materialDemand
           break
 
         case 'resolve':
-          if (!formData.resolvedImages?.length)
-            newErrors.resolvedImages = 'Resolved images are required'
+          newErrors.resolution = {}
+          if (!formData.resolution?.remarks?.trim())
+            newErrors.resolution.remarks = 'Remarks are required'
+          if (!formData.resolution?.images?.length)
+            newErrors.resolution.images = 'Resolved images are required'
+          if (Object.keys(newErrors.resolution).length === 0) delete newErrors.resolution
           break
 
         case 'verifyResolution':
-          if (!formData.customerConfirmed)
-            newErrors.customerConfirmed = 'Customer confirmation is required'
+          newErrors.closureDetails = {}
+          if (!formData.closureDetails?.remarks?.trim())
+            newErrors.closureDetails.remarks = 'Remarks are required'
+          if (!formData.closureDetails?.images?.length)
+            newErrors.closureDetails.images = 'Proof images are required'
+          if (Object.keys(newErrors.closureDetails).length === 0) delete newErrors.closureDetails
+          break
+
+        case 'repush':
+          newErrors.repushedDetails = {}
+          if (!formData.repushedDetails?.reason?.trim())
+            newErrors.repushedDetails.reason = 'Reason is required'
+          if (Object.keys(newErrors.repushedDetails).length === 0) delete newErrors.repushedDetails
           break
 
         default:

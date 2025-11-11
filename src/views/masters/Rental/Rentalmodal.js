@@ -26,7 +26,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     landlordId: '',
     billTo: 'tenant',
     addedBy: 'landlord',
-    isActive: '',
+    isActive: true,
   })
 
   // // 🔹 Fetch all sites when modal opens
@@ -125,7 +125,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
         unitId: modalData?.unitId?._id || '',
         landlordId: modalData?.landlordId?._id || '',
         billTo: modalData?.billTo || 'tenant',
-        isActive: modalData?.isActive ?? '',
+        isActive: modalData?.isActive ?? true,
       })
     }
   }, [modalData])
@@ -202,7 +202,10 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     if (!validateForm()) return
     setLoading(true)
 
-    postRequest({ url: 'tenants', cred: formData })
+    postRequest({
+      url: 'tenants',
+      cred: { ...formData, isActive: formData.isActive === 'on' && true },
+    })
       .then((res) => {
         toast.success(res?.data?.message || 'Tenant added successfully')
         setUpdateStatus((prev) => !prev)

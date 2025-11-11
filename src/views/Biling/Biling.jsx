@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
 import BilingModal from './BilingModal'
 import moment from 'moment'
+import { useNavigate } from 'react-router-dom'
 
 const Biling = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -24,14 +25,49 @@ const Biling = () => {
   const [tempFromDate, setTempFromDate] = useState('')
   const [tempToDate, setTempToDate] = useState('')
   const [bill, setBill] = useState([])
+
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
+  // NEW FILTER STATES
+  const [sites, setSites] = useState([])
+  const [units, setUnits] = useState([])
+  const [selectedSite, setSelectedSite] = useState('')
+  const [selectedUnit, setSelectedUnit] = useState('')
+  const [tempSelectedSite, setTempSelectedSite] = useState('')
+  const [tempSelectedUnit, setTempSelectedUnit] = useState('')
+  const [landLord, setLandlord] = useState([])
+  const [selectedLandlord, setSelectedLandlord] = useState('')
+  const [tempSelectedLandlord, setTempSelectedLandlord] = useState('')
+
+  // Fetch dropdown data for filters
   useEffect(() => {
-    getRequest(`billing/billingSummary`)
+    getRequest('sites?isPagination=false').then((res) => setSites(res?.data?.data?.sites || []))
+    getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
+    getRequest('landlords?isPagination=false').then((res) =>
+      setLandlord(res?.data?.data?.data || []),
+    )
+  }, [])
+
+  // ✅ Fetch Data with Loader
+  useEffect(() => {
+    setLoading(true)
+    const query = [
+      // `search=${searchTerm}`,
+      // `page=${page}`,
+      // `limit=${limit}`,
+      // selectedSite && `siteId=${selectedSite}`,
+      // selectedUnit && `unitId=${selectedUnit}`,
+      selectedLandlord && `landlordId=${selectedLandlord}`,
+    ]
+
+      .filter(Boolean)
+      .join('&')
+
+    getRequest(`billing/billingSummary${query}`)
       .then((res) => {
         const responseData = res?.data
-        console.log('dfdf', responseData?.data)
+        console.log('dfdf', res)
 
         setData(responseData?.data || [])
         setTotal(res?.data?.data?.total || 0)
@@ -39,26 +75,9 @@ const Biling = () => {
       .catch((error) => {
         console.log('error', error)
       })
-  }, [])
-
-  // ✅ Fetch Data with Loader
-  // useEffect(() => {
-  //   setLoading(true)
-  //   getRequest(
-  //     `maintenance-bill?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}`,
-  //   )
-  //     .then((res) => {
-  //       const responseData = res?.data?.data
-  //       console.log('dfdf', res)
-
-  //       setData(responseData?.data || [])
-  //       setTotal(res?.data?.data?.total || 0)
-  //     })
-  //     .catch((error) => {
-  //       console.log('error', error)
-  //     })
-  //     .finally(() => setLoading(false)) // ✅ stop loader
-  // }, [searchTerm, page, limit, fromDate, toDate, updateStatus])
+      .finally(() => setLoading(false)) // ✅ stop loader
+  }, [updateStatus, selectedLandlord])
+  // }, [searchTerm, page, limit, fromDate, toDate,  selectedSite,selectedUnit,selectedLandlord,updateStatus])
 
   // ✅ Delete handler
   const confirmDelete = () => {
@@ -72,6 +91,12 @@ const Biling = () => {
       .catch((error) => {
         console.log('error', error)
       })
+  }
+
+  const navigate = useNavigate()
+  const handleRowClick = (landlordId) => {
+    console.log('landlordId', landlordId)
+    navigate(`/biling-details/${landlordId}`)
   }
 
   return (
@@ -128,6 +153,54 @@ const Biling = () => {
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* Site */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
+            <select
+              value={tempSelectedSite}
+              onChange={(e) => setTempSelectedSite(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Sites</option>
+              {sites.map((s) => (
+                <option key={s._id} value={s._id}>
+                  {s.siteName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
+            <select
+              value={tempSelectedUnit}
+              onChange={(e) => setTempSelectedUnit(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Units</option>
+              {units.map((u) => (
+                <option key={u._id} value={u._id}>
+                  {u.unitNumber}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Landlord</label>
+            <select
+              value={tempSelectedLandlord}
+              onChange={(e) => setTempSelectedLandlord(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Landlord</option>
+              {landLord.map((l) => (
+                <option key={l._id} value={l._id}>
+                  {l.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* From Date */}
           {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
@@ -160,17 +233,20 @@ const Biling = () => {
                 placeholder="Search by name or address..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
+                className="pl-10 pr-4 py-2 w-70 border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
               />
             </div>
           </div>
 
           {/* Filter Buttons */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+          <div className="flex flex-wrap items-center gap-2 md:col-span-8 justify-center mt-1">
             <button
               onClick={() => {
                 setFromDate(tempFromDate)
                 setToDate(tempToDate)
+                setSelectedSite(tempSelectedSite)
+                setSelectedUnit(tempSelectedUnit)
+                setSelectedLandlord(tempSelectedLandlord)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
@@ -178,7 +254,7 @@ const Biling = () => {
             >
               Apply
             </button>
-            {(fromDate || toDate || searchTerm) && (
+            {(fromDate || toDate || searchTerm || selectedSite || selectedUnit) && (
               <button
                 onClick={() => {
                   setTempFromDate('')
@@ -186,6 +262,12 @@ const Biling = () => {
                   setFromDate('')
                   setToDate('')
                   setSearchTerm('')
+                  setTempSelectedSite('')
+                  setSelectedSite('')
+                  setTempSelectedUnit('')
+                  setSelectedUnit('')
+                  setLandlord('')
+                  setSelectedLandlord('')
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
@@ -211,15 +293,16 @@ const Biling = () => {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto w-full">
+            <div className="overflow-x-auto w-full max-h-[70vh]">
               <table className="w-full min-w-max border border-gray-200">
-                <thead className="bg-gray-100">
+                <thead className="bg-gray-100 sticky top-0 z-10">
                   <tr>
                     <th className="px-6 py-3 text-left border border-gray-200">Sr. No.</th>
                     <th className="px-6 py-3 text-left border border-gray-200">Landlord</th>
                     <th className="px-6 py-3 text-left border border-gray-200">
                       Maintenance Amount
                     </th>
+                    <th className="px-6 py-3 text-left border border-gray-200">Electricity Bill</th>
                     <th className="px-6 py-3 text-left border border-gray-200">Current Billing</th>
                     <th className="px-6 py-3 text-left border border-gray-200">GST Amount</th>
                     <th className="px-6 py-3 text-left border border-gray-200">Total Amount</th>
@@ -227,21 +310,25 @@ const Biling = () => {
                       Billing Till Today
                     </th>
                     <th className="px-6 py-3 text-left border border-gray-200">Previous Unpaid</th>
-                    {/* <th className="px-6 py-3 text-left border border-gray-200">From Date</th>
-                    <th className="px-6 py-3 text-left border border-gray-200"> To Date </th> */}
-
-                    {/* <th className="px-6 py-3 text-left border border-gray-200">Status</th> */}
+                    <th className="px-6 py-3 text-left border border-gray-200">Unpaid Bill</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white">
                   {data?.map((item, index) => (
-                    <tr key={item.landlordId} className="whitespace-nowrap">
+                    <tr
+                      key={item.landlordId}
+                      className="whitespace-nowrap cursor-pointer hover:bg-gray-50 transition"
+                      onClick={() => handleRowClick(item.landlordId)}
+                    >
                       <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200">
                         {index + 1}
                       </td>
                       <td className="px-6 py-4 border border-gray-200">{item.landlordName}</td>
                       <td className="px-6 py-4 text-center border border-gray-200">
                         {item.totalMaintenance}
+                      </td>
+                      <td className="px-6 py-4 text-center border border-gray-200">
+                        {item.totalElectricity}
                       </td>
                       <td className="px-6 py-4 text-center border border-gray-200">
                         {item.totalBillingAmount}
@@ -258,23 +345,9 @@ const Biling = () => {
                       <td className="px-6 py-4 text-center border border-gray-200">
                         {item.previousUnpaidBill}
                       </td>
-                      {/* <td className="px-6 py-4 text-center border border-gray-200">
-                        {new Date(item.fromDate).toLocaleDateString()}
-                      </td>
                       <td className="px-6 py-4 text-center border border-gray-200">
-                        {new Date(item.toDate).toLocaleDateString()}
-                      </td> */}
-                      {/* <td className="px-6 py-4 text-center border border-gray-200">
-                        {item.unpaidCount === 0 ? (
-                          <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
-                            Paid
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">
-                            Unpaid
-                          </span>
-                        )}
-                      </td> */}
+                        {item.unpaidCount}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
