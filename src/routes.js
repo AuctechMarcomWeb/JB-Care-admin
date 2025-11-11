@@ -18,6 +18,7 @@ import Biling from './views/Biling/Biling'
 import MaintenceCharges from './views/masters/MaintenceCharges/MaintenceCharges'
 import Inventory from './views/Inventory/Inventory'
 import BillingDetails from './views/Biling/BillingDetails'
+import ComplaintView from './views/Complaints/ComplaintView'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
 const routes = [
@@ -42,6 +43,7 @@ const routes = [
   { path: '/biling', name: 'Biling', element: Biling },
   { path: '/inventory', name: 'Inventory', element: Inventory },
   { path: '/biling-details/:landlordId', name: 'Billing Details', element: BillingDetails },
+  { path: '/complaint-view/:id', name: 'Complaint View', element: ComplaintView },
 ]
 
 export default routes

@@ -305,9 +305,9 @@ const Biling = () => {
                 <tbody className="bg-white">
                   {data?.map((item, index) => (
                     <tr
-                      key={item.landlordId}
+                      key={item?.landlordId}
                       className="whitespace-nowrap cursor-pointer hover:bg-gray-50 transition"
-                      onClick={() => handleRowClick(item.landlordId)}
+                      onClick={() => handleRowClick(item?.landlordId)}
                     >
                       <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200">
                         {index + 1}

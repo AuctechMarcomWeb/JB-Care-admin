@@ -72,7 +72,7 @@ const ResolutionSection = ({
       {/* 🔹 Remarks Input */}
       <div className="col-md-12 mb-3">
         <label className="form-label fw-bold">
-          Remarks <span className="text-danger"></span>
+          Remarks <span className="text-danger">*</span>
         </label>
         <textarea
           name="remarks"
@@ -91,7 +91,7 @@ const ResolutionSection = ({
       {/* 🔹 Resolved Images */}
       <div className="col-md-12 mb-3">
         <label className="form-label fw-bold">
-          Resolution Images <span className="text-danger"></span>
+          Resolution Images <span className="text-danger">*</span>
         </label>
 
         <div className="d-flex align-items-start gap-3 flex-wrap">
