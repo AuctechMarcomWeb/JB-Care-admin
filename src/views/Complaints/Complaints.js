@@ -157,7 +157,7 @@ const Complaints = () => {
           </div>
 
           {/* Project Filter */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Project</label>
             <select
               value={selectedProject}
@@ -171,7 +171,7 @@ const Complaints = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
 
           {/* Date Filters */}
           <div className="flex flex-col">
