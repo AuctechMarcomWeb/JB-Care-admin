@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getRequest } from '../../Helpers'
 import { Spin, Button, Tag, Card, Modal, Empty } from 'antd'
 import moment from 'moment'
 import { Edit, Plus, ArrowLeft } from 'lucide-react'
 import BilingModal from '../Biling/BilingModal'
-
+import { BillingSummaryContext } from '../../context/BillingSummaryContext'
 const BillingDetails = () => {
   const { landlordId } = useParams()
   const navigate = useNavigate()
@@ -15,6 +15,7 @@ const BillingDetails = () => {
   const [loading, setLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const { billingSummary } = useContext(BillingSummaryContext)
 
   // 🔄 Fetch billing data
   const fetchBillingData = useCallback(async () => {
@@ -33,6 +34,8 @@ const BillingDetails = () => {
   useEffect(() => {
     fetchBillingData()
   }, [fetchBillingData])
+
+  console.log('billingSummary?.billingTillToday', billingSummary?.[0]?.billingTillToday)
 
   const landlord = billingData[0]?.landlordId || {}
   const site = billingData[0]?.siteId || {}
@@ -111,11 +114,20 @@ const BillingDetails = () => {
               <p className="text-gray-500">🏠 {landlord?.address || 'N/A'}</p>
             </div>
             <div className="text-right md:min-w-[200px]">
-              <p className="font-semibold text-gray-700">🏢 {site?.siteName || 'N/A'}</p>
-              <p className="text-gray-500">{site?.siteAddress || 'N/A'}</p>
+              <p className="font-semibold text-gray-700">Site: {site?.siteName || 'N/A'}</p>
               <p className="text-gray-500">
                 Unit: {unit?.unitNumber || 'N/A'} ({unit?.block || '-'})
               </p>
+            </div>
+          </div>
+          <div className="flex justify-end gap-4">
+            <div className="bg-yellow-200 text-black p-2 rounded">
+              <span className="font-semibold">Billing Till Today:</span>{' '}
+              {billingSummary?.[0]?.billingTillToday || 'N/A'}
+            </div>
+            <div className="bg-green-200 text-black p-2 rounded">
+              <span className="font-semibold">Previous Unpaid Bill:</span>{' '}
+              {billingSummary?.[0]?.previousUnpaidBill || 'N/A'}
             </div>
           </div>
         </Card>

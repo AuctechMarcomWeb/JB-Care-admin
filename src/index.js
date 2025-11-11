@@ -5,9 +5,12 @@ import 'core-js'
 
 import App from './App'
 import store from './store'
+import { BillingSummaryProvider } from './context/BillingSummaryContext'
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <App />
+    <BillingSummaryProvider>
+      <App />
+    </BillingSummaryProvider>
   </Provider>,
 )
