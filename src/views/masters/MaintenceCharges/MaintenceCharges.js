@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
-import { Search, Plus, Edit, Trash2, AlertTriangle, IndianRupee } from 'lucide-react'
+import { Search, Plus, Edit, Trash2, AlertTriangle } from 'lucide-react'
 import ExportButton from '../../ExportButton'
 import { deleteRequest, getRequest } from '../../../Helpers'
 import toast from 'react-hot-toast'
@@ -14,53 +14,68 @@ const MaintenceCharges = () => {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
-  const [fromDate, setFromDate] = useState('')
-  const [toDate, setToDate] = useState('')
   const [updateStatus, setUpdateStatus] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [tempFromDate, setTempFromDate] = useState('')
-  const [tempToDate, setTempToDate] = useState('')
+
+  // 🔹 Temp filters (before Apply)
   const [tempSelectedSite, setTempSelectedSite] = useState('')
   const [tempSelectedUnit, setTempSelectedUnit] = useState('')
-  const [sites, setSites] = useState([])
-  const [units, setUnits] = useState([])
+
+  // 🔹 Applied filters (after Apply)
   const [selectedSite, setSelectedSite] = useState('')
   const [selectedUnit, setSelectedUnit] = useState('')
-  const formatDate = (dateString) => {
-    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
-  }
-  // 🔹 Fetch Sites for Dropdown
+
+  // 🔹 Dropdown data
+  const [sites, setSites] = useState([])
+  const [units, setUnits] = useState([])
+
+  // 🔹 Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+
+  const formatDate = (dateString) => (dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A')
+
+  // 🔹 Fetch Sites
   useEffect(() => {
-    getRequest('sites?isPagination=false').then((res) => {
-      const responseData = res?.data?.data
-      setSites(responseData?.sites || [])
-    })
-    getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
+    getRequest('sites?isPagination=false').then((res) => setSites(res?.data?.data?.sites || []))
   }, [])
 
-  // ✅ Fetch Data with Loader
+  // 🔹 Fetch Units based on selected Site (for dropdown)
+  useEffect(() => {
+    if (tempSelectedSite) {
+      getRequest(`units?isPagination=false&siteId=${tempSelectedSite}`).then((res) =>
+        setUnits(res?.data?.data?.units || []),
+      )
+    } else {
+      getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
+    }
+  }, [tempSelectedSite])
+
+  // 🔹 Fetch Data with Filters
   useEffect(() => {
     setLoading(true)
-    getRequest(
-      `maintain-charges?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}${
-        selectedSite ? `&siteId=${selectedSite}` : ''
-      }${selectedUnit ? `&unitId=${selectedUnit}` : ''}`,
-    )
+    const queryParams = new URLSearchParams({
+      search: searchTerm || '',
+      page,
+      limit,
+      order: 'desc',
+    })
+
+    if (selectedSite) queryParams.append('siteId', selectedSite)
+    if (selectedUnit) queryParams.append('unitId', selectedUnit)
+
+    getRequest(`maintain-charges?${queryParams.toString()}`)
       .then((res) => {
         const responseData = res?.data?.data
         setData(responseData?.data || [])
         setTotal(responseData?.total || 0)
       })
-      .catch((error) => {
-        console.log('error', error)
-      })
-      .finally(() => setLoading(false)) // ✅ stop loader
-  }, [searchTerm, page, limit, fromDate, toDate, selectedSite, selectedUnit, updateStatus])
+      .catch((err) => console.error('Error fetching maintenance charges:', err))
+      .finally(() => setLoading(false))
+  }, [searchTerm, page, limit, selectedSite, selectedUnit, updateStatus])
 
-  // ✅ Delete handler
+  // 🔹 Delete Handler
   const confirmDelete = () => {
     deleteRequest(`maintain-charges/${selectedItem?._id}`)
       .then((res) => {
@@ -69,9 +84,7 @@ const MaintenceCharges = () => {
         setUpdateStatus((prev) => !prev)
         setShowDeleteModal(false)
       })
-      .catch((error) => {
-        console.log('error', error)
-      })
+      .catch((err) => console.error('Delete failed:', err))
   }
 
   return (
@@ -79,13 +92,14 @@ const MaintenceCharges = () => {
       {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 max-w-md w-full mx-4">
+          <div className="bg-white p-6 max-w-md w-full mx-4 rounded-lg shadow-lg">
             <div className="flex items-center mb-4">
               <AlertTriangle className="w-6 h-6 text-red-500 mr-3" />
               <h3 className="text-lg font-semibold text-gray-900">Confirm Delete</h3>
             </div>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete <strong>{selectedItem?.siteName}</strong>?
+              Are you sure you want to delete{' '}
+              <strong>{selectedItem?.siteId?.siteName || 'this record'}</strong>?
             </p>
             <div className="flex justify-end space-x-3">
               <button
@@ -104,40 +118,46 @@ const MaintenceCharges = () => {
           </div>
         </div>
       )}
+
       {/* Header */}
-      <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+      <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3 px-2 py-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Maintence Charges</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Manage Maintence Charges</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Maintenance Charges</h2>
+          <p className="text-gray-600 text-sm sm:text-base">Manage maintenance charge details</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <ExportButton
             data={data}
-            fileName="Maintence Charges.xlsx"
-            sheetName="Maintence Charges"
+            fileName="Maintenance Charges.xlsx"
+            sheetName="Maintenance Charges"
           />
           <button
             onClick={() => {
               setIsModalOpen(true)
+              setSelectedItem(null)
             }}
-            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center  text-sm sm:text-base w-full sm:w-auto"
+            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center text-sm sm:text-base rounded-md"
           >
-            <Plus className="w-4 h-4 mr-2" /> Add Maintence Charges
+            <Plus className="w-4 h-4 mr-2" /> Add Charges
           </button>
         </div>
       </div>
-      {/* Filters Section */}
-      <div className="py-2 border-b border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-          {/* 🔹 Site Name Filter */}
+
+      {/* 🔹 Filters Section */}
+      <div className="py-3 border-b border-gray-200 px-2">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+          {/* Site Filter */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
             <select
               value={tempSelectedSite}
-              onChange={(e) => setTempSelectedSite(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => {
+                setTempSelectedSite(e.target.value)
+                setTempSelectedUnit('') // reset unit when site changes
+              }}
+              className="w-full border border-gray-300 rounded-md  py-2 focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All Sites</option>
+              <option value="">Select Sites</option>
               {sites.map((site) => (
                 <option key={site._id} value={site._id}>
                   {site.siteName}
@@ -145,15 +165,16 @@ const MaintenceCharges = () => {
               ))}
             </select>
           </div>
-          {/* 🔹 Unit Name Filter */}
+
+          {/* Unit Filter */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
             <select
               value={tempSelectedUnit}
               onChange={(e) => setTempSelectedUnit(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md  py-2 focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All Unit</option>
+              <option value="">Select Units</option>
               {units.map((unit) => (
                 <option key={unit._id} value={unit._id}>
                   {unit.unitNumber}
@@ -161,27 +182,6 @@ const MaintenceCharges = () => {
               ))}
             </select>
           </div>
-          {/* From Date */}
-          {/* <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
-            <input
-              type="date"
-              value={tempFromDate}
-              onChange={(e) => setTempFromDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            />
-          </div> */}
-
-          {/* To Date */}
-          {/* <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
-            <input
-              type="date"
-              value={tempToDate}
-              onChange={(e) => setTempToDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            />
-          </div> */}
 
           {/* Search Input */}
           <div className="flex flex-col md:col-span-2">
@@ -190,20 +190,18 @@ const MaintenceCharges = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search by name or address..."
+                placeholder="Search by name or rate type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
+                className="pl-10  py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
               />
             </div>
           </div>
 
-          {/* Filter Buttons */}
+          {/* Buttons */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
             <button
               onClick={() => {
-                setFromDate(tempFromDate)
-                setToDate(tempToDate)
                 setSelectedSite(tempSelectedSite)
                 setSelectedUnit(tempSelectedUnit)
                 setPage(1)
@@ -213,18 +211,15 @@ const MaintenceCharges = () => {
             >
               Apply
             </button>
-            {(fromDate || toDate || searchTerm) && (
+
+            {(selectedSite || selectedUnit || searchTerm) && (
               <button
                 onClick={() => {
-                  setTempFromDate('')
-                  setTempToDate('')
-                  setFromDate('')
-                  setToDate('')
-                  setSearchTerm('')
                   setTempSelectedSite('')
-                  setSelectedSite('')
                   setTempSelectedUnit('')
+                  setSelectedSite('')
                   setSelectedUnit('')
+                  setSearchTerm('')
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
@@ -236,13 +231,14 @@ const MaintenceCharges = () => {
           </div>
         </div>
       </div>
-      <hr className="" /> {/* ✅ Table Section with Loader & Empty State */}
+
+      {/* ✅ Table Section */}
       <div className="overflow-x-auto">
         {loading ? (
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />
             <div className="mt-4 text-blue-500 font-medium text-center">
-              Loading Maintence Chargess...
+              Loading Maintenance Charges...
             </div>
           </div>
         ) : !data || data.length === 0 ? (
@@ -250,121 +246,93 @@ const MaintenceCharges = () => {
             <Empty description="No records found" />
           </div>
         ) : (
-          <>
-            <div className="overflow-x-auto w-full">
-              <table className="w-full min-w-max border border-gray-200 text-center">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-2 py-2text-sm font-semibold text-gray-700 border border-gray-200">
-                      Sr. No.
-                    </th>
-                    <th className="px-2 py-2text-sm font-semibold text-gray-700 border border-gray-200">
-                      Site Name
-                    </th>
-                    <th className="px-2 py-2text-sm font-semibold text-gray-700 border border-gray-200">
-                      Unit
-                    </th>
-                    <th className="px-2 py-2text-sm font-semibold text-gray-700 border border-gray-200">
-                      Rate Type
-                    </th>
-                    <th className="px-2 py-2text-sm font-semibold text-gray-700 border border-gray-200">
-                      Rate (₹)
-                    </th>
-                    <th className="px-2 py-2text-sm font-semibold text-gray-700 border border-gray-200">
-                      GST (%)
-                    </th>
-                    <th className="px-2 py-2text-sm font-semibold text-gray-700 border border-gray-200">
-                      Status
-                    </th>
-                    <th className="px-2 py-2text-sm font-semibold text-gray-700 border border-gray-200">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="bg-white">
-                  {data?.map((item, index) => (
-                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
-                      {/* Sr. No. */}
-                      <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200 align-middle">
-                        {(page - 1) * limit + (index + 1)}
-                      </td>
-
-                      {/* Site Name */}
-                      <td className="px-2 py-2 text-gray-600 border border-gray-200 align-middle">
-                        {item?.siteId?.siteName || '-'}
-                      </td>
-
-                      {/* Unit */}
-                      <td className="px-2 py-2 text-gray-600 border border-gray-200 align-middle">
-                        {item?.unitId?.unitNumber || '-'}
-                      </td>
-
-                      {/* Rate Type */}
-                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-                        {item?.rateType
-                          ? item.rateType.charAt(0).toUpperCase() +
-                            item.rateType.slice(1).toLowerCase()
-                          : '-'}
-                      </td>
-
-                      {/* Rate (₹) */}
-                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-                        ₹{item?.rateValue || '0'}
-                      </td>
-
-                      {/* GST (%) */}
-                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-                        {item?.gstPercent || '0'}%
-                      </td>
-                      {/* Active Status */}
-                      <td className="px-2 py-2 border border-gray-200 align-middle">
-                        {item?.isActive ? (
-                          <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                            Inactive
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-2 py-2 border border-gray-200 align-middle">
-                        <div className="flex justify-center gap-3">
-                          <button
-                            onClick={() => {
-                              setSelectedItem(item)
-                              setIsModalOpen(true)
-                            }}
-                            className="text-blue-600 hover:text-blue-800 transition"
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-
-                          <button
-                            onClick={() => {
-                              setSelectedItem(item)
-                              setShowDeleteModal(true)
-                            }}
-                            className="text-red-600 hover:text-red-800 transition"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
+          <table className="w-full min-w-max border border-gray-200 text-center">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                  Sr.NO.
+                </th>
+                <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                  Site
+                </th>
+                <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                  Unit
+                </th>
+                <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                  Rate Type
+                </th>
+                <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                  Rate (₹)
+                </th>
+                <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                  GST (%)
+                </th>
+                <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                  Status
+                </th>
+                <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white">
+              {data.map((item, index) => (
+                <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                  <td className="px-2 py-2 border border-gray-200">
+                    {(page - 1) * limit + (index + 1)}
+                  </td>
+                  <td className="px-2 py-2 border border-gray-200">
+                    {item?.siteId?.siteName || '-'}
+                  </td>
+                  <td className="px-2 py-2 border border-gray-200">
+                    {item?.unitId?.unitNumber || '-'}
+                  </td>
+                  <td className="px-2 py-2 border border-gray-200 capitalize">
+                    {item?.rateType || '-'}
+                  </td>
+                  <td className="px-2 py-2 border border-gray-200">₹{item?.rateValue || 0}</td>
+                  <td className="px-2 py-2 border border-gray-200">{item?.gstPercent || 0}%</td>
+                  <td className="px-2 py-2 border border-gray-200">
+                    {item?.isActive ? (
+                      <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                        Active
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                        Inactive
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-2 py-2 border border-gray-200">
+                    <div className="flex justify-center gap-3">
+                      <button
+                        onClick={() => {
+                          setSelectedItem(item)
+                          setIsModalOpen(true)
+                        }}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedItem(item)
+                          setShowDeleteModal(true)
+                        }}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
-      {/* ✅ Pagination (only show if data exists) */}
+
+      {/* Pagination */}
       {!loading && data?.length > 0 && (
         <div className="px-2 py-2 border-t border-gray-200">
           <div className="flex items-center justify-between">
@@ -375,18 +343,18 @@ const MaintenceCharges = () => {
               current={page}
               pageSize={limit}
               total={total}
-              pageSizeOptions={['5', '10', '15', '20', '30', '50', '100', '500']}
-              onChange={(newPage) => setPage(newPage)}
-              showSizeChanger={true}
-              onShowSizeChange={(current, size) => {
+              onChange={(p) => setPage(p)}
+              pageSizeOptions={['5', '10', '15', '20', '30', '50', '100']}
+              onShowSizeChange={(curr, size) => {
                 setLimit(size)
                 setPage(1)
               }}
-              // showQuickJumper
+              showSizeChanger
             />
           </div>
         </div>
       )}
+
       {/* Modal */}
       {isModalOpen && (
         <MaintenceChargesModal
