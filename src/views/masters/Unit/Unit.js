@@ -33,6 +33,9 @@ const Unit = () => {
   // const [selectedProject, setSelectedProject] = useState('')
   const [tempSelectedSite, setTempSelectedSite] = useState('')
   // const [tempSelectedProject, setTempSelectedProject] = useState('')
+
+  const [statusCheckbox, setStatusCheckbox] = useState(null) // user-selected checkbox state
+  const [appliedStatus, setAppliedStatus] = useState(null) // applied filter after Apply button
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
@@ -121,7 +124,7 @@ const Unit = () => {
         </div>
       )}
       {/* Header */}
-      <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+      <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Unit</h2>
           <p className="text-gray-600 text-sm sm:text-base">Manage Unit</p>
@@ -130,15 +133,14 @@ const Unit = () => {
           <ExportButton data={data} fileName="Unit.xlsx" sheetName="Unit" />
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base"
+            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center text-sm sm:text-base"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Unit
           </button>
         </div>
       </div>
-
       {/* Filters Section */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className=" py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
           {/* 🔹 Site Filter */}
           <div className="flex flex-col">
@@ -215,10 +217,23 @@ const Unit = () => {
             </div>
           </div>
 
+          <div className="flex items-center">
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <input
+                type="checkbox"
+                checked={statusCheckbox === true}
+                onChange={(e) => setStatusCheckbox(e.target.checked ? true : false)}
+                className="w-4 h-4"
+              />
+              Active
+            </label>
+          </div>
+
           {/* Buttons */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
             <button
               onClick={() => {
+                setAppliedStatus(statusCheckbox)
                 setFromDate(tempFromDate)
                 setToDate(tempToDate)
                 setSelectedSite(tempSelectedSite)
@@ -251,7 +266,8 @@ const Unit = () => {
           </div>
         </div>
       </div>
-
+      {/* <hr className="" /> */}
+      &nbsp;
       {/* Table */}
       <div className="overflow-x-auto">
         {loading ? (
@@ -271,38 +287,38 @@ const Unit = () => {
               <table className="w-full min-w-max border border-gray-200 text-center">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Sr. No.
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Site Name
                     </th>
-                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    {/* <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
           Project Name
         </th> */}
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Unit Type
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Unit
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Block
                     </th>
-                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    {/* <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Floor
                     </th> */}
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Area (Sqft)
                     </th>
 
-                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    {/* <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
           Date
         </th> */}
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Actions
                     </th>
                   </tr>
@@ -312,51 +328,51 @@ const Unit = () => {
                   {data?.map((item, index) => (
                     <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
                       {/* Sr. No. */}
-                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200 align-middle">
                         {(page - 1) * limit + (index + 1)}
                       </td>
 
                       {/* Site */}
-                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
                         {item?.siteId?.siteName || '-'}
                       </td>
 
                       {/* Project (optional)
-          <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+          <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
             {item?.projectId?.projectName || '-'}
           </td> */}
                       {/* Unit Type */}
-                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
                         {item?.unitTypeId?.title || '-'}
                       </td>
 
                       {/* Unit */}
-                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
                         {item?.unitNumber || '-'}
                       </td>
 
                       {/* Block */}
-                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
                         {item?.block || '-'}
                       </td>
 
                       {/* Floor */}
-                      {/* <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                      {/* <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
                         {item?.floor || '-'}
                       </td> */}
 
                       {/* Area */}
-                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
                         {item?.areaSqFt || '-'}
                       </td>
 
                       {/* Date (optional)
-          <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+          <td className="px-2 py-2 text-gray-600 border border-gray-200 align-middle">
             {formatDate(item?.createdAt || '-')}
           </td> */}
 
                       {/* Status */}
-                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 border border-gray-200 align-middle">
                         {item?.status ? (
                           <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
                             Active
@@ -369,7 +385,7 @@ const Unit = () => {
                       </td>
 
                       {/* Actions */}
-                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 border border-gray-200 align-middle">
                         <div className="flex justify-center gap-3">
                           <button
                             onClick={() => {
@@ -404,7 +420,7 @@ const Unit = () => {
       </div>
       {/* Pagination (only show if there’s data) */}
       {!loading && data?.length > 0 && (
-        <div className="px-6 py-4 border-t border-gray-200">
+        <div className="px-2 py-2 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-700">
               Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total} results
@@ -425,7 +441,6 @@ const Unit = () => {
           </div>
         </div>
       )}
-
       {isModalOpen && (
         <UnitModal
           setUpdateStatus={setUpdateStatus}

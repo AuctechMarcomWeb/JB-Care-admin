@@ -95,9 +95,8 @@ const Supervisor = () => {
           </div>
         </div>
       )}
-
       {/* Header */}
-      <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+      <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Supervisor</h2>
           <p className="text-gray-600 text-sm sm:text-base">Manage Supervisor</p>
@@ -114,7 +113,6 @@ const Supervisor = () => {
           </button>
         </div>
       </div>
-
       {/* Filters Section */}
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
@@ -187,7 +185,7 @@ const Supervisor = () => {
           </div>
         </div>
       </div>
-
+      &nbsp;
       {/* Table */}
       <div className="overflow-x-auto">
         {loading ? (
@@ -341,7 +339,6 @@ const Supervisor = () => {
           </div>
         </div>
       )}
-
       {isModalOpen && (
         <SupervisorModal
           setUpdateStatus={setUpdateStatus}

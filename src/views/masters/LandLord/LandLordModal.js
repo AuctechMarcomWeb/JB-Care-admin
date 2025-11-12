@@ -176,6 +176,7 @@ const LandLordModal = ({
     const payload = {
       ...formData,
       unitIds: [formData?.unitId],
+      isActive: formData.isActive === 'on' && 'true',
     }
 
     postRequest({ url: 'landlords', cred: payload })
