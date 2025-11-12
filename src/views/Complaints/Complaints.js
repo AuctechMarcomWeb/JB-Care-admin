@@ -142,7 +142,7 @@ const Complaints = () => {
         </div>
       </div>
       {/* Filters */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
           {/* Site Filter */}
           <div className="flex flex-col">
@@ -255,8 +255,7 @@ const Complaints = () => {
           </div>
         </div>
       </div>
-      &nbsp;
-      {/* Table */}
+      <hr className="" /> {/* Table */}
       <div className="overflow-x-auto">
         {loading ? (
           // Loader when fetching data
@@ -303,8 +302,8 @@ const Complaints = () => {
                   {data?.map((item, index) => (
                     <tr
                       key={item._id}
-                      className="whitespace-nowrap cursor-pointer hover:bg-gray-50 transition"
-                      onClick={() => handleRowClick(item._id)} // ✅ call the navigate function
+                      className="whitespace-nowrap hover:bg-gray-50 transition cursor-pointer"
+                      onClick={() => handleRowClick(item._id)} // ✅ Navigate on row click
                     >
                       {/* Sr. No. */}
                       <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200 align-middle">
@@ -321,7 +320,7 @@ const Complaints = () => {
                         {item?.complaintTitle || '-'}
                       </td>
 
-                      {/* Description with ellipsis & tooltip */}
+                      {/* Description */}
                       <td className="px-2 py-2 text-gray-600 border border-gray-200 align-middle max-w-[200px] text-left">
                         <Tooltip title={item?.complaintDescription || '-'} placement="topLeft">
                           <span className="inline-block w-full truncate cursor-pointer">
@@ -361,11 +360,13 @@ const Complaints = () => {
                         </span>
                       </td>
 
-                      {/* Actions */}
-                      <td className="px-2 py-2  border border-gray-200 align-middle">
+                      {/* ✅ Actions column — stops propagation */}
+                      <td
+                        className="px-2 py-2 border border-gray-200 align-middle"
+                        onClick={(e) => e.stopPropagation()} // 🛑 Prevent row click inside this cell
+                      >
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation() // ✅ Stop the row click
+                          onClick={() => {
                             setSelectedItem(item)
                             setIsModalOpen(true)
                           }}
@@ -373,17 +374,6 @@ const Complaints = () => {
                         >
                           <Edit className="w-4 h-4" />
                         </button>
-
-                        {/* Optional Delete Button */}
-                        {/* <button
-              onClick={() => {
-                setSelectedItem(item);
-                setShowDeleteModal(true);
-              }}
-              className="text-red-600 hover:text-red-800"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button> */}
                       </td>
                     </tr>
                   ))}
@@ -395,7 +385,7 @@ const Complaints = () => {
       </div>
       {/* Pagination (only show if there’s data) */}
       {!loading && data?.length > 0 && (
-        <div className="px-2 py-2 border-t border-gray-200">
+        <div className="px-6 py-4 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-700">
               Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total} results

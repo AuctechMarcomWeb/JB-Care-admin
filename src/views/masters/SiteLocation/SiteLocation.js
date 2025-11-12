@@ -165,8 +165,7 @@ const SiteLocation = () => {
           </div>
         </div>
       </div>
-      &nbsp;
-      {/* Table Section */}
+      <hr className="" /> {/* Table Section */}
       <div className="overflow-x-auto">
         {loading ? (
           <div className="flex flex-col justify-center items-center py-20">

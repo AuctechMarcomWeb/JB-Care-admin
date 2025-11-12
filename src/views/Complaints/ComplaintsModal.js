@@ -149,52 +149,6 @@ const ComplaintsModal = ({
     }
   }, [modalData, users])
 
-  // // ✅ Auto-prefill action-specific sections before update
-  // useEffect(() => {
-  //   if (!modalData || !formData.action) return
-
-  //   switch (formData.action) {
-  //     case 'review':
-  //       if (modalData.supervisorDetails) {
-  //         setFormData((prev) => ({
-  //           ...prev,
-  //           supervisorDetails: modalData.supervisorDetails,
-  //         }))
-  //       }
-  //       break
-
-  //     case 'raiseMaterialDemand':
-  //       if (modalData.materialDemand) {
-  //         setFormData((prev) => ({
-  //           ...prev,
-  //           materialDemand: modalData.materialDemand,
-  //         }))
-  //       }
-  //       break
-
-  //     case 'resolve':
-  //       if (modalData.resolution) {
-  //         setFormData((prev) => ({
-  //           ...prev,
-  //           resolution: modalData.resolution,
-  //         }))
-  //       }
-  //       break
-
-  //     case 'verifyResolution':
-  //       setFormData((prev) => ({
-  //         ...prev,
-  //         comment: modalData.comment || '',
-  //         closedImages: modalData.closedImages || [],
-  //       }))
-  //       break
-
-  //     default:
-  //       break
-  //   }
-  // }, [modalData, formData.action])
-  // console.log('modalData.supervisorDetails', modalData?.supervisorDetails?.comment)
-
   // ✅ Handle Change
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -320,6 +274,8 @@ const ComplaintsModal = ({
     }
 
     setErrors(newErrors)
+    console.log('newErrors', newErrors)
+
     return Object.keys(newErrors).length === 0
   }
 
@@ -349,7 +305,11 @@ const ComplaintsModal = ({
   const handleEdit = async (e) => {
     e.preventDefault()
     console.log('button hits')
+    console.log('Validation result:', validateForm())
+
     if (!validateForm()) return
+    console.log('Validation result:', validateForm())
+
     setLoading(true)
     try {
       console.log('button hits 2')

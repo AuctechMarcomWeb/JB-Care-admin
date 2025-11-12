@@ -249,7 +249,6 @@ const Biling = () => {
                   setTempToDate('')
                   setFromDate('')
                   setToDate('')
-                  setSearchTerm('')
                   setTempSelectedSite('')
                   setSelectedSite('')
                   setTempSelectedUnit('')
@@ -267,7 +266,7 @@ const Biling = () => {
           </div>
         </div>
       </div>
-
+      <hr className="" />
       {/* ✅ Table Section with Loader & Empty State */}
       <div className="overflow-x-auto">
         {loading ? (
