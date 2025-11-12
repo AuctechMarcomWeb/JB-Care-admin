@@ -123,9 +123,8 @@ const Complaints = () => {
           </div>
         </div>
       )}
-
       {/* Header */}
-      <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+      <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Complaints</h2>
           <p className="text-gray-600 text-sm sm:text-base">Manage Complaints</p>
@@ -136,13 +135,12 @@ const Complaints = () => {
             onClick={() => {
               setIsModalOpen(true)
             }}
-            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center  text-sm sm:text-base w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Complaints
           </button>
         </div>
       </div>
-
       {/* Filters */}
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
@@ -257,7 +255,7 @@ const Complaints = () => {
           </div>
         </div>
       </div>
-
+      &nbsp;
       {/* Table */}
       <div className="overflow-x-auto">
         {loading ? (
@@ -277,25 +275,25 @@ const Complaints = () => {
               <table className="w-full min-w-max border border-gray-200 text-center">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Sr. No.
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Title
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Description
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Image
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Actions
                     </th>
                   </tr>
@@ -309,22 +307,22 @@ const Complaints = () => {
                       onClick={() => handleRowClick(item._id)} // ✅ call the navigate function
                     >
                       {/* Sr. No. */}
-                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200 align-middle">
                         {(page - 1) * limit + (index + 1)}
                       </td>
 
                       {/* Date */}
-                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-gray-600 border border-gray-200 align-middle">
                         {formatDate(item?.createdAt || '-')}
                       </td>
 
                       {/* Title */}
-                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
                         {item?.complaintTitle || '-'}
                       </td>
 
                       {/* Description with ellipsis & tooltip */}
-                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle max-w-[200px] text-left">
+                      <td className="px-2 py-2 text-gray-600 border border-gray-200 align-middle max-w-[200px] text-left">
                         <Tooltip title={item?.complaintDescription || '-'} placement="topLeft">
                           <span className="inline-block w-full truncate cursor-pointer">
                             {item?.complaintDescription?.split(' ')?.slice(0, 5)?.join(' ') || '-'}
@@ -334,7 +332,7 @@ const Complaints = () => {
                       </td>
 
                       {/* Image */}
-                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 border border-gray-200 align-middle">
                         {item?.images ? (
                           <img
                             src={item?.images}
@@ -347,7 +345,7 @@ const Complaints = () => {
                       </td>
 
                       {/* Status */}
-                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 border border-gray-200 align-middle">
                         <span
                           className={`px-2 py-1 text-xs rounded-full ${
                             item?.status === 'Closed'
@@ -364,7 +362,7 @@ const Complaints = () => {
                       </td>
 
                       {/* Actions */}
-                      <td className="px-6 py-4  border border-gray-200 align-middle">
+                      <td className="px-2 py-2  border border-gray-200 align-middle">
                         <button
                           onClick={(e) => {
                             e.stopPropagation() // ✅ Stop the row click
@@ -397,7 +395,7 @@ const Complaints = () => {
       </div>
       {/* Pagination (only show if there’s data) */}
       {!loading && data?.length > 0 && (
-        <div className="px-6 py-4 border-t border-gray-200">
+        <div className="px-2 py-2 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-700">
               Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total} results
@@ -418,7 +416,6 @@ const Complaints = () => {
           </div>
         </div>
       )}
-
       {isModalOpen && (
         <ComplaintsModal
           setUpdateStatus={setUpdateStatus}
