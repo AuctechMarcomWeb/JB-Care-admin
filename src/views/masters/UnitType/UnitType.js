@@ -93,7 +93,7 @@ const UnitType = () => {
       )}
 
       {/* Header */}
-      <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+      <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Unit Type</h2>
           <p className="text-gray-600 text-sm sm:text-base">Manage Unit Type</p>
@@ -104,7 +104,7 @@ const UnitType = () => {
             onClick={() => {
               setIsModalOpen(true)
             }}
-            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center text-sm sm:text-base w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Unit Type
           </button>
@@ -203,19 +203,19 @@ const UnitType = () => {
               <table className="w-full min-w-max border border-gray-200 text-center">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Sr. No.
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Title
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Status
                     </th>
-                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    {/* <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Date
                     </th> */}
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Actions
                     </th>
                   </tr>
@@ -225,17 +225,17 @@ const UnitType = () => {
                   {data?.map((item, index) => (
                     <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
                       {/* Sr. No. */}
-                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200 align-middle">
                         {(page - 1) * limit + (index + 1)}
                       </td>
 
                       {/* Title */}
-                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
                         {item?.title || '-'}
                       </td>
 
                       {/* Status */}
-                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 border border-gray-200 align-middle">
                         {item?.status ? (
                           <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
                             Active
@@ -248,12 +248,12 @@ const UnitType = () => {
                       </td>
 
                       {/* Date */}
-                      {/* <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                      {/* <td className="px-2 py-2 text-gray-600 border border-gray-200 align-middle">
                         {formatDate(item?.createdAt || '-')}
                       </td> */}
 
                       {/* Actions */}
-                      <td className="px-6 py-4 border border-gray-200 align-middle">
+                      <td className="px-2 py-2 border border-gray-200 align-middle">
                         <div className="flex justify-center gap-3">
                           <button
                             onClick={() => {
@@ -288,7 +288,7 @@ const UnitType = () => {
       </div>
       {/* Pagination (only show if there’s data) */}
       {!loading && data?.length > 0 && (
-        <div className="px-6 py-4 border-t border-gray-200">
+        <div className="px-2 py-2 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-700">
               Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total} results
