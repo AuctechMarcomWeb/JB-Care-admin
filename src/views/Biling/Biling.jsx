@@ -139,7 +139,7 @@ const Biling = () => {
       )}
 
       {/* Header */}
-      <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+      <div className=" border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Biling</h2>
           <p className="text-gray-600 text-sm sm:text-base">Manage Biling</p>
@@ -158,7 +158,7 @@ const Biling = () => {
       </div>
 
       {/* Filters Section */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className=" py-4 border-b border-gray-200">
         <div className="flex flex-wrap items-end gap-4">
           {/* Site */}
           <div className="flex flex-col">
@@ -285,21 +285,21 @@ const Biling = () => {
               <table className="w-full min-w-max border border-gray-200">
                 <thead className="bg-gray-100 sticky top-0 z-10">
                   <tr>
-                    <th className="px-6 py-3 text-left border border-gray-200">Sr. No.</th>
-                    <th className="px-6 py-3 text-left border border-gray-200">Landlord</th>
-                    <th className="px-6 py-3 text-left border border-gray-200">
+                    <th className="px-2 py-2 text-left border border-gray-200">Sr. No.</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">Landlord</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">
                       Maintenance Amount
                     </th>
-                    <th className="px-6 py-3 text-left border border-gray-200">Electricity Bill</th>
-                    <th className="px-6 py-3 text-left border border-gray-200">Current Billing</th>
-                    <th className="px-6 py-3 text-left border border-gray-200">GST Amount</th>
-                    <th className="px-6 py-3 text-left border border-gray-200">Total Amount</th>
-                    <th className="px-6 py-3 text-left border border-gray-200">
+                    <th className="px-2 py-2 text-left border border-gray-200">Electricity Bill</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">Current Billing</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">GST Amount</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">Total Amount</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">
                       Billing Till Today
                     </th>
-                    <th className="px-6 py-3 text-left border border-gray-200">Previous Unpaid</th>
-                    <th className="px-6 py-3 text-left border border-gray-200">Unpaid Bill</th>
-                    <th className="px-6 py-3 text-left border border-gray-200">Action</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">Previous Unpaid</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">Unpaid Bill</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">Action</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white">
@@ -309,42 +309,45 @@ const Biling = () => {
                       className="whitespace-nowrap cursor-pointer hover:bg-gray-50 transition"
                       onClick={() => handleRowClick(item?.landlordId)}
                     >
-                      <td className="px-6 py-4 text-sm text-gray-700 border border-gray-200">
+                      <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200">
                         {index + 1}
                       </td>
-                      <td className="px-6 py-4 border border-gray-200">{item.landlordName}</td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      <td className="px-2 py-2 border border-gray-200">{item.landlordName}</td>
+                      <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalMaintenance}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalElectricity}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalBillingAmount}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalGST}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalBillingAmount}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      <td className="px-2 py-2 text-center border border-gray-200">
                         {item.billingTillToday}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      <td className="px-2 py-2 text-center border border-gray-200">
                         {item.previousUnpaidBill}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      <td className="px-2 py-2 text-center border border-gray-200">
                         {item.unpaidCount}
                       </td>
-                      <td className="px-6 py-4 text-center border border-gray-200">
+                      <td className="px-2 py-2 text-center border border-gray-200">
                         <label className="relative inline-flex items-center cursor-pointer">
                           <input
                             type="checkbox"
                             className="sr-only peer"
                             checked={item.isActionEnabled} // true -> green, false -> red
                             // disabled={!item.canEnableAction} // disable unless some condition is true
-                            onChange={() => handleToggle(item.landlordId)}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleToggle(item.landlordId)
+                            }}
                           />
                           <div
                             className={`w-11 h-6 rounded-full transition-colors duration-300

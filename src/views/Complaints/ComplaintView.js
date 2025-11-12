@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // import React, { useEffect, useState } from 'react';
 // import { useParams, useNavigate } from 'react-router-dom';
 // import { Spin, Card, Row, Col, Image, Divider, Timeline, Tag, Button } from 'antd';
@@ -187,10 +188,9 @@
 
 // export default ComplaintView;
 
-
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Spin, Card, Row, Col, Image, Divider, Tag, Button, Collapse } from 'antd';
+import React, { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Spin, Card, Row, Col, Image, Divider, Tag, Button, Collapse } from 'antd'
 import {
   ClockCircleOutlined,
   UserOutlined,
@@ -202,63 +202,91 @@ import {
   ToolOutlined,
   PictureOutlined,
   ArrowLeftOutlined,
-} from '@ant-design/icons';
-import moment from 'moment';
-import { getRequest } from '../../Helpers';
+} from '@ant-design/icons'
+import moment from 'moment'
+import { getRequest } from '../../Helpers'
 
-const { Panel } = Collapse;
+const { Panel } = Collapse
 
 const ComplaintView = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [complaint, setComplaint] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [complaint, setComplaint] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    setLoading(true);
+    setLoading(true)
     getRequest(`complaints/${id}`)
-      .then(res => {
+      .then((res) => {
         if (res?.data?.success) {
-          const complaintData = res.data.data.complaints ? res.data.data.complaints[0] : res.data.data;
-          setComplaint(complaintData);
+          const complaintData = res.data.data.complaints
+            ? res.data.data.complaints[0]
+            : res.data.data
+          setComplaint(complaintData)
         } else {
-          setError(res?.data?.message || 'Failed to fetch complaint');
+          setError(res?.data?.message || 'Failed to fetch complaint')
         }
       })
       .catch(() => setError('Error fetching complaint'))
-      .finally(() => setLoading(false));
-  }, [id]);
+      .finally(() => setLoading(false))
+  }, [id])
 
-  const formatDate = date => moment(date).format('DD MMM YYYY, hh:mm A');
+  const formatDate = (date) => moment(date).format('DD MMM YYYY, hh:mm A')
 
-  const getStatusColor = status => {
+  const getStatusColor = (status) => {
     switch (status) {
-      case 'Pending': return 'orange';
-      case 'Under Review': return 'blue';
-      case 'Material Demand Raised': return 'purple';
-      case 'Resolved': return 'green';
-      case 'Repushed': return 'red';
-      case 'Closed': return 'gray';
-      default: return 'gray';
+      case 'Pending':
+        return 'orange'
+      case 'Under Review':
+        return 'blue'
+      case 'Material Demand Raised':
+        return 'purple'
+      case 'Resolved':
+        return 'green'
+      case 'Repushed':
+        return 'red'
+      case 'Closed':
+        return 'gray'
+      default:
+        return 'gray'
     }
-  };
+  }
 
-  const getStatusIcon = status => {
+  const getStatusIcon = (status) => {
     switch (status) {
-      case 'Pending': return <ClockCircleOutlined />;
-      case 'Under Review': return <SyncOutlined spin />;
-      case 'Material Demand Raised': return <ToolOutlined />;
-      case 'Resolved': return <CheckCircleOutlined />;
-      case 'Repushed': return <CloseCircleOutlined />;
-      case 'Closed': return <CheckCircleOutlined />;
-      default: return <FileTextOutlined />;
+      case 'Pending':
+        return <ClockCircleOutlined />
+      case 'Under Review':
+        return <SyncOutlined spin />
+      case 'Material Demand Raised':
+        return <ToolOutlined />
+      case 'Resolved':
+        return <CheckCircleOutlined />
+      case 'Repushed':
+        return <CloseCircleOutlined />
+      case 'Closed':
+        return <CheckCircleOutlined />
+      default:
+        return <FileTextOutlined />
     }
-  };
+  }
 
-  if (loading) return <div className="flex justify-center items-center min-h-screen"><Spin size="large" tip="Loading complaint..." /></div>;
-  if (error) return <div className="p-4"><Card><p style={{ color: 'red' }}>{error}</p></Card></div>;
-  if (!complaint) return null;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Spin size="large" tip="Loading complaint..." />
+      </div>
+    )
+  if (error)
+    return (
+      <div className="p-4">
+        <Card>
+          <p style={{ color: 'red' }}>{error}</p>
+        </Card>
+      </div>
+    )
+  if (!complaint) return null
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
@@ -273,10 +301,12 @@ const ComplaintView = () => {
 
       <Card className="shadow-lg rounded-lg p-4 sm:p-6 lg:p-8">
         <h1 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">Complaint Overview</h1>
-        <hr className='mb-4'/>
+        <hr className="mb-4" />
 
         <Card bordered className="p-4 sm:p-6 shadow-sm mb-6">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">{complaint.complaintTitle}</h2>
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">
+            {complaint.complaintTitle}
+          </h2>
 
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={24} md={12}>
@@ -321,26 +351,43 @@ const ComplaintView = () => {
                 key={history._id || idx}
                 header={
                   <div className="flex justify-between items-center w-full">
-                    <Tag color={getStatusColor(history.status)} icon={getStatusIcon(history.status)}>
+                    <Tag
+                      color={getStatusColor(history.status)}
+                      icon={getStatusIcon(history.status)}
+                    >
                       {history.status}
                     </Tag>
-                    <span className="text-xs sm:text-sm text-gray-500">{formatDate(history.updatedAt)}</span>
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      {formatDate(history.updatedAt)}
+                    </span>
                   </div>
                 }
               >
-                {history.comment && <p><strong>Comment:</strong> {history.comment}</p>}
+                {history.comment && (
+                  <p>
+                    <strong>Comment:</strong> {history.comment}
+                  </p>
+                )}
 
                 {history.supervisorDetails?.comments && (
                   <div className="mt-2">
-                    <p><strong>Supervisor:</strong> {history.supervisorDetails.comments}</p>
+                    <p>
+                      <strong>Supervisor:</strong> {history.supervisorDetails.comments}
+                    </p>
                     {history.supervisorDetails.images?.length > 0 && (
-                      <Row gutter={[8, 8]}>Images:
+                      <Row gutter={[8, 8]}>
+                        Images:
                         {history.supervisorDetails.images.map((img, i) => (
                           <Col xs={12} sm={8} md={6} lg={4} key={i}>
                             <Image
                               src={img}
                               alt={`supervisor-${i}`}
-                              style={{ width: '100%', height: 60, objectFit: 'cover', cursor: 'pointer' }}
+                              style={{
+                                width: '100%',
+                                height: 60,
+                                objectFit: 'cover',
+                                cursor: 'pointer',
+                              }}
                               preview={{ mask: <PictureOutlined /> }}
                             />
                           </Col>
@@ -352,17 +399,30 @@ const ComplaintView = () => {
 
                 {history.materialDemand && (
                   <div className="mt-2">
-                    <p><strong>Material Demand:</strong> {history.materialDemand.materialName}</p>
-                    <p><strong>Material Quantity:</strong> {history.materialDemand.quantity}</p>
-                    <p><strong>Reason:</strong> {history.materialDemand.reason}</p>
+                    <p>
+                      <strong>Material Demand:</strong> {history.materialDemand.materialName}
+                    </p>
+                    <p>
+                      <strong>Material Quantity:</strong> {history.materialDemand.quantity}
+                    </p>
+                    <p>
+                      <strong>Reason:</strong> {history.materialDemand.reason}
+                    </p>
                     {history.materialDemand.images?.length > 0 && (
-                      <Row gutter={[8, 8]}> Images:
+                      <Row gutter={[8, 8]}>
+                        {' '}
+                        Images:
                         {history.materialDemand.images.map((img, i) => (
                           <Col xs={12} sm={8} md={6} lg={4} key={i}>
                             <Image
                               src={img}
                               alt={`material-${i}`}
-                              style={{ width: '100%', height: 60, objectFit: 'cover', cursor: 'pointer' }}
+                              style={{
+                                width: '100%',
+                                height: 60,
+                                objectFit: 'cover',
+                                cursor: 'pointer',
+                              }}
                               preview={{ mask: <PictureOutlined /> }}
                             />
                           </Col>
@@ -374,15 +434,24 @@ const ComplaintView = () => {
 
                 {history.resolution && (
                   <div className="mt-2">
-                    <p><strong>Remarks:</strong> {history.resolution.remarks}</p>
+                    <p>
+                      <strong>Remarks:</strong> {history.resolution.remarks}
+                    </p>
                     {history.resolution.images?.length > 0 && (
-                      <Row gutter={[8, 8]}> Images:
+                      <Row gutter={[8, 8]}>
+                        {' '}
+                        Images:
                         {history.resolution.images.map((img, i) => (
                           <Col xs={12} sm={8} md={6} lg={4} key={i}>
                             <Image
                               src={img}
                               alt={`resolution-${i}`}
-                              style={{ width: '100%', height: 60, objectFit: 'cover', cursor: 'pointer' }}
+                              style={{
+                                width: '100%',
+                                height: 60,
+                                objectFit: 'cover',
+                                cursor: 'pointer',
+                              }}
                               preview={{ mask: <PictureOutlined /> }}
                             />
                           </Col>
@@ -394,15 +463,24 @@ const ComplaintView = () => {
 
                 {history.closureDetails && (
                   <div className="mt-2">
-                    <p><strong>Closure Remarks:</strong> {history.closureDetails.remarks}</p>
+                    <p>
+                      <strong>Closure Remarks:</strong> {history.closureDetails.remarks}
+                    </p>
                     {history.closureDetails.images?.length > 0 && (
-                      <Row gutter={[8, 8]}> Images:
+                      <Row gutter={[8, 8]}>
+                        {' '}
+                        Images:
                         {history.closureDetails.images.map((img, i) => (
                           <Col xs={12} sm={8} md={6} lg={4} key={i}>
                             <Image
                               src={img}
                               alt={`closure-${i}`}
-                              style={{ width: '100%', height: 60, objectFit: 'cover', cursor: 'pointer' }}
+                              style={{
+                                width: '100%',
+                                height: 60,
+                                objectFit: 'cover',
+                                cursor: 'pointer',
+                              }}
                               preview={{ mask: <PictureOutlined /> }}
                             />
                           </Col>
@@ -414,8 +492,12 @@ const ComplaintView = () => {
 
                 {history.repushedDetails && (
                   <div className="mt-2">
-                    <p><strong>Repushed Count:</strong> {history.repushedDetails.count}</p>
-                    <p><strong>Reason:</strong> {history.repushedDetails.reason}</p>
+                    <p>
+                      <strong>Repushed Count:</strong> {history.repushedDetails.count}
+                    </p>
+                    <p>
+                      <strong>Reason:</strong> {history.repushedDetails.reason}
+                    </p>
                     {/* <p><strong>Repushed At:</strong> {formatDate(history.repushedDetails.repushedAt)}</p> */}
                   </div>
                 )}
@@ -423,10 +505,9 @@ const ComplaintView = () => {
             ))}
           </Collapse>
         </Card>
-
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default ComplaintView;
+export default ComplaintView

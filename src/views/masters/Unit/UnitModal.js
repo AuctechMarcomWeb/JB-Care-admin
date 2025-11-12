@@ -125,7 +125,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
     const newErrors = {}
     if (!formData?.unitNumber) newErrors.unitNumber = 'Unit Number is required'
     if (!formData?.block) newErrors.block = 'Block is required'
-    if (!formData?.floor) newErrors.floor = 'Floor is required'
+    // if (!formData?.floor) newErrors.floor = 'Floor is required'
     if (!formData?.areaSqFt) newErrors.areaSqFt = 'Area is required'
     if (!formData?.siteId) newErrors.siteId = 'Site is required'
     // if (!formData?.projectId) newErrors.projectId = 'Project is required'
@@ -286,7 +286,7 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
 
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
-              Floor<span className="text-danger">*</span>
+              Floor<span className="text-danger"></span>
             </label>
             <input
               type="number"

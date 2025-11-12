@@ -179,7 +179,7 @@ const Unit = () => {
           </div> */}
 
           {/* From Date */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
@@ -187,10 +187,10 @@ const Unit = () => {
               onChange={(e) => setTempFromDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           {/* To Date */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
@@ -198,7 +198,7 @@ const Unit = () => {
               onChange={(e) => setTempToDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           {/* Search */}
           <div className="flex flex-col">
@@ -289,9 +289,9 @@ const Unit = () => {
                     <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
                       Block
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
                       Floor
-                    </th>
+                    </th> */}
                     <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
                       Area (Sqft)
                     </th>
@@ -341,9 +341,9 @@ const Unit = () => {
                       </td>
 
                       {/* Floor */}
-                      <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
+                      {/* <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
                         {item?.floor || '-'}
-                      </td>
+                      </td> */}
 
                       {/* Area */}
                       <td className="px-6 py-4 text-gray-700 border border-gray-200 align-middle">
