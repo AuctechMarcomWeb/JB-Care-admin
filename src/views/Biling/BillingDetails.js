@@ -18,7 +18,7 @@ const BillingDetails = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const { billingSummary } = useContext(BillingSummaryContext)
   const { selectedBill } = useBillingContext()
-console.log("Selected bill from context", selectedBill.billingTillToday);
+  console.log('Selected bill from context', selectedBill.billingTillToday)
 
   // 🔄 Fetch billing data
   const fetchBillingData = useCallback(async () => {
@@ -27,8 +27,7 @@ console.log("Selected bill from context", selectedBill.billingTillToday);
     try {
       const res = await getRequest(`billing?landlordId=${landlordId}`)
       setBillingData(res?.data?.data || [])
-      console.log("res===",res);
-      
+      console.log('res===', res)
     } catch (err) {
       console.error('Error fetching billing data:', err)
     } finally {
@@ -55,21 +54,21 @@ console.log("Selected bill from context", selectedBill.billingTillToday);
     )
   }
 
-  if (!billingData.length) {
-    return (
-      <div className="flex flex-col justify-center items-center h-96 text-center">
-        <Empty description="No billing data found for this landlord." />
-        <Button
-          type="primary"
-          icon={<ArrowLeft size={16} />}
-          className="mt-4"
-          onClick={() => navigate('/biling')}
-        >
-          Back to Billing
-        </Button>
-      </div>
-    )
-  }
+  // if (!billingData.length) {
+  //   return (
+  //     <div className="flex flex-col justify-center items-center h-96 text-center">
+  //       <Empty description="No billing data found for this landlord." />
+  //       <Button
+  //         type="primary"
+  //         icon={<ArrowLeft size={16} />}
+  //         className="mt-4"
+  //         onClick={() => navigate('/biling')}
+  //       >
+  //         Back to Billing
+  //       </Button>
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="flex flex-col items-center p-6 bg-gray-50 min-h-screen">

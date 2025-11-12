@@ -159,6 +159,7 @@ const MaintenceChargesModal = ({
               <Select
                 showSearch
                 allowClear
+                size="large"
                 placeholder="-- Select Site --"
                 value={formData?.siteId || undefined}
                 onChange={(value) => {
@@ -200,6 +201,7 @@ const MaintenceChargesModal = ({
                 }))}
                 className={`w-100 ${errors?.unitId ? 'is-invalid' : ''}`}
                 disabled={!formData?.siteId}
+                size="large"
               />
               {errors?.unitId && <div className="invalid-feedback d-block">{errors.unitId}</div>}
             </div>

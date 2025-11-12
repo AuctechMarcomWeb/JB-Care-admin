@@ -12,6 +12,7 @@ import RentalModal from './Rentalmodal'
 import moment from 'moment'
 
 const Rental = () => {
+  // States
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
   const [total, setTotal] = useState(0)
@@ -19,36 +20,44 @@ const Rental = () => {
   const [limit, setLimit] = useState(10)
   const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
-  const [isActive, setIsActive] = useState(false)
+  const [isActive, setIsActive] = useState(null)
   const [updateStatus, setUpdateStatus] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  //filters
-  const [tempFromDate, setTempFromDate] = useState('')
-  const [tempToDate, setTempToDate] = useState('')
-  // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false)
-  // NEW FILTER STATES
-  const [sites, setSites] = useState([])
-  const [units, setUnits] = useState([])
-  const [selectedSite, setSelectedSite] = useState('')
-  const [selectedUnit, setSelectedUnit] = useState('')
+
+  // Filters temporary states
+  const [tempFromDate, setTempFromDate] = useState('')
+  const [tempToDate, setTempToDate] = useState('')
   const [tempSelectedSite, setTempSelectedSite] = useState('')
   const [tempSelectedUnit, setTempSelectedUnit] = useState('')
+  const [tempIsActive, setTempIsActive] = useState(null)
 
-  const formatDate = (dateString) => {
-    return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
-  }
+  // Filters applied
+  const [selectedSite, setSelectedSite] = useState('')
+  const [selectedUnit, setSelectedUnit] = useState('')
 
-  // Fetch dropdown data for filters
+  // Dropdown data
+  const [sites, setSites] = useState([])
+  const [units, setUnits] = useState([])
+
+  // Format date
+  const formatDate = (dateString) => (dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A')
+  // 🔹 Fetch Sites
   useEffect(() => {
     getRequest('sites?isPagination=false').then((res) => setSites(res?.data?.data?.sites || []))
-    // getRequest('projects?isPagination=false').then((res) =>
-    //   setProjects(res?.data?.data?.projects || []),
-    // )
-    getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
   }, [])
+  // Fetch units when Site changes
+  useEffect(() => {
+    if (tempSelectedSite) {
+      getRequest(`units?isPagination=false&siteId=${tempSelectedSite}`).then((res) =>
+        setUnits(res?.data?.data?.units || []),
+      )
+    } else {
+      getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
+    }
+  }, [tempSelectedSite])
 
   useEffect(() => {
     setLoading(true)
@@ -151,16 +160,17 @@ const Rental = () => {
         </div>
       </div>
       {/* Filters */}
-      <div className="py-2 border-b border-gray-200 bg-white">
-        <div className="grid grid-cols-1 md:grid-cols-8 gap-4 items-end">
-          <div className="flex flex-col">
+      <div className="py-3 border-b border-gray-200 bg-white px-1">
+        <div className="flex flex-wrap items-end gap-3">
+          {/* Site */}
+          <div className="flex flex-col min-w-[120px] flex-1 sm:flex-none">
             <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
             <select
               value={tempSelectedSite}
               onChange={(e) => setTempSelectedSite(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              <option value="">All Sites</option>
+              <option value="">Select Sites</option>
               {sites.map((s) => (
                 <option key={s._id} value={s._id}>
                   {s.siteName}
@@ -169,30 +179,15 @@ const Rental = () => {
             </select>
           </div>
 
-          {/* <div className="flex flex-col">
-                 <label className="text-sm font-medium text-gray-700 mb-1">Project</label>
-                 <select
-                   value={selectedProject}
-                   onChange={(e) => setSelectedProject(e.target.value)}
-                   className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-                 >
-                   <option value="">All Projects</option>
-                   {projects.map((p) => (
-                     <option key={p._id} value={p._id}>
-                       {p.projectName}
-                     </option>
-                   ))}
-                 </select>
-               </div> */}
-
-          <div className="flex flex-col">
+          {/* Unit */}
+          <div className="flex flex-col min-w-[110px] flex-1 sm:flex-none">
             <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
             <select
               value={tempSelectedUnit}
               onChange={(e) => setTempSelectedUnit(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              <option value="">All Units</option>
+              <option value="">Select Units</option>
               {units.map((u) => (
                 <option key={u._id} value={u._id}>
                   {u.unitNumber}
@@ -201,83 +196,95 @@ const Rental = () => {
             </select>
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
+          {/* From */}
+          <div className="flex flex-col min-w-[130px] flex-1 sm:flex-none">
+            <label className="text-sm font-medium text-gray-700 mb-1">From</label>
             <input
               type="date"
               value={tempFromDate}
               onChange={(e) => setTempFromDate(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
+          {/* To */}
+          <div className="flex flex-col min-w-[130px] flex-1 sm:flex-none">
+            <label className="text-sm font-medium text-gray-700 mb-1">To</label>
             <input
               type="date"
               value={tempToDate}
               onChange={(e) => setTempToDate(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
-          <div className="flex flex-col md:col-span-2">
+          {/* Status */}
+          <div className="flex flex-col min-w-[100px] flex-1 sm:flex-none">
+            <label className="text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select
+              value={tempIsActive === true ? 'active' : tempIsActive === false ? 'inactive' : ''}
+              onChange={(e) => {
+                const val = e.target.value
+                if (val === 'active') setTempIsActive(true)
+                else if (val === 'inactive') setTempIsActive(false)
+                else setTempIsActive(null)
+              }}
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            >
+              <option value="">Select Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>{' '}
+            </select>
+          </div>
+
+          {/* Search */}
+          <div className="flex flex-col flex-1 min-w-[180px] md:min-w-[220px] max-w-[260px]">
             <label className="text-sm font-medium text-gray-700 mb-1">Search</label>
-            <div className="relative">
+            <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search by name or address..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                className="pl-10 pr-3 py-2 text-sm w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-2 h-[42px] mt-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isActive}
-                onChange={(e) => setIsActive(e.target.checked)}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-700 select-none">Active</span>
-            </label>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 md:col-span-8 justify-center mt-1">
+          {/* Apply & Clear */}
+          <div className="flex items-center gap-2 mt-4 w-full sm:w-auto">
             <button
               onClick={() => {
                 setFromDate(tempFromDate)
                 setToDate(tempToDate)
                 setSelectedSite(tempSelectedSite)
                 setSelectedUnit(tempSelectedUnit)
+                setIsActive(tempIsActive)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 text-sm"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm w-full sm:w-auto"
             >
               Apply
             </button>
-
-            {(fromDate || toDate || searchTerm || selectedSite || selectedUnit) && (
+            {(fromDate || toDate || selectedSite || selectedUnit || isActive !== null) && (
               <button
                 onClick={() => {
                   setTempFromDate('')
                   setTempToDate('')
                   setFromDate('')
                   setToDate('')
-                  setSearchTerm('')
                   setTempSelectedSite('')
                   setSelectedSite('')
                   setTempSelectedUnit('')
                   setSelectedUnit('')
+                  setTempIsActive(null)
+                  setIsActive(null)
                   setPage(1)
                   setUpdateStatus((prev) => !prev)
                 }}
-                className="bg-red-600 text-white px-3 sm:px-4 py-2 hover:bg-red-700 rounded-md text-sm sm:text-base"
+                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 text-sm w-full sm:w-auto"
               >
                 Clear
               </button>
