@@ -164,7 +164,7 @@ const MaintenceCharges = () => {
             </select>
           </div>
           {/* From Date */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
@@ -172,10 +172,10 @@ const MaintenceCharges = () => {
               onChange={(e) => setTempFromDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           {/* To Date */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
@@ -183,7 +183,7 @@ const MaintenceCharges = () => {
               onChange={(e) => setTempToDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           {/* Search Input */}
           <div className="flex flex-col md:col-span-2">

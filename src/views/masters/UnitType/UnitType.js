@@ -115,7 +115,7 @@ const UnitType = () => {
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* From Date */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
             <input
               type="date"
@@ -123,10 +123,10 @@ const UnitType = () => {
               onChange={(e) => setTempFromDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           {/* To Date */}
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
             <input
               type="date"
@@ -134,7 +134,7 @@ const UnitType = () => {
               onChange={(e) => setTempToDate(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           {/* Search Input */}
           <div className="flex flex-col md:col-span-2">
@@ -212,9 +212,9 @@ const UnitType = () => {
                     <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
+                    {/* <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
                       Date
-                    </th>
+                    </th> */}
                     <th className="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-200">
                       Actions
                     </th>
@@ -248,9 +248,9 @@ const UnitType = () => {
                       </td>
 
                       {/* Date */}
-                      <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
+                      {/* <td className="px-6 py-4 text-gray-600 border border-gray-200 align-middle">
                         {formatDate(item?.createdAt || '-')}
-                      </td>
+                      </td> */}
 
                       {/* Actions */}
                       <td className="px-6 py-4 border border-gray-200 align-middle">
