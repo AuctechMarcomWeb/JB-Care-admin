@@ -8,8 +8,10 @@ import { Empty, Pagination, Spin } from 'antd'
 import BilingModal from './BilingModal'
 import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
+import { useBillingContext } from '../../context/bilingContext'
 
 const Biling = () => {
+  const { setSelectedBill } = useBillingContext()
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState([])
   const [total, setTotal] = useState(0)
@@ -96,6 +98,10 @@ const Biling = () => {
   const navigate = useNavigate()
   const handleRowClick = (landlordId) => {
     console.log('landlordId', landlordId)
+    const selected = data.find((item) => item.landlordId === landlordId)
+    console.log("Selected bill", selected);
+    
+  setSelectedBill(selected) // ✅ Save selected bill globally
     navigate(`/biling-details/${landlordId}`)
   }
 

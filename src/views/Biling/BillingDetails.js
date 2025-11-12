@@ -7,6 +7,7 @@ import moment from 'moment'
 import { Edit, Plus, ArrowLeft } from 'lucide-react'
 import BilingModal from '../Biling/BilingModal'
 import { BillingSummaryContext } from '../../context/BillingSummaryContext'
+import { useBillingContext } from '../../context/bilingContext'
 const BillingDetails = () => {
   const { landlordId } = useParams()
   const navigate = useNavigate()
@@ -16,6 +17,8 @@ const BillingDetails = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const { billingSummary } = useContext(BillingSummaryContext)
+  const { selectedBill } = useBillingContext()
+console.log("Selected bill from context", selectedBill.billingTillToday);
 
   // 🔄 Fetch billing data
   const fetchBillingData = useCallback(async () => {
@@ -24,6 +27,8 @@ const BillingDetails = () => {
     try {
       const res = await getRequest(`billing?landlordId=${landlordId}`)
       setBillingData(res?.data?.data || [])
+      console.log("res===",res);
+      
     } catch (err) {
       console.error('Error fetching billing data:', err)
     } finally {
@@ -123,11 +128,11 @@ const BillingDetails = () => {
           <div className="flex justify-end gap-4">
             <div className="bg-yellow-200 text-black p-2 rounded">
               <span className="font-semibold">Billing Till Today:</span>{' '}
-              {billingSummary?.[0]?.billingTillToday || 'N/A'}
+              {selectedBill.billingTillToday || 'N/A'}
             </div>
             <div className="bg-green-200 text-black p-2 rounded">
               <span className="font-semibold">Previous Unpaid Bill:</span>{' '}
-              {billingSummary?.[0]?.previousUnpaidBill || 'N/A'}
+              {selectedBill.previousUnpaidBill || 'N/A'}
             </div>
           </div>
         </Card>

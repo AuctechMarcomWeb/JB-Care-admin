@@ -11,6 +11,7 @@ export const BillingSummaryProvider = ({ children }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [total, setTotal] = useState(0)
+  const [billTillDate, setBillTillDate] = useState()
 
   useEffect(() => {
     setLoading(true)
@@ -36,6 +37,8 @@ export const BillingSummaryProvider = ({ children }) => {
         loading,
         error,
         total,
+        billTillDate,
+        setBillTillDate,
       }}
     >
       {children}
