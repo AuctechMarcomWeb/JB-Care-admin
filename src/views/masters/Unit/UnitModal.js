@@ -4,6 +4,7 @@ import { Modal } from 'antd'
 import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { getRequest, postRequest, putRequest } from '../../../Helpers'
+import { LogIn } from 'lucide-react'
 
 const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setIsModalOpen }) => {
   const [loading, setLoading] = useState(false)
@@ -145,12 +146,14 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
       cred: formData,
     })
       .then((res) => {
+        console.log(res?.data?.message)
+
         toast.success(res?.data?.message || 'Unit added successfully')
         setUpdateStatus((prev) => !prev)
         handleCancel()
       })
       .catch((error) => {
-        toast.error(error?.response?.data?.message || 'Something went wrong')
+        toast.error(error?.response || 'Something went wrong')
       })
       .finally(() => setLoading(false))
   }
@@ -171,7 +174,9 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
         handleCancel()
       })
       .catch((error) => {
-        toast.error(error?.response?.data?.error || 'Something went wrong')
+        console.log(error)
+
+        toast.error(error?.response?.data?.message || 'Something went wrong')
       })
       .finally(() => setLoading(false))
   }

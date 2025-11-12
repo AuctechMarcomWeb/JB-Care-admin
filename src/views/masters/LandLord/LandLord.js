@@ -147,7 +147,7 @@ const LandLord = () => {
         </div>
       </div>
       {/* Filters */}
-      <div className="px-6 py-4 border-b border-gray-200 bg-white">
+      <div className="py-2 border-b border-gray-200 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-8 gap-4 items-end">
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
@@ -281,8 +281,7 @@ const LandLord = () => {
           </div>
         </div>
       </div>
-      &nbsp;
-      {/* Table */}
+      <hr className="" /> {/* Table */}
       <div className="overflow-x-auto">
         {loading ? (
           // Loader when fetching data

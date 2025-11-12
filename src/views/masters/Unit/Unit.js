@@ -26,16 +26,15 @@ const Unit = () => {
   const [tempFromDate, setTempFromDate] = useState('')
   const [tempToDate, setTempToDate] = useState('')
 
-  // 🔹 Site & Project filters
+  // 🔹 Site filters
   const [sites, setSites] = useState([])
-  // const [projects, setProjects] = useState([])
   const [selectedSite, setSelectedSite] = useState('')
-  // const [selectedProject, setSelectedProject] = useState('')
   const [tempSelectedSite, setTempSelectedSite] = useState('')
-  // const [tempSelectedProject, setTempSelectedProject] = useState('')
 
-  const [statusCheckbox, setStatusCheckbox] = useState(null) // user-selected checkbox state
-  const [appliedStatus, setAppliedStatus] = useState(null) // applied filter after Apply button
+  // 🔹 Status filter
+  const [statusCheckbox, setStatusCheckbox] = useState(null) // user selection
+  const [appliedStatus, setAppliedStatus] = useState(null) // applied filter
+
   const formatDate = (dateString) => {
     return dateString ? moment(dateString).format('DD-MM-YYYY') : 'N/A'
   }
@@ -50,28 +49,22 @@ const Unit = () => {
       .catch((error) => console.error('Error fetching sites:', error))
   }, [])
 
-  // 🔹 Fetch projects (filtered by selected site)
-  // useEffect(() => {
-  //   if (!tempSelectedSite) {
-  //     setProjects([])
-  //     return
-  //   }
-  //   getRequest(`projects?isPagination=false&siteId=${tempSelectedSite}`)
-  //     .then((res) => {
-  //       const responseData = res?.data?.data
-  //       setProjects(responseData?.projects || [])
-  //     })
-  //     .catch((error) => console.error('Error fetching projects:', error))
-  // }, [tempSelectedSite])
-
   // 🔹 Fetch Units (with filters)
   useEffect(() => {
     setLoading(true)
-    getRequest(
-      `units?search=${searchTerm}&page=${page}&limit=${limit}&fromDate=${fromDate}&toDate=${toDate}${
-        selectedSite ? `&siteId=${selectedSite}` : ''
-      }`,
-    )
+
+    const params = new URLSearchParams({
+      search: searchTerm || '',
+      page,
+      limit,
+    })
+
+    if (fromDate) params.append('fromDate', fromDate)
+    if (toDate) params.append('toDate', toDate)
+    if (selectedSite) params.append('siteId', selectedSite)
+    if (appliedStatus !== null) params.append('status', appliedStatus)
+
+    getRequest(`units?${params.toString()}`)
       .then((res) => {
         const responseData = res?.data?.data
         setData(responseData?.units || [])
@@ -79,9 +72,9 @@ const Unit = () => {
       })
       .catch((error) => console.error('Error fetching units:', error))
       .finally(() => setLoading(false))
-  }, [page, limit, searchTerm, fromDate, toDate, selectedSite, updateStatus])
+  }, [page, limit, searchTerm, fromDate, toDate, selectedSite, appliedStatus, updateStatus])
 
-  //  Delete handler
+  // 🔹 Delete handler
   const confirmDelete = () => {
     deleteRequest(`units/${selectedItem?._id}`)
       .then((res) => {
@@ -123,6 +116,7 @@ const Unit = () => {
           </div>
         </div>
       )}
+
       {/* Header */}
       <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
@@ -139,18 +133,16 @@ const Unit = () => {
           </button>
         </div>
       </div>
+
       {/* Filters Section */}
-      <div className=" py-4 border-b border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+      <div className="py-2 border-b border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
           {/* 🔹 Site Filter */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
             <select
               value={tempSelectedSite}
-              onChange={(e) => {
-                setTempSelectedSite(e.target.value)
-                setTempSelectedProject('') // reset project when site changes
-              }}
+              onChange={(e) => setTempSelectedSite(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Sites</option>
@@ -162,47 +154,7 @@ const Unit = () => {
             </select>
           </div>
 
-          {/* 🔹 Project Filter */}
-          {/* <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">Project</label>
-            <select
-              value={tempSelectedProject}
-              onChange={(e) => setTempSelectedProject(e.target.value)}
-              disabled={!tempSelectedSite}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Projects</option>
-              {projects.map((project) => (
-                <option key={project._id} value={project._id}>
-                  {project.projectName}
-                </option>
-              ))}
-            </select>
-          </div> */}
-
-          {/* From Date */}
-          {/* <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">From Date</label>
-            <input
-              type="date"
-              value={tempFromDate}
-              onChange={(e) => setTempFromDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            />
-          </div> */}
-
-          {/* To Date */}
-          {/* <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700 mb-1">To Date</label>
-            <input
-              type="date"
-              value={tempToDate}
-              onChange={(e) => setTempToDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            />
-          </div> */}
-
-          {/* Search */}
+          {/* 🔹 Search */}
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1">Search</label>
             <div className="relative">
@@ -217,20 +169,21 @@ const Unit = () => {
             </div>
           </div>
 
-          <div className="flex items-center">
-            <label className="flex items-center gap-2 text-sm font-medium">
+          {/* 🔹 Status Checkbox — centered with input box */}
+          <div className="flex items-center h-full">
+            <label className="flex items-center gap-2 text-sm font-medium translate-y-[8px]">
               <input
                 type="checkbox"
                 checked={statusCheckbox === true}
-                onChange={(e) => setStatusCheckbox(e.target.checked ? true : false)}
+                onChange={(e) => setStatusCheckbox(e.target.checked ? true : null)}
                 className="w-4 h-4"
               />
               Active
             </label>
           </div>
 
-          {/* Buttons */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+          {/* 🔹 Buttons */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               onClick={() => {
                 setAppliedStatus(statusCheckbox)
@@ -245,13 +198,15 @@ const Unit = () => {
               Apply
             </button>
 
-            {(fromDate || toDate || searchTerm || selectedSite) && (
+            {(fromDate || toDate || searchTerm || selectedSite || appliedStatus !== null) && (
               <button
                 onClick={() => {
                   setTempFromDate('')
                   setTempToDate('')
                   setFromDate('')
                   setToDate('')
+                  setAppliedStatus(null)
+                  setStatusCheckbox(null)
                   setSearchTerm('')
                   setTempSelectedSite('')
                   setSelectedSite('')
@@ -266,159 +221,117 @@ const Unit = () => {
           </div>
         </div>
       </div>
-      {/* <hr className="" /> */}
-      &nbsp;
+
+      <hr className="" />
+
       {/* Table */}
       <div className="overflow-x-auto">
         {loading ? (
-          // Loader when fetching data
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />
             <div className="mt-4 text-blue-500 font-medium text-center">Loading Unit...</div>
           </div>
         ) : !data || data.length === 0 ? (
-          // Empty state when no data found
           <div className="flex justify-center items-center py-20">
             <Empty description="No records found" />
           </div>
         ) : (
-          <>
-            <div className="overflow-x-auto w-full">
-              <table className="w-full min-w-max border border-gray-200 text-center">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Sr. No.
-                    </th>
-                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Site Name
-                    </th>
-                    {/* <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-          Project Name
-        </th> */}
-                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Unit Type
-                    </th>
-                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Unit
-                    </th>
-                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Block
-                    </th>
-                    {/* <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Floor
-                    </th> */}
-                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Area (Sqft)
-                    </th>
+          <div className="overflow-x-auto w-full">
+            <table className="w-full min-w-max border border-gray-200 text-center">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                    Sr. No.
+                  </th>
+                  <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                    Site Name
+                  </th>
+                  <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                    Unit Type
+                  </th>
+                  <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                    Unit
+                  </th>
+                  <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                    Block
+                  </th>
+                  <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                    Area (Sqft)
+                  </th>
+                  <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                    Status
+                  </th>
+                  <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
 
-                    {/* <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-          Date
-        </th> */}
-                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Status
-                    </th>
-                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Actions
-                    </th>
+              <tbody className="bg-white">
+                {data?.map((item, index) => (
+                  <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
+                    <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200 align-middle">
+                      {(page - 1) * limit + (index + 1)}
+                    </td>
+                    <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
+                      {item?.siteId?.siteName || '-'}
+                    </td>
+                    <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
+                      {item?.unitTypeId?.title || '-'}
+                    </td>
+                    <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
+                      {item?.unitNumber || '-'}
+                    </td>
+                    <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
+                      {item?.block || '-'}
+                    </td>
+                    <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
+                      {item?.areaSqFt || '-'}
+                    </td>
+                    <td className="px-2 py-2 border border-gray-200 align-middle">
+                      {item?.status ? (
+                        <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                          Active
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                          Inactive
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-2 py-2 border border-gray-200 align-middle">
+                      <div className="flex justify-center gap-3">
+                        <button
+                          onClick={() => {
+                            setSelectedItem(item)
+                            setIsModalOpen(true)
+                          }}
+                          className="text-blue-600 hover:text-blue-800 transition"
+                          title="Edit"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedItem(item)
+                            setShowDeleteModal(true)
+                          }}
+                          className="text-red-600 hover:text-red-800 transition"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-
-                <tbody className="bg-white">
-                  {data?.map((item, index) => (
-                    <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
-                      {/* Sr. No. */}
-                      <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200 align-middle">
-                        {(page - 1) * limit + (index + 1)}
-                      </td>
-
-                      {/* Site */}
-                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-                        {item?.siteId?.siteName || '-'}
-                      </td>
-
-                      {/* Project (optional)
-          <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-            {item?.projectId?.projectName || '-'}
-          </td> */}
-                      {/* Unit Type */}
-                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-                        {item?.unitTypeId?.title || '-'}
-                      </td>
-
-                      {/* Unit */}
-                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-                        {item?.unitNumber || '-'}
-                      </td>
-
-                      {/* Block */}
-                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-                        {item?.block || '-'}
-                      </td>
-
-                      {/* Floor */}
-                      {/* <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-                        {item?.floor || '-'}
-                      </td> */}
-
-                      {/* Area */}
-                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
-                        {item?.areaSqFt || '-'}
-                      </td>
-
-                      {/* Date (optional)
-          <td className="px-2 py-2 text-gray-600 border border-gray-200 align-middle">
-            {formatDate(item?.createdAt || '-')}
-          </td> */}
-
-                      {/* Status */}
-                      <td className="px-2 py-2 border border-gray-200 align-middle">
-                        {item?.status ? (
-                          <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                            Inactive
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-2 py-2 border border-gray-200 align-middle">
-                        <div className="flex justify-center gap-3">
-                          <button
-                            onClick={() => {
-                              setSelectedItem(item)
-                              setIsModalOpen(true)
-                            }}
-                            className="text-blue-600 hover:text-blue-800 transition"
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-
-                          <button
-                            onClick={() => {
-                              setSelectedItem(item)
-                              setShowDeleteModal(true)
-                            }}
-                            className="text-red-600 hover:text-red-800 transition"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
-      {/* Pagination (only show if there’s data) */}
+
+      {/* Pagination */}
       {!loading && data?.length > 0 && (
         <div className="px-2 py-2 border-t border-gray-200">
           <div className="flex items-center justify-between">
@@ -431,16 +344,16 @@ const Unit = () => {
               total={total}
               pageSizeOptions={['5', '10', '15', '20', '30', '50', '100', '500']}
               onChange={(newPage) => setPage(newPage)}
-              showSizeChanger={true}
+              showSizeChanger
               onShowSizeChange={(current, size) => {
                 setLimit(size)
                 setPage(1)
               }}
-              // showQuickJumper
             />
           </div>
         </div>
       )}
+
       {isModalOpen && (
         <UnitModal
           setUpdateStatus={setUpdateStatus}

@@ -127,7 +127,7 @@ const MaintenceCharges = () => {
         </div>
       </div>
       {/* Filters Section */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="py-2 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* 🔹 Site Name Filter */}
           <div className="flex flex-col">
@@ -236,8 +236,7 @@ const MaintenceCharges = () => {
           </div>
         </div>
       </div>
-      &nbsp;
-      {/* ✅ Table Section with Loader & Empty State */}
+      <hr className="" /> {/* ✅ Table Section with Loader & Empty State */}
       <div className="overflow-x-auto">
         {loading ? (
           <div className="flex flex-col justify-center items-center py-20">

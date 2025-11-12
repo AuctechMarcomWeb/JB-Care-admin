@@ -1,193 +1,3 @@
-/* eslint-disable prettier/prettier */
-// import React, { useEffect, useState } from 'react';
-// import { useParams, useNavigate } from 'react-router-dom';
-// import { Spin, Card, Row, Col, Image, Divider, Timeline, Tag, Button } from 'antd';
-// import {
-//   ClockCircleOutlined,
-//   UserOutlined,
-//   HomeOutlined,
-//   FileTextOutlined,
-//   CheckCircleOutlined,
-//   SyncOutlined,
-//   CloseCircleOutlined,
-//   ToolOutlined,
-//   PictureOutlined,
-//   ArrowLeftOutlined,
-// } from '@ant-design/icons';
-// import moment from 'moment';
-// import { getRequest } from '../../Helpers';
-
-// const ComplaintView = () => {
-//   const { id } = useParams();
-//   const navigate = useNavigate();
-//   const [complaint, setComplaint] = useState(null);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState('');
-
-//   useEffect(() => {
-//     setLoading(true);
-//     getRequest(`complaints/${id}`)
-//       .then(res => {
-//         if (res?.data?.success) {
-//           const complaintData = res.data.data.complaints ? res.data.data.complaints[0] : res.data.data;
-//           setComplaint(complaintData);
-//         } else {
-//           setError(res?.data?.message || 'Failed to fetch complaint');
-//         }
-//       })
-//       .catch(() => setError('Error fetching complaint'))
-//       .finally(() => setLoading(false));
-//   }, [id]);
-
-//   const formatDate = date => moment(date).format('DD MMM YYYY, hh:mm A');
-
-//   const getStatusColor = status => {
-//     switch (status) {
-//       case 'Pending': return 'orange';
-//       case 'Under Review': return 'blue';
-//       case 'Material Demand Raised': return 'purple';
-//       case 'Resolved': return 'green';
-//       case 'Repushed': return 'red';
-//       case 'Closed': return 'gray';
-//       default: return 'gray';
-//     }
-//   };
-
-//   const getStatusIcon = status => {
-//     switch (status) {
-//       case 'Pending': return <ClockCircleOutlined />;
-//       case 'Under Review': return <SyncOutlined spin />;
-//       case 'Material Demand Raised': return <ToolOutlined />;
-//       case 'Resolved': return <CheckCircleOutlined />;
-//       case 'Repushed': return <CloseCircleOutlined />;
-//       case 'Closed': return <CheckCircleOutlined />;
-//       default: return <FileTextOutlined />;
-//     }
-//   };
-
-//   if (loading) return <div className="flex justify-center items-center min-h-screen"><Spin size="large" tip="Loading complaint..." /></div>;
-//   if (error) return <div className="p-6"><Card><p style={{ color: 'red' }}>{error}</p></Card></div>;
-//   if (!complaint) return null;
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 p-6">
-//       <Button
-//         type="default"
-//         icon={<ArrowLeftOutlined />}
-//         onClick={() => navigate(-1)}
-//         style={{ marginBottom: 16 }}
-//       >
-//         Back
-//       </Button>
-
-//       <Card className="shadow-lg rounded-lg p-6">
-//         {/* Title */}
-//         <h1 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>{complaint.complaintTitle}</h1>
-
-//         {/* Complaint Overview Row */}
-//         <Row gutter={16} style={{ marginBottom: 16 }}>
-//           <Col xs={24} md={8}>
-//             <Card bordered className="p-3 shadow-sm">
-//               <UserOutlined style={{ fontSize: 16, color: '#1890ff', marginBottom: 4 }} />
-//               <p style={{ fontWeight: 500, margin: 0 }}>Tenant</p>
-//               <p style={{ margin: 0 }}>{complaint.userId?.name}</p>
-//               <p style={{ color: '#888', fontSize: 12, margin: 0 }}>{complaint.userId?.email}</p>
-//             </Card>
-//           </Col>
-//           <Col xs={24} md={8}>
-//             <Card bordered className="p-3 shadow-sm">
-//               <HomeOutlined style={{ fontSize: 16, color: '#52c41a', marginBottom: 4 }} />
-//               <p style={{ fontWeight: 500, margin: 0 }}>Site</p>
-//               <p style={{ margin: 0 }}>{complaint.siteId?.siteName}</p>
-//             </Card>
-//           </Col>
-//           <Col xs={24} md={8}>
-//             <Card bordered className="p-3 shadow-sm">
-//               <p style={{ fontWeight: 500, margin: 0 }}>Unit</p>
-//               <p style={{ margin: 0 }}>{complaint.unitId?.unitNumber}</p>
-//             </Card>
-//           </Col>
-//         </Row>
-
-//         {/* Description & Images */}
-//         <Row gutter={16} style={{ marginBottom: 16 }}>
-//           <Col xs={24} md={12}>
-//             <Card bordered className="p-3 shadow-sm">
-//               <FileTextOutlined style={{ fontSize: 16, color: '#1890ff', marginBottom: 4 }} />
-//               <p style={{ fontWeight: 500, marginBottom: 8 }}>Description</p>
-//               <p>{complaint.complaintDescription}</p>
-//             </Card>
-//           </Col>
-//           <Col xs={24} md={12}>
-//             {complaint.images?.length > 0 && (
-//               <Card bordered className="p-3 shadow-sm">
-//                 <PictureOutlined style={{ fontSize: 16, color: '#1890ff', marginBottom: 4 }} />
-//                 <p style={{ fontWeight: 500, marginBottom: 8 }}>Images</p>
-//                 <Row gutter={8}>
-//                   {complaint.images.map((img, idx) => (
-//                     <Col xs={8} key={idx}>
-//                       <Image
-//                         src={img}
-//                         alt={`complaint-${idx}`}
-//                         style={{ width: '100%', height: 80, objectFit: 'cover', cursor: 'pointer' }}
-//                         preview={{ mask: <PictureOutlined /> }}
-//                       />
-//                     </Col>
-//                   ))}
-//                 </Row>
-//               </Card>
-//             )}
-//           </Col>
-//         </Row>
-
-//         <Divider />
-
-//         {/* Status History */}
-//         <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Status History</h2>
-//         <Row gutter={16}>
-//           {complaint.statusHistory.map((history, idx) => (
-//             <Col xs={24} md={12} key={history._id || idx} style={{ marginBottom: 16 }}>
-//               <Card bordered className="shadow-sm">
-//                 <Tag color={getStatusColor(history.status)} icon={getStatusIcon(history.status)}>
-//                   {history.status}
-//                 </Tag>
-//                 <p style={{ fontSize: 12, color: '#555', margin: '8px 0' }}>{formatDate(history.updatedAt)}</p>
-//                 {history.comment && <p><strong>Comment:</strong> {history.comment}</p>}
-//                 {history.supervisorDetails?.comments && <p><strong>Supervisor:</strong> {history.supervisorDetails.comments}</p>}
-
-//                 {/* Images */}
-//                 {[
-//                   history.supervisorDetails?.images,
-//                   history.materialDemand?.images,
-//                   history.resolution?.images,
-//                   history.closureDetails?.images
-//                 ].map((imgArr, i) =>
-//                   imgArr?.length > 0 ? (
-//                     <Row gutter={8} style={{ marginTop: 8 }} key={i}>
-//                       {imgArr.map((img, j) => (
-//                         <Col xs={8} key={j}>
-//                           <Image
-//                             src={img}
-//                             alt={`history-img-${j}`}
-//                             style={{ width: '100%', height: 60, objectFit: 'cover', cursor: 'pointer' }}
-//                             preview={{ mask: <PictureOutlined /> }}
-//                           />
-//                         </Col>
-//                       ))}
-//                     </Row>
-//                   ) : null
-//                 )}
-//               </Card>
-//             </Col>
-//           ))}
-//         </Row>
-//       </Card>
-//     </div>
-//   );
-// };
-
-// export default ComplaintView;
-
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Spin, Card, Row, Col, Image, Divider, Tag, Button, Collapse } from 'antd'
@@ -205,6 +15,7 @@ import {
 } from '@ant-design/icons'
 import moment from 'moment'
 import { getRequest } from '../../Helpers'
+import { ArrowLeft } from 'lucide-react'
 
 const { Panel } = Collapse
 
@@ -289,62 +100,104 @@ const ComplaintView = () => {
   if (!complaint) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <Button
-        type="default"
-        icon={<ArrowLeftOutlined />}
-        onClick={() => navigate(-1)}
-        style={{ marginBottom: 16 }}
-      >
-        Back
-      </Button>
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-6 lg:p-8">
+      {/* 🔙 Back Button (Outside Card) */}
+      <div className="w-full max-w-5xl mb-2">
+        <div
+          onClick={() => navigate('/complaints')}
+          className="flex items-center gap-2 text-gray-600 hover:text-blue-600 cursor-pointer transition-all w-fit"
+        >
+          <ArrowLeft size={16} />
+          <span className="text-sm font-medium">Back</span>
+        </div>
+      </div>
 
-      <Card className="shadow-lg rounded-lg p-4 sm:p-6 lg:p-8">
-        <h1 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">Complaint Overview</h1>
-        <hr className="mb-4" />
+      <Card className="shadow-lg rounded-lg p-1 sm:p-6 lg:p-8">
+        <h1 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-6">Complaint Overview</h1>
+        <hr className="mt-2" />
 
-        <Card bordered className="p-4 sm:p-6 shadow-sm mb-6">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">
-            {complaint.complaintTitle}
+        <Card bordered className="shadow-sm mb-2 p-2 sm:p-3">
+          {/* Centered Title */}
+          <h2 className="text-center text-base sm:text-lg md:text-xl font-semibold mb-4">
+            Title : {complaint.complaintTitle}
           </h2>
-
-          <Row gutter={[16, 16]}>
+          <Row gutter={[12, 12]}>
+            {/* Left column */}
             <Col xs={24} sm={24} md={12}>
-              <div className="flex flex-col gap-4">
-                <p className="font-medium">Tenant : {complaint.userId?.name}</p>
-                <p className="font-medium">Site : {complaint.siteId?.siteName}</p>
-                <p className="font-medium">Unit : {complaint.unitId?.unitNumber}</p>
-                <p className="font-medium">Status : {complaint.status}</p>
+              <div className="flex flex-col gap-2 text-[15px] sm:text-[16px] leading-snug">
+                <p className="break-words">
+                  <span className="font-semibold">Tenant :</span>{' '}
+                  <span className="font-normal">{complaint.userId?.name}</span>
+                </p>
+                <p className="break-words">
+                  <span className="font-semibold">Site :</span>{' '}
+                  <span className="font-normal">{complaint.siteId?.siteName}</span>
+                </p>
+                <p className="break-words">
+                  <span className="font-semibold">Unit :</span>{' '}
+                  <span className="font-normal">{complaint.unitId?.unitNumber}</span>
+                </p>
+
+                {/* Highlighted Status */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-semibold">Status :</span>
+                  <Tag
+                    color={
+                      complaint.status === 'Pending'
+                        ? 'orange'
+                        : complaint.status === 'In Progress'
+                          ? 'blue'
+                          : complaint.status === 'Resolved'
+                            ? 'green'
+                            : complaint.status === 'Closed'
+                              ? 'red'
+                              : 'default'
+                    }
+                    className="text-[15px] sm:text-[16px] px-2 py-[2px] rounded-md font-normal"
+                  >
+                    {complaint.status}
+                  </Tag>
+                </div>
               </div>
             </Col>
 
+            {/* Right column */}
             <Col xs={24} sm={24} md={12}>
-              <div className="flex flex-col gap-4">
-                <p className="font-medium">Description : {complaint.complaintDescription}</p>
+              <div className="flex flex-col gap-2 text-[15px] sm:text-[16px] leading-snug">
+                <p className="break-words">
+                  <span className="font-semibold">Description :</span>{' '}
+                  <span className="font-normal">{complaint.complaintDescription}</span>
+                </p>
 
+                {/* Inline Images with Label */}
                 {complaint.images?.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-4 mt-2">
-                    <p className="font-medium m-0 w-full">Images:</p>
-                    {complaint.images.map((img, idx) => (
-                      <Image
-                        key={idx}
-                        src={img}
-                        alt={`complaint-${idx}`}
-                        style={{ width: 100, height: 80, objectFit: 'cover', cursor: 'pointer' }}
-                        preview={{ mask: <PictureOutlined /> }}
-                      />
-                    ))}
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    <span className="font-semibold whitespace-nowrap">Images :</span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {complaint.images.map((img, idx) => (
+                        <Image
+                          key={idx}
+                          src={img}
+                          alt={`complaint-${idx}`}
+                          className="rounded-md shadow-sm"
+                          style={{
+                            width: 90,
+                            height: 70,
+                            objectFit: 'cover',
+                            cursor: 'pointer',
+                          }}
+                          preview={{ mask: <PictureOutlined /> }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
             </Col>
           </Row>
         </Card>
-
-        <Divider />
-
         <Card style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)', padding: 16 }}>
-          <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">Status History</h2>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-6">Status History</h2>
           <Collapse accordion>
             {complaint.statusHistory.map((history, idx) => (
               <Panel

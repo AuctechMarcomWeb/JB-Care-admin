@@ -112,7 +112,7 @@ const UnitType = () => {
       </div>
 
       {/* Filters Section */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="py-2 border-b border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* From Date */}
           {/* <div className="flex flex-col">
@@ -183,7 +183,7 @@ const UnitType = () => {
           </div>
         </div>
       </div>
-
+      <hr className="" />
       {/* Table */}
       <div className="overflow-x-auto">
         {loading ? (
