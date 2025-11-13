@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
@@ -12,23 +13,25 @@ const BillingFixRate = ({ setUpdateStatus }) => {
   const [selectedRate, setSelectedRate] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  // const fetchRates = () => {
-  //   setLoading(true)
-  //   getRequest('billing/fixedRates')
-  //     .then((res) => {
-  //       setRates(res?.data?.data || [])
-  //     })
-  //     .catch(() => toast.error('Failed to load rates'))
-  //     .finally(() => setLoading(false))
-  // }
+  const fetchRates = () => {
+    setLoading(true)
+    getRequest(`maintain-charges/get-min-fix-charges`)
+      .then((res) => {
+        console.log('resfixed===', res)
 
-  // useEffect(() => {
-  //   fetchRates()
-  // }, [])
+        setRates(res?.data?.data || [])
+      })
+      .catch(() => toast.error('Failed to load rates'))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    fetchRates()
+  }, [])
 
   const handleDelete = (rateId) => {
     if (window.confirm('Are you sure you want to delete this rate?')) {
-      deleteRequest(`billing/fixedRates/${rateId}`)
+      deleteRequest(`maintain-charges/${selectedRate._id}`)
         .then((res) => {
           toast.success(res?.data?.message || 'Deleted successfully')
           fetchRates()

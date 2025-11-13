@@ -9,7 +9,7 @@ const UnderDevelopment = () => {
   const navigate = useNavigate() // 👈 React Router navigation
 
   const handleGoBack = () => {
-    navigate('/dashboard') // 👈 Redirect to dashboard
+    navigate('/biling') // 👈 Redirect to dashboard
   }
 
   return (
@@ -21,7 +21,7 @@ const UnderDevelopment = () => {
         {/* Image Section */}
         <div className="relative">
           <img
-            src="/src/assets/dev.jpg"
+            src="https://res.cloudinary.com/ddkzmnsqy/image/upload/v1763028166/user_uploads/hxzls4odg2y3lcsoszm1.jpg"
             alt="Under Development"
             className="w-full h-80 object-cover rounded-t-2xl"
           />

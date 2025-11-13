@@ -156,7 +156,7 @@ const MaintenceCharges = () => {
                 setTempSelectedSite(e.target.value)
                 setTempSelectedUnit('') // reset unit when site changes
               }}
-              className="w-full border border-gray-300 rounded-md  py-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md  py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
               <option value="">Select Sites</option>
               {sites.map((site) => (
@@ -173,7 +173,7 @@ const MaintenceCharges = () => {
             <select
               value={tempSelectedUnit}
               onChange={(e) => setTempSelectedUnit(e.target.value)}
-              className="w-full border border-gray-300 rounded-md  py-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md  py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
               <option value="">Select Units</option>
               {units.map((unit) => (
@@ -194,7 +194,7 @@ const MaintenceCharges = () => {
                 placeholder="Search by name or rate type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10  py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md"
+                className="pl-10  py-2 w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 rounded-md focus:outline-none"
               />
             </div>
           </div>
@@ -233,6 +233,9 @@ const MaintenceCharges = () => {
         </div>
       </div>
       <hr className="" />
+      <BillingFixRate setUpdateStatus={setUpdateStatus} />
+      <hr className="" />
+
       {/* ✅ Table Section */}
       <div className="overflow-x-auto">
         {loading ? (
@@ -332,9 +335,6 @@ const MaintenceCharges = () => {
           </table>
         )}
       </div>
-      <hr className="" />
-
-      <BillingFixRate setUpdateStatus={setUpdateStatus} />
 
       {/* Pagination */}
       {!loading && data?.length > 0 && (

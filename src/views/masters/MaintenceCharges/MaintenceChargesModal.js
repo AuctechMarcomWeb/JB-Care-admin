@@ -148,195 +148,194 @@ const MaintenceChargesModal = ({
       footer={null}
       onCancel={handleCancel}
     >
-      <Spin spinning={loading}>
-        <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
-          <div className="row">
-            {/* 🔹 Site Dropdown */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Site<span className="text-danger">*</span>
-              </label>
-              <Select
-                showSearch
-                allowClear
-                size="large"
-                placeholder="-- Select Site --"
-                value={formData?.siteId || undefined}
-                onChange={(value) => {
-                  setFormData((prev) => ({ ...prev, siteId: value }))
-                  if (errors?.siteId) setErrors((prev) => ({ ...prev, siteId: '' }))
-                }}
-                filterOption={(input, option) =>
-                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+      <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
+        <div className="row">
+          {/* 🔹 Site Dropdown */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Site<span className="text-danger">*</span>
+            </label>
+            <Select
+              showSearch
+              allowClear
+              size="large"
+              placeholder="-- Select Site --"
+              value={formData?.siteId || undefined}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, siteId: value }))
+                if (errors?.siteId) setErrors((prev) => ({ ...prev, siteId: '' }))
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={sites?.map((s) => ({
+                value: s?._id,
+                label: s?.siteName,
+              }))}
+              className={`w-100 ${errors?.siteId ? 'is-invalid' : ''}`}
+            />
+            {errors?.siteId && <div className="invalid-feedback d-block">{errors.siteId}</div>}
+          </div>
+
+          {/* 🔹 Unit Dropdown */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Unit<span className="text-danger">*</span>
+            </label>
+            <Select
+              showSearch
+              allowClear
+              placeholder="-- Select Unit --"
+              value={formData?.unitId || undefined}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, unitId: value }))
+                if (errors?.unitId) setErrors((prev) => ({ ...prev, unitId: '' }))
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={units?.map((u) => ({
+                value: u?._id,
+                label: u?.unitNumber,
+              }))}
+              className={`w-100 ${errors?.unitId ? 'is-invalid' : ''}`}
+              disabled={!formData?.siteId}
+              size="large"
+            />
+            {errors?.unitId && <div className="invalid-feedback d-block">{errors.unitId}</div>}
+          </div>
+
+          {/* 🔹 Rate Type */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Rate Type<span className="text-danger">*</span>
+            </label>
+            <select
+              name="rateType"
+              value={formData?.rateType}
+              onChange={handleChange}
+              className="form-select"
+            >
+              <option value="">Select Type</option>
+              <option value="per_sqft">Per Sqft</option>
+              <option value="fixed">Fixed</option>
+            </select>
+          </div>
+
+          {/* 🔹 Rate Value */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Rate(
+              <IndianRupee className="w-4 h-4 inline" />)<span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="rateValue"
+              min="0"
+              value={formData?.rateValue === 0 ? '' : formData?.rateValue}
+              onChange={(e) => {
+                const value = e.target.value
+                if (value === '' || Number(value) >= 0) {
+                  setFormData((prev) => ({
+                    ...prev,
+                    rateValue: value === '' ? '' : Number(value),
+                  }))
+                  if (errors?.rateValue) setErrors((prev) => ({ ...prev, rateValue: '' }))
                 }
-                options={sites?.map((s) => ({
-                  value: s?._id,
-                  label: s?.siteName,
-                }))}
-                className={`w-100 ${errors?.siteId ? 'is-invalid' : ''}`}
-              />
-              {errors?.siteId && <div className="invalid-feedback d-block">{errors.siteId}</div>}
-            </div>
+              }}
+              className={`form-control ${errors?.rateValue ? 'is-invalid' : ''}`}
+            />
+            {errors?.rateValue && <div className="invalid-feedback">{errors.rateValue}</div>}
+          </div>
 
-            {/* 🔹 Unit Dropdown */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Unit<span className="text-danger">*</span>
-              </label>
-              <Select
-                showSearch
-                allowClear
-                placeholder="-- Select Unit --"
-                value={formData?.unitId || undefined}
-                onChange={(value) => {
-                  setFormData((prev) => ({ ...prev, unitId: value }))
-                  if (errors?.unitId) setErrors((prev) => ({ ...prev, unitId: '' }))
-                }}
-                filterOption={(input, option) =>
-                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                }
-                options={units?.map((u) => ({
-                  value: u?._id,
-                  label: u?.unitNumber,
-                }))}
-                className={`w-100 ${errors?.unitId ? 'is-invalid' : ''}`}
-                disabled={!formData?.siteId}
-                size="large"
-              />
-              {errors?.unitId && <div className="invalid-feedback d-block">{errors.unitId}</div>}
-            </div>
-
-            {/* 🔹 Rate Type */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Rate Type<span className="text-danger">*</span>
-              </label>
-              <select
-                name="rateType"
-                value={formData?.rateType}
-                onChange={handleChange}
-                className="form-select"
-              >
-                <option value="per_sqft">Per Sqft</option>
-                <option value="fixed">Fixed</option>
-              </select>
-            </div>
-
-            {/* 🔹 Rate Value */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Rate(
-                <IndianRupee className="w-4 h-4 inline" />)<span className="text-danger">*</span>
-              </label>
+          {/* 🔹 GST Percent */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">GST Percent</label>
+            <div style={{ position: 'relative' }}>
               <input
                 type="text"
-                name="rateValue"
-                min="0"
-                value={formData?.rateValue === 0 ? '' : formData?.rateValue}
+                name="gstPercent"
+                value={formData?.gstPercent !== '' ? `${formData?.gstPercent}` : ''}
                 onChange={(e) => {
-                  const value = e.target.value
-                  if (value === '' || Number(value) >= 0) {
-                    setFormData((prev) => ({
-                      ...prev,
-                      rateValue: value === '' ? '' : Number(value),
-                    }))
-                    if (errors?.rateValue) setErrors((prev) => ({ ...prev, rateValue: '' }))
+                  let value = e.target.value.replace('%', '')
+                  if (/^\d*\.?\d*$/.test(value)) {
+                    const num = Number(value)
+                    if (num >= 0 && num <= 100) {
+                      setFormData((prev) => ({ ...prev, gstPercent: num }))
+                    } else if (value === '') {
+                      setFormData((prev) => ({ ...prev, gstPercent: '' }))
+                    }
                   }
                 }}
-                className={`form-control ${errors?.rateValue ? 'is-invalid' : ''}`}
+                className="form-control"
+                style={{ paddingRight: '25px' }}
+                placeholder="Enter GST (e.g., 18)"
               />
-              {errors?.rateValue && <div className="invalid-feedback">{errors.rateValue}</div>}
+              <span
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#555',
+                }}
+              >
+                %
+              </span>
             </div>
+          </div>
 
-            {/* 🔹 GST Percent */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">GST Percent</label>
-              <div style={{ position: 'relative' }}>
-                <input
-                  type="text"
-                  name="gstPercent"
-                  value={formData?.gstPercent !== '' ? `${formData?.gstPercent}` : ''}
-                  onChange={(e) => {
-                    let value = e.target.value.replace('%', '')
-                    if (/^\d*\.?\d*$/.test(value)) {
-                      const num = Number(value)
-                      if (num >= 0 && num <= 100) {
-                        setFormData((prev) => ({ ...prev, gstPercent: num }))
-                      } else if (value === '') {
-                        setFormData((prev) => ({ ...prev, gstPercent: '' }))
-                      }
-                    }
-                  }}
-                  className="form-control"
-                  style={{ paddingRight: '25px' }}
-                  placeholder="Enter GST (e.g., 18)"
-                />
-                <span
-                  style={{
-                    position: 'absolute',
-                    right: '10px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: '#555',
-                  }}
-                >
-                  %
-                </span>
-              </div>
-            </div>
+          {/* 🔹 Effective From */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Date<span className="text-danger">*</span>
+            </label>
+            <input
+              type="date"
+              name="effectiveFrom"
+              value={formData?.effectiveFrom?.slice(0, 10) || ''}
+              onChange={handleChange}
+              className={`form-control ${errors?.date ? 'is-invalid' : ''}`}
+            />
+            {errors?.effectiveFrom && (
+              <div className="invalid-feedback">{errors.effectiveFrom}</div>
+            )}
+          </div>
 
-            {/* 🔹 Effective From */}
-            <div className="col-md-6 mb-3">
-              <label className="form-label fw-bold">
-                Date<span className="text-danger">*</span>
-              </label>
+          {/* 🔹 Active Checkbox */}
+          <div className="col-md-6 mb-3 d-flex align-items-center">
+            <div className="form-check">
               <input
-                type="date"
-                name="effectiveFrom"
-                value={formData?.effectiveFrom?.slice(0, 10) || ''}
+                type="checkbox"
+                className="form-check-input"
+                name="isActive"
+                checked={formData?.isActive}
                 onChange={handleChange}
-                className={`form-control ${errors?.effectiveFrom ? 'is-invalid' : ''}`}
+                id="isActive"
               />
-              {errors?.effectiveFrom && (
-                <div className="invalid-feedback">{errors.effectiveFrom}</div>
-              )}
-            </div>
-
-            {/* 🔹 Active Checkbox */}
-            <div className="col-md-6 mb-3 d-flex align-items-center">
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  name="isActive"
-                  checked={formData?.isActive}
-                  onChange={handleChange}
-                  id="isActive"
-                />
-                <label className="form-check-label" htmlFor="isActive">
-                  Active
-                </label>
-              </div>
+              <label className="form-check-label" htmlFor="isActive">
+                Active
+              </label>
             </div>
           </div>
+        </div>
 
-          {/* 🔹 Buttons */}
-          <div className="d-flex justify-content-end gap-2">
-            <button type="button" className="btn btn-secondary" onClick={handleCancel}>
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary" disabled={loading}>
-              {modalData
-                ? loading
-                  ? 'Updating...'
-                  : 'Update Maintenance Charges'
-                : loading
-                  ? 'Saving...'
-                  : 'Save Maintenance Charges'}
-            </button>
-          </div>
-        </form>
-      </Spin>
+        {/* 🔹 Buttons */}
+        <div className="d-flex justify-content-end gap-2">
+          <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+            Cancel
+          </button>
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {modalData
+              ? loading
+                ? 'Updating...'
+                : 'Update Maintenance Charges'
+              : loading
+                ? 'Saving...'
+                : 'Save Maintenance Charges'}
+          </button>
+        </div>
+      </form>
     </Modal>
   )
 }

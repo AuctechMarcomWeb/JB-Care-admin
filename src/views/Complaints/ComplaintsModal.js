@@ -23,11 +23,13 @@ const ComplaintsModal = ({
   const [uploadingResolvedImages, setUploadingResolvedImages] = useState([])
   const [uploadingMaterialImages, setUploadingMaterialImages] = useState([])
   const [uploadingClosedImages, setUploadingClosedImages] = useState([])
-
   const [errors, setErrors] = useState({})
-  const [users, setUsers] = useState([])
+  // const [users, setUsers] = useState([])
   const [selectedUser, setSelectedUser] = useState(null)
   const imagesInputRefs = React.useRef([])
+  const [sites, setSites] = useState([])
+  const [units, setUnits] = useState([])
+  const [users, setUsers] = useState([])
   const [formData, setFormData] = useState({
     userId: '',
     siteId: '',
@@ -66,20 +68,43 @@ const ComplaintsModal = ({
     userRole: 'Admin',
   })
   console.log('formData', formData)
-
-  // Fetch Users Once
+  // 🧩 Fetch Sites Once
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await getRequest(`users?isPagination=false`)
-        setUsers(res?.data?.data?.data || [])
-      } catch (err) {
-        console.error('Error fetching users:', err)
-      }
-    }
-    fetchUsers()
+    getRequest('sites?isPagination=false')
+      .then((res) => setSites(res?.data?.data?.sites || []))
+      .catch(() => toast.error('Failed to load sites'))
   }, [])
 
+  // 🧩 Fetch Units when Site changes
+  useEffect(() => {
+    if (!formData.siteId) {
+      setUnits([])
+      setUsers([])
+      setFormData((prev) => ({ ...prev, unitId: '', userId: '' }))
+      return
+    }
+    getRequest(`units?isPagination=false&siteId=${formData.siteId}`)
+      .then((res) => setUnits(res?.data?.data?.units || []))
+      .catch(() => toast.error('Failed to load units'))
+  }, [formData.siteId])
+
+  // 🧩 Fetch Users when Unit changes
+  useEffect(() => {
+    if (!formData.unitId) {
+      setUsers([])
+      setFormData((prev) => ({ ...prev, userId: '' }))
+      return
+    }
+    getRequest(`users?isPagination=false&siteId=${formData.siteId}&unitId=${formData.unitId}`)
+      .then((res) => setUsers(res?.data?.data?.data || []))
+      .catch(() => toast.error('Failed to load users'))
+  }, [formData.unitId])
+
+  // 🧩 Handle Input Change
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
   // Prefill Edit Mode
   useEffect(() => {
     if (modalData) {
@@ -149,28 +174,28 @@ const ComplaintsModal = ({
     }
   }, [modalData, users])
 
-  // ✅ Handle Change
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
+  // // ✅ Handle Change
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target
+  //   setFormData((prev) => ({ ...prev, [name]: value }))
+  //   if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
 
-    // Auto-fill user related info
-    if (name === 'userId') {
-      const user = users.find((u) => u._id === value)
-      setSelectedUser(user || null)
+  //   // Auto-fill user related info
+  //   if (name === 'userId') {
+  //     const user = users.find((u) => u._id === value)
+  //     setSelectedUser(user || null)
 
-      if (user) {
-        setFormData((prev) => ({
-          ...prev,
-          userId: value,
-          siteId: user?.siteId?._id || '',
-          projectId: user?.projectId?._id || '',
-          unitId: user?.unitId?._id || '',
-        }))
-      }
-    }
-  }
+  //     if (user) {
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         userId: value,
+  //         siteId: user?.siteId?._id || '',
+  //         projectId: user?.projectId?._id || '',
+  //         unitId: user?.unitId?._id || '',
+  //       }))
+  //     }
+  //   }
+  // }
 
   // ✅ Handle Image Upload
   const handleImageUpload = (e) => {
@@ -358,38 +383,47 @@ const ComplaintsModal = ({
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
         {/* 🔹 User Selection */}
         <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              User <span className="text-danger">*</span>
-            </label>
-            <select
-              name="userId"
-              value={formData.userId}
-              onChange={handleChange}
-              className={`form-select ${errors.userId ? 'is-invalid' : ''}`}
-            >
-              <option value="">Select User</option>
-              {users.map((u) => (
-                <option key={u._id} value={u._id}>
-                  {u.name}
-                </option>
-              ))}
-            </select>
-            {errors.userId && <div className="invalid-feedback">{errors.userId}</div>}
-          </div>
-
+          {/* 🔹 Site Dropdown */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Site <span className="text-danger">*</span>
             </label>
-            <input
-              type="text"
-              className="form-control"
-              value={selectedUser?.siteId?.siteName || ''}
-              disabled={!formData.userId}
-              readOnly
-            />
+            <select
+              name="siteId"
+              value={formData.siteId}
+              onChange={handleChange}
+              className={`form-select ${errors.siteId ? 'is-invalid' : ''}`}
+            >
+              <option value="">Select Site</option>
+              {sites.map((site) => (
+                <option key={site._id} value={site._id}>
+                  {site.siteName}
+                </option>
+              ))}
+            </select>
             {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
+          </div>
+
+          {/* 🔹 Unit Dropdown */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Unit <span className="text-danger">*</span>
+            </label>
+            <select
+              name="unitId"
+              value={formData.unitId}
+              onChange={handleChange}
+              className={`form-select ${errors.unitId ? 'is-invalid' : ''}`}
+              disabled={!formData.siteId}
+            >
+              <option value="">Select Unit</option>
+              {units.map((unit) => (
+                <option key={unit._id} value={unit._id}>
+                  {unit.unitNumber}
+                </option>
+              ))}
+            </select>
+            {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
           </div>
         </div>
 
@@ -411,16 +445,23 @@ const ComplaintsModal = ({
 
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
-              Unit <span className="text-danger">*</span>
+              User <span className="text-danger">*</span>
             </label>
-            <input
-              type="text"
-              className="form-control"
-              value={selectedUser?.unitId?.unitNumber || ''}
-              disabled={!formData.userId}
-              readOnly
-            />
-            {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
+            <select
+              name="userId"
+              value={formData.userId}
+              onChange={handleChange}
+              className={`form-select ${errors.userId ? 'is-invalid' : ''}`}
+              disabled={!formData.unitId}
+            >
+              <option value="">Select User</option>
+              {users.map((u) => (
+                <option key={u._id} value={u._id}>
+                  {u.name}
+                </option>
+              ))}
+            </select>
+            {errors.userId && <div className="invalid-feedback">{errors.userId}</div>}
           </div>
 
           {/* 🔹 Complaint Title */}

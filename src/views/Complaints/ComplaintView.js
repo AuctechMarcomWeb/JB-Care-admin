@@ -113,13 +113,15 @@ const ComplaintView = () => {
       </div>
 
       <Card className="shadow-lg rounded-lg p-1 sm:p-6 lg:p-8">
-        <h1 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-6">Complaint Overview</h1>
-        <hr className="mt-2" />
+        <h1 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-6 text-center">
+          Complaint Overview
+        </h1>
+        <hr className="mt-1" />
 
         <Card bordered className="shadow-sm mb-2 p-2 sm:p-3">
           {/* Centered Title */}
-          <h2 className="text-center text-base sm:text-lg md:text-xl font-semibold mb-4">
-            Title : {complaint.complaintTitle}
+          <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2">
+            Complaint Title : {complaint.complaintTitle}
           </h2>
           <Row gutter={[12, 12]}>
             {/* Left column */}
@@ -197,7 +199,7 @@ const ComplaintView = () => {
           </Row>
         </Card>
         <Card style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)', padding: 16 }}>
-          <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-6">Status History</h2>
+          <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2">Status History</h2>
           <Collapse accordion>
             {complaint.statusHistory.map((history, idx) => (
               <Panel
