@@ -306,7 +306,6 @@ const Biling = () => {
           </div>
         </div>
       </div>
-
       <hr className="" />
       {/* ✅ Table Section with Loader & Empty State */}
       <div className="overflow-x-auto">
@@ -377,15 +376,17 @@ const Biling = () => {
                       <td className="px-2 py-2 text-center border border-gray-200">
                         {item.unpaidCount}
                       </td>
-                      <td className="px-2 py-2 text-center border border-gray-200">
+                      <td
+                        className="px-2 py-2 text-center border border-gray-200"
+                        onClick={(e) => e.stopPropagation()} // 🛑 Prevent row click inside this cell
+                      >
                         <label className="relative inline-flex items-center cursor-pointer">
                           <input
                             type="checkbox"
                             className="sr-only peer"
                             checked={item.isActionEnabled} // true -> green, false -> red
                             // disabled={!item.canEnableAction} // disable unless some condition is true
-                            onClick={(e) => {
-                              e.stopPropagation()
+                            onClick={() => {
                               handleToggle(item.landlordId)
                             }}
                           />
