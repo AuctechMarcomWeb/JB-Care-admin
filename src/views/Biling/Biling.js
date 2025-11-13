@@ -356,7 +356,11 @@ const Biling = () => {
                       <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200">
                         {index + 1}
                       </td>
-                      <td className="px-2 py-2 border border-gray-200">{item.landlordName}</td>
+                      <td className="px-2 py-2 border border-gray-200">
+                        <div className="font-semibold text-gray-800">{item.landlordName}</div>
+                        <div className="text-sm text-gray-600">{item.siteNames}</div>
+                        <div className="text-sm text-gray-600">{item.unitNumbers}</div>
+                      </td>
                       <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalMaintenance}
                       </td>
