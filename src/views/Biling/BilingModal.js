@@ -262,6 +262,7 @@ const BilingModal = ({
               placeholder="Select Site"
               disabled={!!modalData}
               onChange={(value) => handleSelectChange('siteId', value)}
+              size="large"
             />
             {errors.siteId && <div className="text-danger small">{errors.siteId}</div>}
           </div>
@@ -276,6 +277,7 @@ const BilingModal = ({
               placeholder="Select Unit"
               disabled={!!modalData}
               onChange={(value) => handleSelectChange('unitId', value)}
+              size="large"
             />
             {errors.unitId && <div className="text-danger small">{errors.unitId}</div>}
           </div>
@@ -290,6 +292,7 @@ const BilingModal = ({
               placeholder="Select Landlord"
               disabled={!!modalData || !!landlordId}
               onChange={(value) => handleSelectChange('landlordId', value)}
+              size="large"
             />
             {errors.landlordId && <div className="text-danger small">{errors.landlordId}</div>}
           </div>
