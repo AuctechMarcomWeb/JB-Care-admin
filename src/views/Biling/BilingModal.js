@@ -4,6 +4,7 @@ import { Modal, Select, Spin } from 'antd'
 import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { getRequest, postRequest, putRequest } from '../../Helpers'
+import { useBillingContext } from '../../context/bilingContext'
 
 const BilingModal = ({
   setUpdateStatus,
@@ -18,7 +19,7 @@ const BilingModal = ({
   const [sites, setSites] = useState([])
   const [units, setUnits] = useState([])
   const [landlords, setLandlords] = useState([])
-
+  const { setSelectedBill } = useBillingContext()
   const [formData, setFormData] = useState({
     siteId: '',
     unitId: '',
@@ -212,6 +213,14 @@ const BilingModal = ({
     putRequest({ url: `billing/${modalData._id}`, cred: payload })
       .then((res) => {
         toast.success(res?.data?.message || 'Landlord updated successfully')
+        const updatedData = res?.data?.data || {}
+        console.log('updatedData', res)
+
+        setSelectedBill((prev) => ({
+          ...prev,
+          billingTillToday: updatedData.billingTillToday ?? prev.billingTillToday,
+          previousUnpaidBill: updatedData.previousUnpaidBill ?? prev.previousUnpaidBill,
+        }))
         setUpdateStatus((prev) => !prev)
         handleCancel()
       })
@@ -363,7 +372,7 @@ const BilingModal = ({
                 />
               </div>
               <div className="col-md-6 mb-3">
-                <label className="form-label fw-bold">Paid At</label>
+                <label className="form-label fw-bold">Payment Date</label>
                 <input
                   type="date"
                   name="paidAt"

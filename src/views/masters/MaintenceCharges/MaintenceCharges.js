@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 import { Empty, Pagination, Spin } from 'antd'
 import MaintenceChargesModal from './MaintenceChargesModal'
 import moment from 'moment'
+import BillingFixRate from './BillingFixrate'
 
 const MaintenceCharges = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -231,7 +232,7 @@ const MaintenceCharges = () => {
           </div>
         </div>
       </div>
-
+      <hr className="" />
       {/* ✅ Table Section */}
       <div className="overflow-x-auto">
         {loading ? (
@@ -331,6 +332,9 @@ const MaintenceCharges = () => {
           </table>
         )}
       </div>
+      <hr className="" />
+
+      <BillingFixRate setUpdateStatus={setUpdateStatus} />
 
       {/* Pagination */}
       {!loading && data?.length > 0 && (
