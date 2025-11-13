@@ -154,7 +154,7 @@ const Complaints = () => {
               onChange={(e) => setTempSelectedSite(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              <option value="">All Sites</option>
+              <option value="">Select Sites</option>
               {sites.map((s) => (
                 <option key={s._id} value={s._id}>
                   {s.siteName}
@@ -199,7 +199,7 @@ const Complaints = () => {
                   setPage(1)
                   setUpdateStatus((prev) => !prev) // 🔹 Re-fetch immediately for search
                 }}
-                className="pl-10 pr-3 py-2 text-sm w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -263,7 +263,7 @@ const Complaints = () => {
                       Sr. No.
                     </th>
                     <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Date
+                      Complaint Date
                     </th>
                     <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Site Name
@@ -272,7 +272,7 @@ const Complaints = () => {
                       Units
                     </th>
                     <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
-                      Title
+                      Complaint Title
                     </th>
                     <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Description

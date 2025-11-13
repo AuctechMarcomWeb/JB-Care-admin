@@ -31,7 +31,7 @@ const BilingModal = ({
     gstAmount: '',
     totalAmount: '',
     billingAmount: '',
-    status: '',
+    status: 'Unpaid', // 🔹 Default status
     paymentId: '',
     paidAt: '',
   })
@@ -96,6 +96,32 @@ const BilingModal = ({
     }
   }, [modalData, landlordId])
 
+  // 🔹 Auto-fill when opened from BillingDetails (Profile Page)
+  useEffect(() => {
+    if (landlordId && isModalOpen && !modalData) {
+      // Fetch landlord details (to get site & unit)
+      getRequest(`landlords/${landlordId}`)
+        .then((res) => {
+          console.log(res)
+
+          const landlord = res?.data?.data
+          if (landlord) {
+            setFormData((prev) => ({
+              ...prev,
+              landlordId: landlord._id,
+              siteId: landlord.siteId?._id || landlord.siteId || '',
+              // unitId: landlord.unitId?._id || landlord.units || '',
+              unitId:
+                Array.isArray(landlord?.unitIds) && landlord.unitIds.length > 0
+                  ? landlord.unitIds[0]?._id || landlord.unitIds[0]
+                  : '',
+            }))
+          }
+        })
+        .catch(() => toast.error('Failed to fetch landlord details'))
+    }
+  }, [landlordId, isModalOpen, modalData])
+
   const resetForm = () => {
     setFormData({
       siteId: '',
@@ -108,7 +134,7 @@ const BilingModal = ({
       gstAmount: '',
       totalAmount: '',
       billingAmount: '',
-      status: '',
+      status: 'Unpaid',
       paymentId: '',
       paidAt: '',
     })
@@ -142,6 +168,14 @@ const BilingModal = ({
     }
     setErrors((prev) => ({ ...prev, [name]: error }))
   }
+
+  // 🔹 Auto-set current date when status changes to "Paid"
+  useEffect(() => {
+    if (formData.status === 'Paid' && !formData.paidAt) {
+      const today = new Date().toISOString().split('T')[0]
+      setFormData((prev) => ({ ...prev, paidAt: today }))
+    }
+  }, [formData.status])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -290,7 +324,7 @@ const BilingModal = ({
               options={landlords.map((l) => ({ value: l._id, label: l.name }))}
               className="w-100"
               placeholder="Select Landlord"
-              disabled={!!modalData || !!landlordId}
+              disabled={!!modalData}
               onChange={(value) => handleSelectChange('landlordId', value)}
               size="large"
             />

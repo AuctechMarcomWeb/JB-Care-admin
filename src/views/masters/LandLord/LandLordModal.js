@@ -4,7 +4,7 @@ import { Modal, Select } from 'antd'
 import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { fileUpload, getRequest, postRequest, putRequest } from '../../../Helpers'
-import { validateEmail } from '../../../Utils/index'
+import { validateEmail } from '../../../Utils'
 
 const LandLordModal = ({
   setUpdateStatus,
@@ -16,9 +16,7 @@ const LandLordModal = ({
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
   const [site, setSite] = useState([])
-  const [project, setProject] = useState([])
   const [units, setUnits] = useState([])
-  console.log('units==', units)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -27,38 +25,23 @@ const LandLordModal = ({
     address: '',
     profilePic: '',
     siteId: '',
-    projectId: '',
     unitId: '',
-    isActive: 'true',
+    isActive: false,
   })
+  console.log('formDarta', formData)
 
-  console.log('fprmdata', formData)
-
-  // Fetch all sites initially
+  // 🔹 Fetch all sites initially
   useEffect(() => {
     getRequest('sites?isPagination=false')
       .then((res) => setSite(res?.data?.data?.sites || []))
       .catch((err) => console.error('Error fetching sites:', err))
   }, [])
 
-  // // Fetch projects when site changes
-  // useEffect(() => {
-  //   if (formData?.siteId) {
-  //     getRequest(`projects?isPagination=false&siteId=${formData?.siteId}`)
-  //       .then((res) => setProject(res?.data?.data?.projects || []))
-  //       .catch((err) => console.error('Error fetching projects:', err))
-  //   } else {
-  //     setProject([])
-  //     setFormData((prev) => ({ ...prev, projectId: '', unitId: '' }))
-  //   }
-  // }, [formData?.siteId])
-
-  // Fetch units when project changes
+  // 🔹 Fetch units when site changes
   useEffect(() => {
     if (formData?.siteId) {
       getRequest(`units?isPagination=false&siteId=${formData?.siteId}`)
         .then((res) => setUnits(res?.data?.data?.units || []))
-
         .catch((err) => console.error('Error fetching units:', err))
     } else {
       setUnits([])
@@ -66,6 +49,7 @@ const LandLordModal = ({
     }
   }, [formData?.siteId])
 
+  // 🔹 Set form data in edit mode
   useEffect(() => {
     if (modalData) {
       setFormData({
@@ -75,13 +59,13 @@ const LandLordModal = ({
         address: modalData?.address || '',
         profilePic: modalData?.profilePic || '',
         siteId: modalData?.siteId?._id || '',
-        // projectId: modalData?.projectId?._id || '',
         unitId:
           Array.isArray(modalData?.unitIds) && modalData.unitIds.length > 0
             ? modalData.unitIds[0]?._id || modalData.unitIds[0]
             : '',
-        isActive: modalData?.isActive ?? '',
+        isActive: modalData?.isActive ?? false,
       })
+      console.log('ADDRESS', modalData?.address)
     } else {
       setFormData({
         name: '',
@@ -90,49 +74,44 @@ const LandLordModal = ({
         address: '',
         profilePic: '',
         siteId: '',
-        // projectId: '',
         unitId: '',
-        isActive: '',
+        isActive: false,
       })
     }
   }, [modalData])
 
-  // Handle input change
+  // 🔹 Handle Input Change
   const handleChange = (e) => {
-    const { name, value } = e.target
-    console.log('name and value', name, value)
+    const { name, value, type, checked } = e.target
 
-    // Phone number validation
+    // ✅ Handle checkbox
+    if (type === 'checkbox') {
+      setFormData((prev) => ({ ...prev, [name]: checked }))
+      return
+    }
+
+    // ✅ Handle phone input
     if (name === 'phone') {
       const onlyNums = value.replace(/\D/g, '')
       if (onlyNums.length <= 10) {
         setFormData((prev) => ({ ...prev, phone: onlyNums }))
       }
-      // Remove phone error while typing
-      if (errors.phone) {
-        setErrors((prev) => ({ ...prev, phone: '' }))
-      }
+      if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }))
       return
     }
 
-    // Update form data for all other fields
+    // ✅ Handle other inputs
     setFormData((prev) => ({ ...prev, [name]: value }))
-
-    // Clear error message as soon as user types
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }))
-    }
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
   }
 
-  // Handle image upload
+  // 🔹 Image Upload
   const handleImageUpload = (e) => {
     const image = e.target.files[0]
     if (!image) return
     setLoading(true)
     fileUpload({ url: 'upload', cred: { image } })
       .then((res) => {
-        console.log('fdgdfdf', res)
-
         const uploadedUrl = res?.data?.imageUrl
         if (uploadedUrl) {
           setFormData((prev) => ({ ...prev, profilePic: uploadedUrl }))
@@ -145,7 +124,7 @@ const LandLordModal = ({
 
   const handleRemoveImage = () => setFormData((prev) => ({ ...prev, profilePic: '' }))
 
-  // Validation
+  // 🔹 Validation
   const validateForm = () => {
     const newErrors = {}
     if (!formData?.name) newErrors.name = 'Name is required'
@@ -153,7 +132,6 @@ const LandLordModal = ({
     if (!formData?.phone) newErrors.phone = 'Phone number is required'
     if (!formData?.address) newErrors.address = 'Address is required'
     if (!formData?.siteId) newErrors.siteId = 'Select a site'
-    // if (!formData?.projectId) newErrors.projectId = 'Select a project'
     if (!formData?.unitId) newErrors.unitId = 'Select a unit'
     if (!formData?.profilePic) newErrors.profilePic = 'Profile image is required'
 
@@ -167,7 +145,7 @@ const LandLordModal = ({
     return Object.keys(newErrors).length === 0
   }
 
-  // For Add
+  // 🔹 Add Landlord
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!validateForm()) return
@@ -176,7 +154,6 @@ const LandLordModal = ({
     const payload = {
       ...formData,
       unitIds: [formData?.unitId],
-      isActive: formData.isActive === 'on' && 'true',
     }
 
     postRequest({ url: 'landlords', cred: payload })
@@ -189,7 +166,7 @@ const LandLordModal = ({
       .finally(() => setLoading(false))
   }
 
-  // For Edit
+  // 🔹 Edit Landlord
   const handleEdit = (e) => {
     e.preventDefault()
     if (!validateForm()) return
@@ -198,7 +175,6 @@ const LandLordModal = ({
     const payload = {
       ...formData,
       unitIds: [formData.unitId],
-      isActive: formData.isActive === 'on' && 'true',
     }
 
     putRequest({ url: `landlords/${modalData._id}`, cred: payload })
@@ -225,7 +201,7 @@ const LandLordModal = ({
       onCancel={handleCancel}
     >
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
-        {/* Site & Project */}
+        {/* 🔹 Site & Unit */}
         <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -244,43 +220,13 @@ const LandLordModal = ({
                 value: s?._id,
                 label: s?.siteName,
               }))}
-              style={{ width: '100%', height: '38px' }} // 🔹 match native select height
+              style={{ width: '100%', height: '38px' }}
               className={errors?.siteId ? 'is-invalid' : ''}
             />
             {errors?.siteId && <div className="invalid-feedback">{errors?.siteId}</div>}
           </div>
 
-          {/* project */}
-
-          {/* <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Project<span className="text-danger">*</span>
-            </label>
-            <Select
-              showSearch
-              allowClear
-              placeholder="--Select Project--"
-              value={formData?.projectId || undefined}
-              onChange={(value) => {
-                setFormData((prev) => ({ ...prev, projectId: value }))
-                clearFieldError('projectId') // ✅ clear error on change
-              }}
-              disabled={!formData?.siteId}
-              filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-              }
-              options={project?.map((p) => ({
-                value: p?._id,
-                label: p?.projectName,
-              }))}
-              style={{ width: '100%', height: '38px' }} // match native select height
-              className={errors?.projectId ? 'is-invalid' : ''}
-            />
-            {errors?.projectId && <div className="invalid-feedback">{errors?.projectId}</div>}
-          </div> */}
-
-          {/* Unit */}
-          {/* 🔹 Unit Dropdown (AntD Select) */}
+          {/* 🔹 Unit */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Unit<span className="text-danger">*</span>
@@ -290,10 +236,7 @@ const LandLordModal = ({
               allowClear
               placeholder="--Select Unit--"
               value={formData?.unitId || undefined}
-              onChange={(value) => {
-                setFormData((prev) => ({ ...prev, unitId: value }))
-                clearFieldError('unitId') // ✅ clear validation error on change
-              }}
+              onChange={(value) => setFormData((prev) => ({ ...prev, unitId: value }))}
               disabled={!formData?.siteId}
               filterOption={(input, option) =>
                 (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
@@ -302,15 +245,15 @@ const LandLordModal = ({
                 value: u?._id,
                 label: u?.unitNumber,
               }))}
-              style={{ width: '100%', height: '38px' }} // match input height
+              style={{ width: '100%', height: '38px' }}
               className={errors?.unitId ? 'is-invalid' : ''}
             />
             {errors?.unitId && <div className="invalid-feedback">{errors?.unitId}</div>}
           </div>
         </div>
 
+        {/* 🔹 Name & Email */}
         <div className="row">
-          {/* 🔹 Name Input Field */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Name<span className="text-danger">*</span>
@@ -319,10 +262,7 @@ const LandLordModal = ({
               type="text"
               name="name"
               value={formData?.name}
-              onChange={(e) => {
-                handleChange(e)
-                clearFieldError('name') // ✅ clear validation error on change
-              }}
+              onChange={handleChange}
               className={`form-control ${errors?.name ? 'is-invalid' : ''}`}
             />
             {errors?.name && <div className="invalid-feedback">{errors?.name}</div>}
@@ -343,7 +283,7 @@ const LandLordModal = ({
           </div>
         </div>
 
-        {/* Phone & Address */}
+        {/* 🔹 Phone & Address */}
         <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -375,7 +315,7 @@ const LandLordModal = ({
           </div>
         </div>
 
-        {/* Unit & Profile Image */}
+        {/* 🔹 Profile Image */}
         <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
@@ -418,6 +358,7 @@ const LandLordModal = ({
             )}
           </div>
         </div>
+
         {/* 🔹 Active Checkbox */}
         <div className="form-check mb-3">
           <input
@@ -430,7 +371,7 @@ const LandLordModal = ({
           <label className="form-check-label fw-bold">Active</label>
         </div>
 
-        {/* Buttons */}
+        {/* 🔹 Buttons */}
         <div className="d-flex justify-content-end gap-2">
           <button type="button" className="btn btn-secondary" onClick={handleCancel}>
             Cancel
