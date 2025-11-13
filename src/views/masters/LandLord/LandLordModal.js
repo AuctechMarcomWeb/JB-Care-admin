@@ -17,7 +17,6 @@ const LandLordModal = ({
   const [errors, setErrors] = useState({})
   const [site, setSite] = useState([])
   const [units, setUnits] = useState([])
-
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,6 +25,7 @@ const LandLordModal = ({
     profilePic: '',
     siteId: '',
     unitId: '',
+    walletBalance:'',
     isActive: false,
   })
   console.log('formDarta', formData)
@@ -58,6 +58,7 @@ const LandLordModal = ({
         phone: modalData?.phone || '',
         address: modalData?.address || '',
         profilePic: modalData?.profilePic || '',
+        walletBalance: modalData?.walletBalance || '',
         siteId: modalData?.siteId?._id || '',
         unitId:
           Array.isArray(modalData?.unitIds) && modalData.unitIds.length > 0
@@ -75,6 +76,7 @@ const LandLordModal = ({
         profilePic: '',
         siteId: '',
         unitId: '',
+        walletBalance: '',
         isActive: false,
       })
     }
@@ -134,6 +136,7 @@ const LandLordModal = ({
     if (!formData?.siteId) newErrors.siteId = 'Select a site'
     if (!formData?.unitId) newErrors.unitId = 'Select a unit'
     if (!formData?.profilePic) newErrors.profilePic = 'Profile image is required'
+    if(!formData?.walletBalance) newErrors.walletBalance = 'Wallet Balance is required'
 
     if (!formData.email?.trim()) {
       newErrors.email = 'Email is required'
@@ -210,7 +213,7 @@ const LandLordModal = ({
             <Select
               showSearch
               allowClear
-              placeholder="--Select Site--"
+              placeholder="Select Site"
               value={formData?.siteId || undefined}
               onChange={(value) => setFormData((prev) => ({ ...prev, siteId: value }))}
               filterOption={(input, option) =>
@@ -234,7 +237,7 @@ const LandLordModal = ({
             <Select
               showSearch
               allowClear
-              placeholder="--Select Unit--"
+              placeholder="Select Unit"
               value={formData?.unitId || undefined}
               onChange={(value) => setFormData((prev) => ({ ...prev, unitId: value }))}
               disabled={!formData?.siteId}
@@ -357,6 +360,29 @@ const LandLordModal = ({
               </div>
             )}
           </div>
+
+        <div className="col-md-6 mb-3">
+  <label className="form-label fw-bold">
+    Wallet Balance<span className="text-danger">*</span>
+  </label>
+  <input
+    type="text"
+    name="walletBalance"
+    value={formData?.walletBalance || ''}
+    onChange={(e) => {
+      const value = e.target.value;
+      // Allow only digits
+      if (/^\d*$/.test(value)) {
+        setFormData((prev) => ({ ...prev, walletBalance: value }));
+      }
+    }}
+    className={`form-control ${errors?.walletBalance ? 'is-invalid' : ''}`}
+  />
+  {errors?.walletBalance && (
+    <div className="invalid-feedback">{errors?.walletBalance}</div>
+  )}
+</div>
+
         </div>
 
         {/* 🔹 Active Checkbox */}

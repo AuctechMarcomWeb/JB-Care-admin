@@ -326,6 +326,9 @@ const LandLord = () => {
                   <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                     Profile
                   </th>
+                   <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                    Wallet Balance
+                  </th>
                   <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                     Active
                   </th>
@@ -365,6 +368,9 @@ const LandLord = () => {
                           className="w-10 h-10 rounded-full object-cover border border-gray-300"
                         />
                       </div>
+                    </td>
+                     <td className="px-1 py-1 text-gray-600 border border-gray-200 align-middle">
+                      {item?.walletBalance || '-'}
                     </td>
                     <td className="px-1 py-1 border border-gray-200 align-middle">
                       {item?.isActive ? (
