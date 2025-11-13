@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/prop-types */
 /* eslint-disable prettier/prettier */
 import { createContext, useContext, useState, useEffect } from 'react'

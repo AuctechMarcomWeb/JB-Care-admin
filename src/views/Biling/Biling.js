@@ -41,43 +41,48 @@ const Biling = () => {
   const [landLord, setLandlord] = useState([])
   const [selectedLandlord, setSelectedLandlord] = useState('')
   const [tempSelectedLandlord, setTempSelectedLandlord] = useState('')
-
-  // Fetch Sites
   useEffect(() => {
-    getRequest('sites?isPagination=false').then((res) => setSites(res?.data?.data?.sites || []))
-  }, [])
-
-  // Fetch Units when Site changes
-  useEffect(() => {
-    if (tempSelectedSite) {
-      getRequest(`units?isPagination=false&siteId=${tempSelectedSite}`).then((res) =>
-        setUnits(res?.data?.data?.units || []),
-      )
-    } else {
-      getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
-    }
-  }, [tempSelectedSite])
-
-  // Fetch Landlords when Site or Unit changes
-  useEffect(() => {
-    const query = [
-      tempSelectedSite && `siteId=${tempSelectedSite}`,
-      tempSelectedUnit && `unitId=${tempSelectedUnit}`,
-    ]
-      .filter(Boolean)
-      .join('&')
-
-    getRequest(`landlords?isPagination=false${query ? '&' + query : ''}`).then((res) =>
+    getRequest('landlords?isPagination=false').then((res) =>
       setLandlord(res?.data?.data?.data || []),
     )
-  }, [tempSelectedSite, tempSelectedUnit])
+  }, [])
+
+  // // Fetch Sites
+  // useEffect(() => {
+  //   getRequest('sites?isPagination=false').then((res) => setSites(res?.data?.data?.sites || []))
+  // }, [])
+
+  // // Fetch Units when Site changes
+  // useEffect(() => {
+  //   if (tempSelectedSite) {
+  //     getRequest(`units?isPagination=false&siteId=${tempSelectedSite}`).then((res) =>
+  //       setUnits(res?.data?.data?.units || []),
+  //     )
+  //   } else {
+  //     getRequest('units?isPagination=false').then((res) => setUnits(res?.data?.data?.units || []))
+  //   }
+  // }, [tempSelectedSite])
+
+  // // Fetch Landlords when Site or Unit changes
+  // useEffect(() => {
+  //   const query = [
+  //     tempSelectedSite && `siteId=${tempSelectedSite}`,
+  //     tempSelectedUnit && `unitId=${tempSelectedUnit}`,
+  //   ]
+  //     .filter(Boolean)
+  //     .join('&')
+
+  //   getRequest(`landlords?isPagination=false${query ? '&' + query : ''}`).then((res) =>
+  //     setLandlord(res?.data?.data?.data || []),
+  //   )
+  // }, [tempSelectedSite, tempSelectedUnit])
 
   // ✅ Fetch Data with Loader
   useEffect(() => {
     setLoading(true)
     const query = [
-      // `search=${searchTerm}`,
-      // `page=${page}`,
+      `search=${searchTerm}`,
+      `page=${page}`,
       // `limit=${limit}`,
       // selectedSite && `siteId=${selectedSite}`,
       // selectedUnit && `unitId=${selectedUnit}`,
@@ -87,7 +92,7 @@ const Biling = () => {
       .filter(Boolean)
       .join('&')
 
-    getRequest(`billing/billingSummary${query}`)
+    getRequest(`billing/billingSummary?${query}`)
       .then((res) => {
         const responseData = res?.data
         console.log('dfdf', res)
@@ -188,7 +193,7 @@ const Biling = () => {
       <div className="py-2 border-b border-gray-200 bg-white px-1">
         <div className="flex flex-wrap items-end gap-3">
           {/* Site */}
-          <div className="flex flex-col min-w-[120px] flex-1 sm:flex-none">
+          {/* <div className="flex flex-col min-w-[120px] flex-1 sm:flex-none">
             <label className="text-sm font-medium text-gray-700 mb-1">Site</label>
             <select
               value={tempSelectedSite}
@@ -202,10 +207,10 @@ const Biling = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
 
           {/* Unit */}
-          <div className="flex flex-col min-w-[110px] flex-1 sm:flex-none">
+          {/* <div className="flex flex-col min-w-[110px] flex-1 sm:flex-none">
             <label className="text-sm font-medium text-gray-700 mb-1">Unit</label>
             <select
               value={tempSelectedUnit}
@@ -219,7 +224,7 @@ const Biling = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
 
           {/* Landlord */}
           <div className="flex flex-col min-w-[130px] flex-1 sm:flex-none">
@@ -276,8 +281,8 @@ const Biling = () => {
           <div className="flex items-center gap-2 mt-4 w-full sm:w-auto">
             <button
               onClick={() => {
-                setSelectedSite(tempSelectedSite)
-                setSelectedUnit(tempSelectedUnit)
+                // setSelectedSite(tempSelectedSite)
+                // setSelectedUnit(tempSelectedUnit)
                 setSelectedLandlord(tempSelectedLandlord)
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
@@ -289,10 +294,10 @@ const Biling = () => {
             {(selectedSite || selectedUnit || selectedLandlord) && (
               <button
                 onClick={() => {
-                  setTempSelectedSite('')
-                  setSelectedSite('')
-                  setTempSelectedUnit('')
-                  setSelectedUnit('')
+                  // setTempSelectedSite('')
+                  //setSelectedSite('')
+                  // setTempSelectedUnit('')
+                  //setSelectedUnit('')
                   setTempSelectedLandlord('')
                   setSelectedLandlord('')
                   setPage(1)
