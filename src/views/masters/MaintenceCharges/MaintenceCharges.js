@@ -137,7 +137,7 @@ const MaintenceCharges = () => {
               setIsModalOpen(true)
               setSelectedItem(null)
             }}
-            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center text-sm sm:text-base rounded-md"
+            className="bg-amber-200 text-black px-3 sm:px-4 py-2 hover:bg-amber-300 flex items-center justify-center text-sm sm:text-base rounded-md"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Charges
           </button>

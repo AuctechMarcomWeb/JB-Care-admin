@@ -41,11 +41,18 @@ const Biling = () => {
   const [landLord, setLandlord] = useState([])
   const [selectedLandlord, setSelectedLandlord] = useState('')
   const [tempSelectedLandlord, setTempSelectedLandlord] = useState('')
+
   useEffect(() => {
-    getRequest('landlords?isPagination=false').then((res) =>
-      setLandlord(res?.data?.data?.data || []),
-    )
-  }, [])
+  setLoading(true) // ✅ set loading to true
+  getRequest('landlords?isPagination=false')
+    .then((res) => {
+      setLandlord(res?.data?.data?.data || [])
+    })
+    .catch((err) => {
+      console.error('Error fetching landlords:', err)
+    })
+    .finally(() => setLoading(false)) // ✅ set loading false when done
+}, [])
 
   // // Fetch Sites
   // useEffect(() => {
@@ -174,7 +181,7 @@ const Biling = () => {
       <div className=" border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Biling</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Manage Biling</p>
+          <p className="text-gray-600 text-sm sm:text-base">Manage landlord billing data and transaction history. Click a row to view detailed billing records.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <ExportButton data={data} fileName="Biling.xlsx" sheetName="Biling" />
@@ -182,7 +189,7 @@ const Biling = () => {
             onClick={() => {
               setIsModalOpen(true)
             }}
-            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
+            className="bg-amber-200 text-black px-3 sm:px-4 py-2 hover:bg-amber-700 flex items-center justify-center rounded-md text-sm sm:text-base w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Biling
           </button>

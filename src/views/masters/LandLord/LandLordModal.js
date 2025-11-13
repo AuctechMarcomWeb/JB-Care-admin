@@ -402,7 +402,7 @@ const LandLordModal = ({
           <button type="button" className="btn btn-secondary" onClick={handleCancel}>
             Cancel
           </button>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
+          <button type="submit" className="btn bg-amber-200 text-black" disabled={loading}>
             {modalData
               ? loading
                 ? 'Updating...'

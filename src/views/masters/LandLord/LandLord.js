@@ -144,7 +144,7 @@ const LandLord = () => {
       )}
 
       {/* Header */}
-      <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3 p-4">
+      <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3 p-2">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Landlord</h2>
           <p className="text-gray-600 text-sm sm:text-base">Manage Landlords</p>
@@ -153,7 +153,7 @@ const LandLord = () => {
           <ExportButton data={data} fileName="Landlord.xlsx" sheetName="Landlord" />
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-green-600 text-white px-4 py-2 hover:bg-green-700 flex items-center text-sm sm:text-base rounded-md"
+            className="bg-amber-200 text-black px-2 py-2 hover:bg-amber-200 flex items-center text-sm sm:text-base"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Landlord
           </button>
