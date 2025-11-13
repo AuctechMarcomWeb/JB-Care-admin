@@ -457,7 +457,7 @@ const ComplaintsModal = ({
               <option value="">Select User</option>
               {users.map((u) => (
                 <option key={u._id} value={u._id}>
-                  {u.name}
+                  {u.name} - ({u.role.charAt(0).toUpperCase() + u.role.slice(1)})
                 </option>
               ))}
             </select>
@@ -692,7 +692,7 @@ const ComplaintsModal = ({
           <button type="button" className="btn btn-secondary" onClick={handleCancel}>
             Cancel
           </button>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
+          <button type="submit" className="btn bg-amber-200 text-black" disabled={loading}>
             {modalData
               ? loading
                 ? 'Updating...'

@@ -50,7 +50,7 @@ const BillingFixRate = ({ setUpdateStatus }) => {
             setSelectedRate(null)
             setIsModalOpen(true)
           }}
-          className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md flex items-center gap-2 text-sm"
+          className="bg-amber-200 hover:bg-amber-300 text-black px-3 py-2 rounded-md flex items-center gap-2 text-sm"
         >
           <Plus size={16} /> Add Rate
         </button>

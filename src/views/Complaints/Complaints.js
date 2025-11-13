@@ -129,7 +129,7 @@ const Complaints = () => {
       <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Complaints</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Manage Complaints</p>
+          <p className="text-gray-600 text-sm sm:text-base">Manage complaints and lick a row to view complete status history.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <ExportButton data={data} fileName="Complaints.xlsx" sheetName="Complaints" />
@@ -137,7 +137,7 @@ const Complaints = () => {
             onClick={() => {
               setIsModalOpen(true)
             }}
-            className="bg-green-600 text-white px-3 sm:px-4 py-2 hover:bg-green-700 flex items-center justify-center  text-sm sm:text-base w-full sm:w-auto"
+            className="bg-amber-200 text-black px-3 sm:px-4 py-2 hover:bg-amber-300 flex items-center justify-center  text-sm sm:text-base w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Complaints
           </button>
@@ -257,7 +257,7 @@ const Complaints = () => {
           <>
             <div className="overflow-x-auto w-full">
               <table className="w-full min-w-max border border-gray-200 text-center">
-                <thead className="bg-gray-100">
+                <thead className="bg-gray-100 sticky top-0 z-10">
                   <tr>
                     <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Sr. No.

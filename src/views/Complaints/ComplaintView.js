@@ -25,7 +25,7 @@ const ComplaintView = () => {
   const [complaint, setComplaint] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-
+ 
   useEffect(() => {
     setLoading(true)
     getRequest(`complaints/${id}`)
@@ -44,6 +44,33 @@ const ComplaintView = () => {
   }, [id])
 
   const formatDate = (date) => moment(date).format('DD MMM YYYY, hh:mm A')
+
+ const [activeKeys, setActiveKeys] = useState([]);
+
+// Compute pendingKey only when complaint exists
+useEffect(() => {
+  if (complaint?.statusHistory?.length) {
+    const pending = complaint.statusHistory.find(h => h.status === "Pending");
+    if (pending) {
+      setActiveKeys([pending._id]); // open pending panel initially
+    }
+  }
+}, [complaint]);
+
+const handleChange = (keys) => {
+  // Ensure keys is always an array
+  const updatedKeys = Array.isArray(keys) ? keys : [keys];
+
+  // Find Pending key dynamically from complaint
+  const pending = complaint?.statusHistory?.find(h => h.status === "Pending")?._id;
+
+  // Always include Pending in active keys
+  if (pending && !updatedKeys.includes(pending)) {
+    updatedKeys.push(pending);
+  }
+
+  setActiveKeys(updatedKeys);
+};
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -200,7 +227,8 @@ const ComplaintView = () => {
         </Card>
         <Card style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.1)', padding: 16 }}>
           <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2">Status History</h2>
-          <Collapse accordion>
+    <Collapse accordion={false} activeKey={activeKeys} onChange={handleChange}>
+
             {complaint.statusHistory.map((history, idx) => (
               <Panel
                 key={history._id || idx}
