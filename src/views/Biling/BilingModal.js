@@ -225,6 +225,11 @@ const BilingModal = ({
     postRequest({ url: 'billing', cred: payload })
       .then((res) => {
         toast.success(res?.data?.message || 'Landlord added successfully')
+        setSelectedBill((prev) => ({
+          ...prev,
+          billingTillToday: updatedData.billingTillToday ?? prev.billingTillToday,
+          previousUnpaidBill: updatedData.previousUnpaidBill ?? prev.previousUnpaidBill,
+        }))
         setUpdateStatus((prev) => !prev)
         handleCancel()
       })
@@ -261,6 +266,10 @@ const BilingModal = ({
       .catch((err) => toast.error(err?.response?.data?.message || 'Something went wrong'))
       .finally(() => setLoading(false))
   }
+
+  useEffect(() => {
+    console.log('selectedBill UPDATED === ', selectedBill)
+  }, [selectedBill])
 
   // 🔹 Auto-calculate totalAmount and billingAmount
   useEffect(() => {
