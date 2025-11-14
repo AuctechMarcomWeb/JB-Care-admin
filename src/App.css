@@ -74,6 +74,18 @@ body {
   font-weight: 500 !important;
 }
 
+.table-watermark {
+  position: relative;
+  background-image: url('./assets/logo1.png'); /* yaha apna logo path do */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 420px;  /* watermark size */
+  opacity: 1;
+}
+
+.table-watermark table {
+  background-color: rgba(255, 255, 255, 0.85); /* table white + transparency */
+}
 
 
 }

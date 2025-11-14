@@ -323,7 +323,7 @@ const Biling = () => {
       </div>
       <hr className="" />
       {/* ✅ Table Section with Loader & Empty State */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto w-full table-watermark">
         {loading ? (
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />

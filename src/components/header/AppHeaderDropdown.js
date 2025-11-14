@@ -3,7 +3,6 @@ import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreu
 import { cilBell, cilLockLocked } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
-
 import { deleteCookie } from '../../Hooks/cookie'
 import { useNavigate } from 'react-router-dom'
 
@@ -34,6 +33,7 @@ const AppHeaderDropdown = () => {
 
         {/* <CAvatar src={avatar8} size="md" /> */}
       </CDropdownToggle>
+
       <CDropdownMenu
         style={{ overflow: 'hidden', cursor: 'pointer' }}
         className="pt-0 p-0 m-0 "
