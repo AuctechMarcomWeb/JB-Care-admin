@@ -20,6 +20,7 @@ import ExportButton from '../ExportButton'
 import BilingModal from './BilingModal'
 import { getRequest } from '../../Helpers'
 import { useNavigate } from 'react-router-dom'
+import { Pagination } from 'antd'
 
 const BilingDashboard = () => {
   const [dashData, setDashData] = useState([])
@@ -31,7 +32,8 @@ const BilingDashboard = () => {
   const [dashbill, setDashBill] = useState([])
   const [selectedLandlord, setSelectedLandlord] = useState('')
   const [total, setTotal] = useState(0)
-
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(5)
   useEffect(() => {
     setLoading(true)
     getRequest(`dashboard`)
@@ -51,7 +53,7 @@ const BilingDashboard = () => {
     setLoading(true)
     const query = [
       // `search=${searchTerm}`,
-      // `page=${page}`,
+      `page=${page}`,
       selectedLandlord && `landlordId=${selectedLandlord}`,
     ]
       .filter(Boolean)
@@ -357,6 +359,27 @@ const BilingDashboard = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="px-6 py-4 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-700">
+                Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total}{' '}
+                results
+              </div>
+              <Pagination
+                current={page}
+                pageSize={limit}
+                total={total}
+                pageSizeOptions={['5', '10', '15', '20', '30', '50', '100', '500']}
+                onChange={(newPage) => setPage(newPage)}
+                showSizeChanger={true}
+                onShowSizeChange={(current, size) => {
+                  setLimit(size)
+                  setPage(1)
+                }}
+                // showQuickJumper
+              />
+            </div>
           </div>
         </div>
       </div>
