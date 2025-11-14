@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState, useCallback, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getRequest } from '../../Helpers'
@@ -71,29 +72,32 @@ const BillingDetails = () => {
         <Card className="shadow-sm rounded-lg mb-6 p-2 sm:p-6">
           <div className="flex flex-col md:flex-row gap-4">
             <img
-              src={landlord?.profilePic||"https://cdn-icons-png.flaticon.com/512/4140/4140048.png"}
+              src={
+                landlord?.profilePic || 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png'
+              }
               alt="avatar"
               className="w-40 h-40 rounded-full border mx-auto md:mx-0"
             />
             <div className="flex-1 space-y-2">
-      <h2 className="text-xl font-bold">{landlord?.name || 'N/A'}</h2>
+              <h2 className="text-xl font-bold">{landlord?.name || 'N/A'}</h2>
 
-      <p className="flex items-center gap-2 text-gray-500">
-        <Phone size={16} className="text-current" /> {landlord?.phone || 'N/A'}
-      </p>
+              <p className="flex items-center gap-2 text-gray-500">
+                <Phone size={16} className="text-current" /> {landlord?.phone || 'N/A'}
+              </p>
 
-      <p className="flex items-center gap-2 text-gray-500">
-        <Mail size={16} className="text-current" /> {landlord?.email || 'N/A'}
-      </p>
+              <p className="flex items-center gap-2 text-gray-500">
+                <Mail size={16} className="text-current" /> {landlord?.email || 'N/A'}
+              </p>
 
-      <p className="flex items-center gap-2 text-gray-500">
-        <Home size={16} className="text-current" /> {landlord?.address || 'N/A'}
-      </p>
+              <p className="flex items-center gap-2 text-gray-500">
+                <Home size={16} className="text-current" /> {landlord?.address || 'N/A'}
+              </p>
 
-      <p className="flex items-center gap-2 text-gray-500">
-        <Wallet size={16} className="text-current" /> Wallet Balance: ₹{landlord?.walletBalance || 0}
-      </p>
-    </div>
+              <p className="flex items-center gap-2 text-gray-500">
+                <Wallet size={16} className="text-current" /> Wallet Balance: ₹
+                {landlord?.walletBalance || 0}
+              </p>
+            </div>
 
             <div className="text-right md:min-w-[200px] space-y-1">
               <p className="font-semibold text-gray-700">Site: {site?.siteName || 'N/A'}</p>
