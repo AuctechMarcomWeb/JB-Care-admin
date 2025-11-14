@@ -192,7 +192,7 @@ const Biling = () => {
             onClick={() => {
               setIsModalOpen(true)
             }}
-            className="bg-amber-200 text-black px-3 sm:px-4 py-2 hover:bg-amber-700 flex items-center justify-center  text-sm sm:text-base w-full sm:w-auto"
+            className="bg-yellow-400 text-black px-3 sm:px-4 py-2 hover:bg-yellow-500 flex items-center justify-center  text-sm sm:text-base w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Biling
           </button>
@@ -329,7 +329,7 @@ const Biling = () => {
             <Spin size="large" />
             <div className="mt-4 text-blue-500 font-medium text-center">Loading Biling...</div>
           </div>
-        ) : !data || data.length === 0 ? (
+        ) : !data || (data.length === 0 && loading === false) ? (
           <div className="flex justify-center items-center py-20">
             <Empty description="No records found" />
           </div>
