@@ -321,8 +321,9 @@ const BilingDashboard = () => {
 
         {/* Recent Transactions */}
         <div className="bg-white rounded-xl p-6 shadow border border-gray-100">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Consolidate Bill</h2>
+          <div className="mb-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-1">Consolidate Bill</h2>
+
             <p className="text-gray-600 text-sm sm:text-base">
               Manage landlord billing records. To view complete billing details, click on the
               specific landlord row.
