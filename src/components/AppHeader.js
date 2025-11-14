@@ -14,17 +14,22 @@ const AppHeader = () => {
 
   return (
     <CHeader position="sticky" className=" p-0" ref={headerRef}>
-      <CContainer style={{ backgroundColor: '#000000',color:"white" }} className="border-bottom px-4" fluid>
+      <CContainer
+        style={{ backgroundColor: '#ffffff', color: 'white' }}
+        className="border-bottom px-4"
+        fluid
+      >
         <CHeaderToggler
           onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
           style={{ marginInlineStart: '-14px' }}
         >
-          <CIcon icon={cilMenu} style={{color:"white"}} size="lg" />
+          <CIcon icon={cilMenu} style={{ color: 'black' }} size="lg" />
         </CHeaderToggler>
         <CHeaderNav className="d-none d-md-flex"></CHeaderNav>
 
         <CHeaderNav>
           <AppHeaderDropdown />
+          <p className="text-center mt-3 px-2 text-black font-fw-bold">Admin</p>
         </CHeaderNav>
       </CContainer>
     </CHeader>

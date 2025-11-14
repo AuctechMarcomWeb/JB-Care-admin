@@ -41,11 +41,11 @@ const routes = [
   { path: '/centralStock', name: 'ELM Profile', element: CentralStock },
   { path: '/stockTransfer', name: 'ELM Profile', element: StockTransfer },
   { path: '/stockConsumption', name: 'ELM Profile', element: StockConsumption },
-  // { path: '/biling', name: 'Biling', element: Biling },
+  { path: '/biling', name: 'Biling', element: Biling },
   { path: '/inventory', name: 'Inventory', element: Inventory },
   { path: '/biling-details/:landlordId', name: 'Billing Details', element: BillingDetails },
   { path: '/complaint-view/:id', name: 'Complaint View', element: ComplaintView },
-  { path: '/biling', name: 'BilingDashboard', element: BilingDashboard },
+  // { path: '/biling', name: 'BilingDashboard', element: BilingDashboard },
 ]
 
 export default routes
