@@ -136,13 +136,13 @@ const BilingDashboard = () => {
       percentage: 100,
     },
     {
-      name: 'Paid',
+      name: 'Paid Amount',
       value: `₹${dashData?.totalPaidBilling || 0}`,
       color: 'bg-green-500',
       percentage: 65,
     },
     {
-      name: 'Unpaid',
+      name: 'Unpaid Amount',
       value: `₹${dashData?.totalUnpaidBilling || 0}`,
       color: 'bg-red-500',
       percentage: 35,
@@ -322,7 +322,11 @@ const BilingDashboard = () => {
         {/* Recent Transactions */}
         <div className="bg-white rounded-xl p-6 shadow border border-gray-100">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
+            <h2 className="text-xl font-bold text-gray-900">Consolidate Bill</h2>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Manage landlord billing records. To view complete billing details, click on the
+              specific landlord row.
+            </p>
           </div>
 
           {loading ? (
@@ -357,10 +361,10 @@ const BilingDashboard = () => {
                       <th className="px-2 py-2 text-left border border-gray-200">
                         Billing Till Today
                       </th>
+                      <th className="px-2 py-2 text-left border border-gray-200">Due Amount</th>
                       <th className="px-2 py-2 text-left border border-gray-200">
-                        Previous Unpaid
+                        Unpaid Bill Count
                       </th>
-                      <th className="px-2 py-2 text-left border border-gray-200">Unpaid Bill</th>
                     </tr>
                   </thead>
 
@@ -382,31 +386,31 @@ const BilingDashboard = () => {
                         </td>
 
                         <td className="px-2 py-2 text-center border border-gray-200">
-                          {item.totalMaintenance}
+                          ₹{item.totalMaintenance}
                         </td>
 
                         <td className="px-2 py-2 text-center border border-gray-200">
-                          {item.totalElectricity}
+                          ₹{item.totalElectricity}
                         </td>
 
                         <td className="px-2 py-2 text-center border border-gray-200">
-                          {item.totalBillingAmount}
+                          ₹{item.totalBillingAmount}
                         </td>
 
                         <td className="px-2 py-2 text-center border border-gray-200">
-                          {item.totalGST}
+                          ₹{item.totalGST}
                         </td>
 
                         <td className="px-2 py-2 text-center border border-gray-200">
-                          {item.totalBillingAmount}
+                          ₹{item.totalBillingAmount}
                         </td>
 
                         <td className="px-2 py-2 text-center border border-gray-200">
-                          {item.billingTillToday}
+                          ₹{item.billingTillToday}
                         </td>
 
                         <td className="px-2 py-2 text-center border border-gray-200">
-                          {item.previousUnpaidBill}
+                          ₹{item.previousUnpaidBill}
                         </td>
 
                         <td className="px-2 py-2 text-center border border-gray-200">
