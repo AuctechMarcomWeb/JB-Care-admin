@@ -25,7 +25,7 @@ const LandLordModal = ({
     profilePic: '',
     siteId: '',
     unitId: '',
-    walletBalance:'',
+    walletBalance: '',
     isActive: false,
   })
   console.log('formDarta', formData)
@@ -66,7 +66,7 @@ const LandLordModal = ({
             : '',
         isActive: modalData?.isActive ?? false,
       })
-      console.log('ADDRESS', modalData?.address)
+      console.log('ADDRESS', modalData?.walletBalance)
     } else {
       setFormData({
         name: '',
@@ -136,7 +136,7 @@ const LandLordModal = ({
     if (!formData?.siteId) newErrors.siteId = 'Select a site'
     if (!formData?.unitId) newErrors.unitId = 'Select a unit'
     if (!formData?.profilePic) newErrors.profilePic = 'Profile image is required'
-    if(!formData?.walletBalance) newErrors.walletBalance = 'Wallet Balance is required'
+    if (!formData?.walletBalance) newErrors.walletBalance = 'Wallet Balance is required'
 
     if (!formData.email?.trim()) {
       newErrors.email = 'Email is required'
@@ -361,28 +361,27 @@ const LandLordModal = ({
             )}
           </div>
 
-        <div className="col-md-6 mb-3">
-  <label className="form-label fw-bold">
-    Wallet Balance<span className="text-danger">*</span>
-  </label>
-  <input
-    type="text"
-    name="walletBalance"
-    value={formData?.walletBalance || ''}
-    onChange={(e) => {
-      const value = e.target.value;
-      // Allow only digits
-      if (/^\d*$/.test(value)) {
-        setFormData((prev) => ({ ...prev, walletBalance: value }));
-      }
-    }}
-    className={`form-control ${errors?.walletBalance ? 'is-invalid' : ''}`}
-  />
-  {errors?.walletBalance && (
-    <div className="invalid-feedback">{errors?.walletBalance}</div>
-  )}
-</div>
-
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Wallet Balance<span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="walletBalance"
+              value={formData?.walletBalance || ''}
+              onChange={(e) => {
+                const value = e.target.value
+                // Allow only digits
+                if (/^\d*$/.test(value)) {
+                  setFormData((prev) => ({ ...prev, walletBalance: value }))
+                }
+              }}
+              className={`form-control ${errors?.walletBalance ? 'is-invalid' : ''}`}
+            />
+            {errors?.walletBalance && (
+              <div className="invalid-feedback">{errors?.walletBalance}</div>
+            )}
+          </div>
         </div>
 
         {/* 🔹 Active Checkbox */}
