@@ -10,6 +10,7 @@ export default defineConfig(() => {
     base: './',
     build: {
       outDir: 'build',
+      copyPublicDir: true,
     },
     css: {
       postcss: {
