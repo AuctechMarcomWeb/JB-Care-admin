@@ -293,7 +293,7 @@ const Rental = () => {
         </div>
       </div>
       <hr className="" /> {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto table-watermark">
         {loading ? (
           // Loader when fetching data
           <div className="flex flex-col justify-center items-center py-20">
@@ -302,12 +302,12 @@ const Rental = () => {
           </div>
         ) : !data || data.length === 0 ? (
           // Empty state when no data found
-          <div className="flex justify-center items-center py-20">
+          <div className="flex justify-center items-center py-20 table-watermark">
             <Empty description="No records found" />
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto w-full">
+            <div className="overflow-x-auto w-full table-watermark">
               <table className="w-full min-w-max border border-gray-200 text-center">
                 <thead className="bg-gray-100 font-semibold">
                   <tr>
@@ -335,7 +335,7 @@ const Rental = () => {
                   </tr>
                 </thead>
 
-                <tbody className="bg-white">
+                <tbody className="bg-white table-watermark">
                   {data.map((item, index) => (
                     <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
                       {/* Sr. No. */}

@@ -226,14 +226,14 @@ const Unit = () => {
       <hr className="" />
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto table-watermark">
         {loading ? (
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />
             <div className="mt-4 text-blue-500 font-medium text-center">Loading Unit...</div>
           </div>
         ) : !data || data.length === 0 ? (
-          <div className="flex justify-center items-center py-20">
+          <div className="flex justify-center items-center py-20 table-watermark">
             <Empty description="No records found" />
           </div>
         ) : (
@@ -268,7 +268,7 @@ const Unit = () => {
                 </tr>
               </thead>
 
-              <tbody className="bg-white">
+              <tbody className="bg-white table-watermark">
                 {data?.map((item, index) => (
                   <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
                     <td className="px-2 py-2 text-sm text-gray-700 border border-gray-200 align-middle">

@@ -201,7 +201,7 @@ const Biling = () => {
 
       {/* Filters */}
       <div className="max-w-screen-xl mx-auto flex flex-col lg:flex-row gap-6 px-4">
-        <div className="min-w-[300px]">
+        <div className="min-w-[400px]">
           <UnitsTable />
         </div>
 
@@ -344,8 +344,8 @@ const Biling = () => {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto w-full max-h-[70vh]">
-              <table className="w-full min-w-max border border-gray-200">
+            <div className="overflow-x-auto w-full max-h-[70vh] ">
+              <table className="w-full min-w-max border border-gray-200 ">
                 <thead className="bg-gray-100 sticky top-0 z-10">
                   <tr>
                     <th className="px-2 py-2 text-left border border-gray-200">Sr. No.</th>
@@ -353,7 +353,10 @@ const Biling = () => {
                     <th className="px-2 py-2 text-left border border-gray-200">
                       Maintenance Amount
                     </th>
-                    <th className="px-2 py-2 text-left border border-gray-200">Electricity Bill</th>
+                    <th className="px-1 py-2 text-left border border-gray-200">Electricity Bill</th>
+                    <th className="px-1 py-2 text-left border border-gray-200">Electricity Meter No.</th>
+                    <th className="px-1 py-2 text-left border border-gray-200">Previous Reading</th>
+                    <th className="px-1 py-2 text-left border border-gray-200">Current Reading</th>
                     <th className="px-2 py-2 text-left border border-gray-200">Current Billing</th>
                     <th className="px-2 py-2 text-left border border-gray-200">GST Amount</th>
                     <th className="px-2 py-2 text-left border border-gray-200">Total Amount</th>
@@ -365,7 +368,7 @@ const Biling = () => {
                     <th className="px-2 py-2 text-left border border-gray-200">Action</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white">
+                <tbody className="bg-white table-watermark">
                   {data?.map((item, index) => (
                     <tr
                       key={item?.landlordId}
@@ -383,7 +386,19 @@ const Biling = () => {
                       <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalMaintenance}
                       </td>
-                      <td className="px-2 py-2 text-center border border-gray-200">
+                      <td className="px-1 py-2 text-center border border-gray-200">
+                        {item.totalElectricity}
+                      </td>
+                      <td className="px-1 py-2 text-center border border-gray-200">
+                        {item.electricityMeterNumber || "UPCL12345678"}
+                      </td>
+                      <td className="px-1 py-2 text-center border border-gray-200">
+                        {item.previousReading || "0.10 units"}
+                      </td>
+                      <td className="px-1 py-2 text-center border border-gray-200">
+                        {item.currentReading || "0.14 units"}
+                      </td>
+                      <td className="px-1 py-2 text-center border border-gray-200">
                         {item.totalElectricity}
                       </td>
                       <td className="px-2 py-2 text-center border border-gray-200">
