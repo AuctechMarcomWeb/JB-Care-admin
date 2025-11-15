@@ -156,7 +156,7 @@ const SupervisorModal = ({
     verificationDocuments.forEach((doc, i) => {
       if (!doc.type) newErrors[`docType${i}`] = 'Type required'
       if (!doc.number) newErrors[`docNumber${i}`] = 'Number required'
-      if (!doc.fileUrl) newErrors[`docFile${i}`] = 'File required'
+      // if (!doc.fileUrl) newErrors[`docFile${i}`] = 'File required'
     })
 
     setErrors(newErrors)
@@ -405,7 +405,8 @@ const SupervisorModal = ({
                       {/* File Upload */}
                       <div className="col-12">
                         <label className="form-label">
-                          Upload File<span className="text-danger">*</span>
+                          Upload File
+                          {/* <span className="text-danger">*</span> */}
                         </label>
                         <div className="d-flex align-items-center gap-3">
                           <div style={{ flex: doc.fileUrl ? '0 0 70%' : '1 1 100%' }}>

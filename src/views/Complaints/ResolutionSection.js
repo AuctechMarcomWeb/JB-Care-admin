@@ -91,7 +91,8 @@ const ResolutionSection = ({
       {/* 🔹 Resolved Images */}
       <div className="col-md-12 mb-3">
         <label className="form-label fw-bold">
-          Resolution Images <span className="text-danger">*</span>
+          Resolution Images
+          {/* <span className="text-danger">*</span> */}
         </label>
 
         <div className="d-flex align-items-start gap-3 flex-wrap">
@@ -102,7 +103,7 @@ const ResolutionSection = ({
               className={`form-control ${errors.resolution?.images ? 'is-invalid' : ''}`}
               onChange={handleResolvedImageUpload}
               multiple
-              required={!(formData.resolution?.images?.length > 0)}
+              // required={!(formData.resolution?.images?.length > 0)}
               ref={(el) => (imagesInputRefs.current[1] = el)}
               style={{ width: '250px' }}
             />

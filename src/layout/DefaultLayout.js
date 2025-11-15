@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/index'
 import { getRequest } from '../Helpers'
 import { useNavigate } from 'react-router-dom'
 import { deleteCookie } from '../Hooks/cookie'
+import { AppContext } from '../context/AppContext'
 
 const DefaultLayout = () => {
   const navigate = useNavigate()
   const [userData, setUserData] = useState(null)
+  // const { user, setUser } = useContext(AppContext)
 
   useEffect(() => {
     const savedUser = localStorage.getItem('jbAdminToken')
