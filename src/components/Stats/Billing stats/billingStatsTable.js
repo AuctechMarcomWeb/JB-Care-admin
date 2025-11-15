@@ -185,7 +185,7 @@ export default function BillingDashboard() {
 
           {/* Detailed Table with Counter Animation */}
           <div className="bg-slate-50 rounded-lg p-3">
-            <h2 className="text-sm font-semibold text-slate-800 mb-2">Billing Details</h2>
+            <h2 className="text-sm font-semibold text-slate-800 mb-1">Billing Details</h2>
 
             <div className="overflow-x-auto">
               <table className="w-full">
