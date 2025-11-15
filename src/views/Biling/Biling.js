@@ -9,6 +9,8 @@ import BilingModal from './BilingModal'
 import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
 import { useBillingContext } from '../../context/bilingContext'
+import BillingDashboard from '../../components/Stats/Billing stats/billingStatsTable'
+import UnitsTable from '../../components/Stats/Site stats/siteStatsTable'
 
 const Biling = () => {
   const { setSelectedBill } = useBillingContext()
@@ -176,30 +178,38 @@ const Biling = () => {
           </div>
         </div>
       )}
-
       {/* Header */}
       <div className=" border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Biling</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Billing Dashboard</h2>
           <p className="text-gray-600 text-sm sm:text-base">
-            Manage landlord billing data and transaction history. Click a row to view detailed
-            billing records.
+           Overview of all billing and collection details at a glance
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <div className="w-lg"></div>
+        <div className="flex items-center gap-2 sm:gap-3 whitespace-nowrap">
           <ExportButton data={data} fileName="Biling.xlsx" sheetName="Biling" />
+
           <button
-            onClick={() => {
-              setIsModalOpen(true)
-            }}
-            className="bg-yellow-400 text-black px-3 sm:px-4 py-2 hover:bg-yellow-500 flex items-center justify-center  text-sm sm:text-base w-full sm:w-auto"
+            onClick={() => setIsModalOpen(true)}
+            className="bg-yellow-400 text-black px-3 sm:px-4 py-2 hover:bg-yellow-500 flex items-center justify-center text-sm sm:text-base"
           >
-            <Plus className="w-4 h-4 mr-2" /> Add Biling
+            <Plus className="w-4 h-4 mr-2" /> Add Billing
           </button>
         </div>
       </div>
 
       {/* Filters */}
+      <div className="max-w-screen-xl mx-auto flex flex-col lg:flex-row gap-6 px-4">
+        <div className="min-w-[300px]">
+          <UnitsTable />
+        </div>
+
+        <div className="flex-1">
+          <BillingDashboard />
+        </div>
+      </div>
+
       <div className="py-2 border-b border-gray-200 bg-white px-1">
         <div className="flex flex-wrap items-end gap-3">
           {/* Site */}
@@ -235,9 +245,8 @@ const Biling = () => {
               ))}
             </select>
           </div> */}
-
           {/* Landlord */}
-          <div className="flex flex-col min-w-[130px] flex-1 sm:flex-none">
+          {/* <div className="flex flex-col min-w-[130px] flex-1 sm:flex-none">
             <label className="text-sm font-medium text-gray-700 mb-1">Landlord</label>
             <select
               value={tempSelectedLandlord}
@@ -251,7 +260,7 @@ const Biling = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
 
           {/* Status */}
           {/* <div className="flex flex-col min-w-[100px] flex-1 sm:flex-none">
