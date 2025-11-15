@@ -338,7 +338,11 @@ const UnitModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, setI
           <button type="button" className="btn btn-secondary" onClick={handleCancel}>
             Cancel
           </button>
-          <button type="submit" className="btn bg-amber-200 text-black" disabled={loading}>
+          <button
+            type="submit"
+            className="btn bg-[#e5af2d] text-black hover:bg-[#e5af2d]"
+            disabled={loading}
+          >
             {modalData
               ? loading
                 ? 'Updating...'

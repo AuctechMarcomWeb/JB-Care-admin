@@ -27,7 +27,7 @@ const ExportButton = ({ data = [], fileName = 'ExportedData.xlsx', sheetName = '
   return (
     <button
       onClick={exportToExcel}
-      className="bg-blue-600 text-white px-4 py-2 mx-2 hover:bg-blue-700 transition-colors flex items-center "
+      className="bg-amber-600 text-white px-4 py-2 mx-2 hover:bg-amber-700 transition-colors flex items-center "
     >
       <Download className="w-4 h-4 mr-2" />
       Export

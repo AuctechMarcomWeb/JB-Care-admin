@@ -130,7 +130,9 @@ const Complaints = () => {
       <div className="border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Complaints</h2>
-          <p className="text-gray-600 text-sm sm:text-base">Manage complaints and lick a row to view complete status history.</p>
+          <p className="text-gray-600 text-sm sm:text-base">
+            Manage complaints and lick a row to view complete status history.
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <ExportButton data={data} fileName="Complaints.xlsx" sheetName="Complaints" />
@@ -138,7 +140,8 @@ const Complaints = () => {
             onClick={() => {
               setIsModalOpen(true)
             }}
-            className="bg-amber-200 text-black px-3 sm:px-4 py-2 hover:bg-amber-300 flex items-center justify-center  text-sm sm:text-base w-full sm:w-auto"
+            className="bg-[#f8ca57] text-black px-3 sm:px-4 py-2 hover:bg-[#f9cb59
+ ] flex items-center justify-center text-sm sm:text-base w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Complaints
           </button>
