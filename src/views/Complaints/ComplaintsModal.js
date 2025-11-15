@@ -174,29 +174,6 @@ const ComplaintsModal = ({
     }
   }, [modalData, users])
 
-  // // ✅ Handle Change
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target
-  //   setFormData((prev) => ({ ...prev, [name]: value }))
-  //   if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
-
-  //   // Auto-fill user related info
-  //   if (name === 'userId') {
-  //     const user = users.find((u) => u._id === value)
-  //     setSelectedUser(user || null)
-
-  //     if (user) {
-  //       setFormData((prev) => ({
-  //         ...prev,
-  //         userId: value,
-  //         siteId: user?.siteId?._id || '',
-  //         projectId: user?.projectId?._id || '',
-  //         unitId: user?.unitId?._id || '',
-  //       }))
-  //     }
-  //   }
-  // }
-
   // ✅ Handle Image Upload
   const handleImageUpload = (e) => {
     const image = Array.from(e.target.files)
@@ -427,22 +404,7 @@ const ComplaintsModal = ({
           </div>
         </div>
 
-        {/* 🔹 Auto-Filled Site, Project, Unit */}
         <div className="row">
-          {/* <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">
-              Project <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              value={selectedUser?.projectId?.projectName || ''}
-              disabled={!formData.userId}
-              readOnly
-            />
-            {errors.projectId && <div className="invalid-feedback">{errors.projectId}</div>}
-          </div> */}
-
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               User <span className="text-danger">*</span>
@@ -483,41 +445,49 @@ const ComplaintsModal = ({
         </div>
 
         <div className="row">
+          {/* Problem Type */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
-              Description <span className="text-danger">*</span>
+              Problem Type <span className="text-danger">*</span>
             </label>
-            <textarea
-              name="complaintDescription"
-              rows="2"
-              value={formData.complaintDescription}
+            <select
+              name="problemType"
+              value={formData.problemType || ''}
               onChange={handleChange}
-              className={`form-control ${errors.complaintDescription ? 'is-invalid' : ''}`}
-            />
-            {errors.complaintDescription && (
-              <div className="invalid-feedback">{errors.complaintDescription}</div>
-            )}
+              className={`form-select ${errors.problemType ? 'is-invalid' : ''}`}
+              required
+            >
+              <option value="">Select Problem Type</option>
+              <option value="electician">Electician</option>
+              <option value="plumbing">Plumbing</option>
+              <option value="civil">Civil</option>
+            </select>
+            {errors.problemType && <div className="invalid-feedback">{errors.problemType}</div>}
           </div>
+
           {/* Image Upload */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
               Images <span className="text-danger">*</span>
             </label>
 
-            <input
-              type="file"
-              className={`form-control ${errors.images ? 'is-invalid' : ''}`}
-              onChange={handleImageUpload}
-              multiple
-              required={!(formData.images && formData.images.length > 0)}
-              ref={(el) => (imagesInputRefs.current[0] = el)}
-            />
+            {/* Flex container for input + previews */}
+            <div className="d-flex align-items-start gap-1 flex-wrap">
+              <input
+                type="file"
+                className={`form-control ${errors.images ? 'is-invalid' : ''}`}
+                onChange={handleImageUpload}
+                multiple
+                required={!(formData.images && formData.images.length > 0)}
+                ref={(el) => (imagesInputRefs.current[0] = el)}
+                style={{
+                  flex: formData.images && formData.images.length > 0 ? '0 0 70%' : '1 1 100%',
+                  // transition: 'flex 0.3s ease',
+                }}
+              />
 
-            {errors.images && <div className="invalid-feedback">{errors.images}</div>}
-
-            {(formData?.images?.length > 0 || uploadingImages.length > 0) && (
-              <div className="col-md-12 mt-2">
-                <div className="d-flex flex-wrap gap-2">
+              {(formData?.images?.length > 0 || uploadingImages.length > 0) && (
+                <div className="d-flex flex-wrap gap-1">
                   {formData.images?.map((item, index) => (
                     <div
                       key={`uploaded-${index}`}
@@ -527,6 +497,7 @@ const ComplaintsModal = ({
                         height: '70px',
                         borderRadius: '6px',
                         overflow: 'hidden',
+                        flex: '0 0 auto',
                       }}
                     >
                       <img
@@ -580,6 +551,7 @@ const ComplaintsModal = ({
                         alignItems: 'center',
                         justifyContent: 'center',
                         border: '1px solid #ddd',
+                        flex: '0 0 auto',
                       }}
                     >
                       <div
@@ -592,12 +564,31 @@ const ComplaintsModal = ({
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            {errors.images && <div className="invalid-feedback">{errors.images}</div>}
           </div>
         </div>
 
         <div className="row">
+          {/* Description */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Description <span className="text-danger">*</span>
+            </label>
+            <textarea
+              name="complaintDescription"
+              rows="2"
+              value={formData.complaintDescription}
+              onChange={handleChange}
+              className={`form-control ${errors.complaintDescription ? 'is-invalid' : ''}`}
+            />
+            {errors.complaintDescription && (
+              <div className="invalid-feedback">{errors.complaintDescription}</div>
+            )}
+          </div>
+
           {/* Action Select (Only in Edit Mode) */}
           {modalData && (
             <div className="col-md-6 mb-3">
@@ -612,10 +603,12 @@ const ComplaintsModal = ({
                 required
               >
                 <option value="">Select Action</option>
-                <option value="review">Review</option>
+                <option value="open">Open</option>
+                <option value="review">Review By Supervisor</option>
                 <option value="raiseMaterialDemand">Raise Material Demand</option>
-                <option value="resolve">Resolve</option>
-                <option value="repush">Repush</option>
+                <option value="workinProgress">Work in Progress</option>
+                <option value="resolve">Closed By Help Desk</option>
+                <option value="repush">Repush By Help Desk</option>
                 <option value="verifyResolution">Verify Resolution</option>
               </select>
               {errors.action && <div className="invalid-feedback">{errors.action}</div>}
