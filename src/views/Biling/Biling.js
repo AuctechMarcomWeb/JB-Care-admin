@@ -338,7 +338,7 @@ const Biling = () => {
             <Spin size="large" />
             <div className="mt-4 text-blue-500 font-medium text-center">Loading Biling...</div>
           </div>
-        ) : !data || (data.length === 0 && loading === false) ? (
+        ) : !data || data.length === 0 ? (
           <div className="flex justify-center items-center py-20">
             <Empty description="No records found" />
           </div>
@@ -386,10 +386,10 @@ const Biling = () => {
                         <div className="text-sm text-gray-600">{item.unitNumbers}</div>
                       </td>
                       <td className="px-2 py-2 text-center border border-gray-200">
-                        {item.totalMaintenance}
+                        ₹{item.totalMaintenance}
                       </td>
                       <td className="px-1 py-2 text-center border border-gray-200">
-                        {item.totalElectricity}
+                        ₹ {item.totalElectricity}
                       </td>
                       <td className="px-1 py-2 text-center border border-gray-200">
                         {item.electricityMeterNumber || 'UPCL12345678'}
@@ -401,19 +401,19 @@ const Biling = () => {
                         {item.currentReading || '0.14 units'}
                       </td>
                       <td className="px-2 py-2 text-center border border-gray-200">
-                        {item.totalBillingAmount}
+                        ₹ {item.totalBillingAmount}
                       </td>
                       <td className="px-2 py-2 text-center border border-gray-200">
-                        {item.totalGST}
+                        ₹{item.totalGST}
                       </td>
                       <td className="px-2 py-2 text-center border border-gray-200">
-                        {item.totalBillingAmount}
+                        ₹ {item.totalBillingAmount}
                       </td>
                       <td className="px-2 py-2 text-center border border-gray-200">
-                        {item.billingTillToday}
+                        ₹ {item.billingTillToday}
                       </td>
                       <td className="px-2 py-2 text-center border border-gray-200">
-                        {item.previousUnpaidBill}
+                        ₹ {item.previousUnpaidBill}
                       </td>
                       <td className="px-2 py-2 text-center border border-gray-200">
                         {item.unpaidCount}
