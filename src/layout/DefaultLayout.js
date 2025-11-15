@@ -39,10 +39,10 @@ const DefaultLayout = () => {
       <AppSidebar userData={userData} />
       <div
         style={{ zIndex: 1, position: 'relative' }}
-        className="wrapper d-flex flex-column min-vh-100"
+        className="wrapper d-flex flex-column min-vh-100 "
       >
         <AppHeader userData={userData} />
-        <div className=" flex-grow-1">
+        <div className=" flex-grow-1 p-3 bg-white">
           <AppContent userData={userData} />
         </div>
         <AppFooter userData={userData} />

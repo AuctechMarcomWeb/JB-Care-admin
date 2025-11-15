@@ -153,23 +153,20 @@ export default function BillingDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-      <div className="max-w-3s mx-auto">
-        {/* Dashboard Header */}
-        <div className="bg-white rounded-2m shadow-xl p-1 mb-6 border-t-4 border-blue-600 bg-gradient-to-r from-blue-50 to-white">
+    // <div className="min-h-[50px] bg-gradient-to-br from-slate-50 to-slate-100 p-4 rounded-lg shadow-sm bg-white">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-xl shadow-md p-3 mt-4 border-t-4 border-[#e5af2d]">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            {/* <h1 className="text-3xl font-bold text-slate-800">Billing Dashboard</h1> */}
-
             {/* Date Range */}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-0.5">
               <div className="relative">
                 <input
                   type="date"
                   value={fromDate}
                   onChange={handleDateChange(setFromDate)}
-                  className="pl-10 pr-4 py-2 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                  className="pl-8 pr-3 py-1.5 border border-slate-300 rounded-md text-xs"
                 />
-                <Calendar className="absolute left-3 top-2.5 text-slate-400 w-4 h-4 pointer-events-none" />
+                <Calendar className="absolute left-2 top-2 text-slate-400 w-3.5 h-3.5" />
               </div>
 
               <span className="flex items-center text-slate-600 font-medium">to</span>
@@ -179,42 +176,42 @@ export default function BillingDashboard() {
                   type="date"
                   value={toDate}
                   onChange={handleDateChange(setToDate)}
-                  className="pl-10 pr-4 py-2 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                  className="pl-8 pr-3 py-1.5 border border-slate-300 rounded-md text-xs"
                 />
-                <Calendar className="absolute left-3 top-2.5 text-slate-400 w-4 h-4 pointer-events-none" />
+                <Calendar className="absolute left-2 top-2 text-slate-400 w-3.5 h-3.5" />
               </div>
             </div>
           </div>
 
-         
-
           {/* Detailed Table with Counter Animation */}
-          <div className="bg-slate-50 rounded-xl p-4">
-            <h2 className="text-xl font-bold text-slate-800 mb-4">Billing Details</h2>
+          <div className="bg-slate-50 rounded-lg p-3">
+            <h2 className="text-sm font-semibold text-slate-800 mb-2">Billing Details</h2>
+
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b-2 border-slate-300">
-                    <th className="px-4 py-3 text-left text-sm font-bold text-slate-700 uppercase">
+                  <tr className="border-b border-slate-300 bg-slate-100">
+                    <th className="px-2 py-1.5 text-left text-[10px] font-semibold text-slate-700 uppercase">
                       Category
                     </th>
-                    <th className="px-4 py-3 text-right text-sm font-bold text-slate-700 uppercase">
+                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
                       Total Bill
                     </th>
-                    <th className="px-4 py-3 text-right text-sm font-bold text-slate-700 uppercase">
+                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
                       Collected
                     </th>
-                    <th className="px-4 py-3 text-right text-sm font-bold text-slate-700 uppercase">
-                      Pending Bills
+                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
+                      Pending
                     </th>
-                    <th className="px-4 py-3 text-right text-sm font-bold text-slate-700 uppercase">
-                      Total Amount
+                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
+                      Total Amt
                     </th>
-                    <th className="px-4 py-3 text-right text-sm font-bold text-slate-700 uppercase">
+                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
                       % Collected
                     </th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {animate &&
                     billingData.map((row, index) => {
@@ -224,22 +221,29 @@ export default function BillingDashboard() {
                           key={index}
                           className="border-b border-slate-200 hover:bg-white transition-colors"
                         >
-                          <td className="px-4 py-3 font-semibold text-slate-800">{row.category}</td>
-                          <td className="px-4 py-3 text-right text-slate-700">
+                          <td className="px-2 py-1.5 text-xs font-medium text-slate-800">
+                            {row.category}
+                          </td>
+
+                          <td className="px-2 py-1.5 text-right text-xs">
                             <CounterAnimation target={row.totalBill} duration={2000} />
                           </td>
-                          <td className="px-4 py-3 text-right text-green-600 font-medium">
+
+                          <td className="px-2 py-1.5 text-right text-green-600 text-xs font-semibold">
                             <CounterAnimation target={row.collectedBills} duration={2000} />
                           </td>
-                          <td className="px-4 py-3 text-right text-orange-600 font-medium">
+
+                          <td className="px-2 py-1.5 text-right text-orange-600 text-xs font-semibold">
                             <CounterAnimation target={row.pendingBills} duration={2000} />
                           </td>
-                          <td className="px-4 py-3 text-right text-red-600 font-bold">
+
+                          <td className="px-2 py-1.5 text-right text-red-600 text-xs font-semibold">
                             <CounterAnimation target={row.totalAmount} duration={2000} />
                           </td>
-                          <td className="px-4 py-3 text-right">
+
+                          <td className="px-2 py-1.5 text-right">
                             <span
-                              className={`inline-block px-2 py-1 rounded text-xs font-bold ${
+                              className={`inline-block px-1.5 py-0.5 rounded text-xxs font-bold ${
                                 collectionPercent >= 80
                                   ? 'bg-green-100 text-green-700'
                                   : collectionPercent >= 50
@@ -255,22 +259,27 @@ export default function BillingDashboard() {
                     })}
 
                   {animate && (
-                    <tr className="bg-slate-200 font-bold border-t-2 border-slate-400">
-                      <td className="px-4 py-3 text-slate-800 uppercase">Total</td>
-                      <td className="px-4 py-3 text-right text-slate-800">
+                    <tr className="bg-slate-200 font-bold border-t border-slate-400">
+                      <td className="px-2 py-1.5 text-xs text-slate-800 uppercase">Total</td>
+
+                      <td className="px-2 py-1.5 text-right text-xs text-slate-800">
                         <CounterAnimation target={totalStats.totalBill} duration={2000} />
                       </td>
-                      <td className="px-4 py-3 text-right text-green-700">
+
+                      <td className="px-2 py-1.5 text-right text-xs text-green-700">
                         <CounterAnimation target={totalStats.collectedBills} duration={2000} />
                       </td>
-                      <td className="px-4 py-3 text-right text-orange-700">
+
+                      <td className="px-2 py-1.5 text-right text-xs text-orange-700">
                         <CounterAnimation target={totalStats.pendingBills} duration={2000} />
                       </td>
-                      <td className="px-4 py-3 text-right text-red-700">
+
+                      <td className="px-2 py-1.5 text-right text-xs text-red-700">
                         <CounterAnimation target={totalStats.totalAmount} duration={2000} />
                       </td>
-                      <td className="px-4 py-3 text-right">
-                        <span className="inline-block px-2 py-1 rounded text-xs font-bold bg-blue-100 text-blue-700">
+
+                      <td className="px-2 py-1.5 text-right">
+                        <span className="inline-block px-1.5 py-0.5 rounded text-xxs font-bold bg-blue-100 text-blue-700">
                           <PercentageCounter target={collectionRate} duration={2000} />
                         </span>
                       </td>
@@ -282,6 +291,6 @@ export default function BillingDashboard() {
           </div>
         </div>
       </div>
-    </div>
+    // </div>
   )
 }

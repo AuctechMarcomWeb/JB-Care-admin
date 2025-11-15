@@ -10,6 +10,7 @@ import ComplaintsModal from './ComplaintsModal'
 import { faL } from '@fortawesome/free-solid-svg-icons'
 import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
+import ComplaintsStats from '../../components/Stats/Complaint stats/complaintStatsTable'
 
 const Complaints = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -148,6 +149,7 @@ const Complaints = () => {
       </div>
       {/* Filters */}
       <div className="py-2 border-b border-gray-200 bg-white px-1">
+        <ComplaintsStats />
         <div className="flex flex-wrap items-end gap-3">
           {/* Site */}
           <div className="flex flex-col min-w-[130px] flex-1 sm:flex-none">

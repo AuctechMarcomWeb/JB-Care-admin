@@ -189,16 +189,14 @@ const BilingDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center p-2 sm:p-6 lg:p-8">
       {/* MAIN WRAPPER CARD */}
-      <div className="w-full max-w-[1800px]   p-2 sm:p-6 lg:p-8">
+      <div className="w-full max-w-[1800px]  p-2 sm:p-6 lg:p-8">
         {/* Header */}
-        {/* <div className="mb-4">
-          <BillingDashboard />
-        </div> */}
+        <div className="mb-4"></div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
             {/* <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
               Property Billing Dashboard
-            </h1> */}
+              </h1> */}
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900"> Billing Dashboard</h2>
 
             <p className="text-gray-600">Welcome back! Here's your property management overview </p>
