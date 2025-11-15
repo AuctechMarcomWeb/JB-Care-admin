@@ -265,7 +265,7 @@ const LandLord = () => {
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm w-full sm:w-auto"
+              className="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 text-sm w-full sm:w-auto"
             >
               Apply
             </button>
@@ -326,7 +326,7 @@ const LandLord = () => {
                   <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                     Profile
                   </th>
-                   <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                  <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                     Wallet Balance
                   </th>
                   <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
@@ -369,7 +369,7 @@ const LandLord = () => {
                         />
                       </div>
                     </td>
-                     <td className="px-1 py-1 text-gray-600 border border-gray-200 align-middle">
+                    <td className="px-1 py-1 text-gray-600 border border-gray-200 align-middle">
                       {item?.walletBalance || '-'}
                     </td>
                     <td className="px-1 py-1 border border-gray-200 align-middle">

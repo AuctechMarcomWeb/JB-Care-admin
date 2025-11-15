@@ -194,7 +194,7 @@ const Unit = () => {
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 rounded-md text-sm sm:text-base"
+              className="bg-amber-600 text-white px-3 sm:px-4 py-2 hover:bg-amber-700 rounded-md text-sm sm:text-base"
             >
               Apply
             </button>

@@ -107,7 +107,8 @@ const Supervisor = () => {
             onClick={() => {
               setIsModalOpen(true)
             }}
-            className="bg-amber-200 text-black px-3 sm:px-4 py-2 hover:bg-amber-300 flex items-center justify-center  text-sm sm:text-base w-full sm:w-auto"
+            className="bg-[#f8ca57] text-black px-3 sm:px-4 py-2 hover:bg-[#f9cb59
+ ] flex items-center justify-center text-sm sm:text-base w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" /> Add Supervisor
           </button>
@@ -162,7 +163,7 @@ const Supervisor = () => {
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-3 sm:px-4 py-2 hover:bg-blue-700 rounded-md text-sm sm:text-base"
+              className="bg-amber-600 text-white px-3 sm:px-4 py-2 hover:bg-amber-700 rounded-md text-sm sm:text-base"
             >
               Apply
             </button>
