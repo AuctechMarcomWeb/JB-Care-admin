@@ -171,14 +171,106 @@ export default function BillingDashboard() {
 
             <span className="flex items-center text-slate-600 font-medium">to</span>
 
-            <div className="relative">
-              <input
-                type="date"
-                value={toDate}
-                onChange={handleDateChange(setToDate)}
-                className="pl-8 pr-3 py-1.5 border border-slate-300 rounded-md text-xs"
-              />
-              <Calendar className="absolute left-2 top-2 text-slate-400 w-3.5 h-3.5" />
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-slate-300 bg-slate-100">
+                    <th className="px-2 py-1.5 text-left text-[10px] font-semibold text-slate-700 uppercase">
+                      Category
+                    </th>
+                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
+                      Total Bill
+                    </th>
+                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
+                      Collected
+                    </th>
+                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
+                      Pending
+                    </th>
+                    {/* <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
+                      Total Amt
+                    </th> */}
+                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
+                      % Collected
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {animate &&
+                    billingData.map((row, index) => {
+                      const collectionPercent = (row.collectedBills / row.totalBill) * 100
+                      return (
+                        <tr
+                          key={index}
+                          className="border-b border-slate-200 hover:bg-white transition-colors"
+                        >
+                          <td className="px-2 py-1.5 text-xs font-medium text-slate-800">
+                            {row.category}
+                          </td>
+
+                          <td className="px-2 py-1.5 text-right text-xs">
+                            <CounterAnimation target={row.totalBill} duration={2000} />
+                          </td>
+
+                          <td className="px-2 py-1.5 text-right text-green-600 text-xs font-semibold">
+                            <CounterAnimation target={row.collectedBills} duration={2000} />
+                          </td>
+
+                          <td className="px-2 py-1.5 text-right text-orange-600 text-xs font-semibold">
+                            <CounterAnimation target={row.pendingBills} duration={2000} />
+                          </td>
+
+                          {/* <td className="px-2 py-1.5 text-right text-red-600 text-xs font-semibold">
+                            <CounterAnimation target={row.totalAmount} duration={2000} />
+                          </td> */}
+
+                          <td className="px-2 py-1.5 text-right">
+                            <span
+                              className={`inline-block px-1.5 py-0.5 rounded text-xxs font-bold ${
+                                collectionPercent >= 80
+                                  ? 'bg-green-100 text-green-700'
+                                  : collectionPercent >= 50
+                                    ? 'bg-orange-100 text-orange-700'
+                                    : 'bg-red-100 text-red-700'
+                              }`}
+                            >
+                              <PercentageCounter target={collectionPercent} duration={2000} />
+                            </span>
+                          </td>
+                        </tr>
+                      )
+                    })}
+
+                  {animate && (
+                    <tr className="bg-slate-200 font-bold border-t border-slate-400">
+                      <td className="px-2 py-1.5 text-xs text-slate-800 uppercase">Total</td>
+
+                      <td className="px-2 py-1.5 text-right text-xs text-slate-800">
+                        <CounterAnimation target={totalStats.totalBill} duration={2000} />
+                      </td>
+
+                      <td className="px-2 py-1.5 text-right text-xs text-green-700">
+                        <CounterAnimation target={totalStats.collectedBills} duration={2000} />
+                      </td>
+
+                      <td className="px-2 py-1.5 text-right text-xs text-orange-700">
+                        <CounterAnimation target={totalStats.pendingBills} duration={2000} />
+                      </td>
+
+                      {/* <td className="px-2 py-1.5 text-right text-xs text-red-700">
+                        <CounterAnimation target={totalStats.totalAmount} duration={2000} />
+                      </td> */}
+
+                      <td className="px-2 py-1.5 text-right">
+                        <span className="inline-block px-1.5 py-0.5 rounded text-xxs font-bold bg-blue-100 text-blue-700">
+                          <PercentageCounter target={collectionRate} duration={2000} />
+                        </span>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

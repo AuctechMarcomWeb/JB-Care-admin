@@ -127,7 +127,7 @@ const handleChange = (keys) => {
   if (!complaint) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 p-1 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-6 lg:p-8 ">
       {/* 🔙 Back Button (Outside Card) */}
       <div className="w-full max-w-5xl mb-2">
         <div
@@ -145,7 +145,7 @@ const handleChange = (keys) => {
         </h1>
         <hr className="mt-1" />
 
-        <Card bordered className="shadow-sm mb-2 p-2 sm:p-3">
+        <Card bordered className="shadow-sm mb-2 p-2 sm:p-3 ">
           {/* Centered Title */}
           <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-2">
             Complaint Title : {complaint.complaintTitle}

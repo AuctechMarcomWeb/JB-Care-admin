@@ -167,7 +167,7 @@ const SiteLocation = () => {
         </div>
       </div>
       <hr className="" /> {/* Table Section */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto table-watermark">
         {loading ? (
           <div className="flex flex-col justify-center items-center py-20">
             <Spin size="large" />
@@ -176,11 +176,11 @@ const SiteLocation = () => {
             </div>
           </div>
         ) : !data || data.length === 0 ? (
-          <div className="flex justify-center items-center py-20">
+          <div className="flex justify-center items-center py-20 table-watermark">
             <Empty description="No records found" />
           </div>
         ) : (
-          <div className="overflow-x-auto w-full">
+          <div className="overflow-x-auto w-full table-watermark">
             <table className="w-full min-w-max border border-gray-200 text-center">
               <thead className="bg-gray-100">
                 <tr>
@@ -202,7 +202,7 @@ const SiteLocation = () => {
                 </tr>
               </thead>
 
-              <tbody className="bg-white">
+              <tbody className="bg-white table-watermark">
                 {data
                   ?.filter((item) => {
                     if (appliedStatus === null) return true

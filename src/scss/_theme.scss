@@ -51,4 +51,25 @@ body {
   min-height: calc(3rem + 1px); // stylelint-disable-line function-disallowed-list
 }
 
+.table-watermark {
+  position: relative;
+}
+
+.table-watermark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/watermarkJBBR.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 350px;
+  // opacity: 0.12; 
+  pointer-events: none;
+  z-index: 0;
+}
+
+.table-watermark > * {
+  position: relative;
+  z-index: 1;
+}
 

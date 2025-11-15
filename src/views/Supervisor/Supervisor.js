@@ -188,16 +188,16 @@ const Supervisor = () => {
       </div>
       <hr className="" />
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto table-watermark">
         {loading ? (
           // Loader when fetching data
-          <div className="flex flex-col justify-center items-center py-20">
+          <div className="flex flex-col justify-center items-center py-20 table-watermark">
             <Spin size="large" />
             <div className="mt-4 text-blue-500 font-medium text-center">Loading Supervisor...</div>
           </div>
         ) : !data || data.length === 0 ? (
           // Empty state when no data found
-          <div className="flex justify-center items-center py-20">
+          <div className="flex justify-center items-center py-20 table-watermark">
             <Empty description="No records found" />
           </div>
         ) : (
@@ -233,7 +233,7 @@ const Supervisor = () => {
                   </tr>
                 </thead>
 
-                <tbody className="bg-white">
+                <tbody className="bg-white table-watermark">
                   {data.map((item, index) => (
                     <tr key={item._id} className="hover:bg-gray-50 transition whitespace-nowrap">
                       {/* Sr. No. */}
