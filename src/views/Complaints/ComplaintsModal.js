@@ -66,6 +66,7 @@ const ComplaintsModal = ({
     status: '',
     addedBy: 'Admin',
     userRole: 'Admin',
+    problemType: '',
   })
   console.log('formData', formData)
   // 🧩 Fetch Sites Once
@@ -609,7 +610,7 @@ const ComplaintsModal = ({
                 <option value="workinProgress">Work in Progress</option>
                 <option value="resolve">Closed By Help Desk</option>
                 <option value="repush">Repush By Help Desk</option>
-                <option value="verifyResolution">Verify Resolution</option>
+                <option value="verifyResolution">Closed</option>
               </select>
               {errors.action && <div className="invalid-feedback">{errors.action}</div>}
             </div>

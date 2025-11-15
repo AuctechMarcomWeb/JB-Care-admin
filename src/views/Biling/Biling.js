@@ -183,7 +183,7 @@ const Biling = () => {
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Billing Dashboard</h2>
           <p className="text-gray-600 text-sm sm:text-base">
-           Overview of all billing and collection details at a glance
+            Overview of all billing and collection details at a glance
           </p>
         </div>
         <div className="w-lg"></div>
@@ -306,7 +306,7 @@ const Biling = () => {
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm w-full sm:w-auto"
+              className="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 text-sm w-full sm:w-auto"
             >
               Apply
             </button>
@@ -354,7 +354,9 @@ const Biling = () => {
                       Maintenance Amount
                     </th>
                     <th className="px-1 py-2 text-left border border-gray-200">Electricity Bill</th>
-                    <th className="px-1 py-2 text-left border border-gray-200">Electricity Meter No.</th>
+                    <th className="px-1 py-2 text-left border border-gray-200">
+                      Electricity Meter No.
+                    </th>
                     <th className="px-1 py-2 text-left border border-gray-200">Previous Reading</th>
                     <th className="px-1 py-2 text-left border border-gray-200">Current Reading</th>
                     <th className="px-2 py-2 text-left border border-gray-200">Current Billing</th>
@@ -390,17 +392,20 @@ const Biling = () => {
                         {item.totalElectricity}
                       </td>
                       <td className="px-1 py-2 text-center border border-gray-200">
-                        {item.electricityMeterNumber || "UPCL12345678"}
+                        {item.electricityMeterNumber || 'UPCL12345678'}
                       </td>
                       <td className="px-1 py-2 text-center border border-gray-200">
-                        {item.previousReading || "0.10 units"}
+                        {item.previousReading || '0.10 units'}
                       </td>
                       <td className="px-1 py-2 text-center border border-gray-200">
-                        {item.currentReading || "0.14 units"}
+                        {item.currentReading || '0.14 units'}
                       </td>
                       <td className="px-1 py-2 text-center border border-gray-200">
                         {item.totalElectricity}
                       </td>
+                      <td className="px-2 py-2 text-center border border-gray-200">1</td>
+                      <td className="px-2 py-2 text-center border border-gray-200">1</td>
+                      <td className="px-2 py-2 text-center border border-gray-200">1</td>
                       <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalBillingAmount}
                       </td>

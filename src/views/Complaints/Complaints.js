@@ -219,7 +219,7 @@ const Complaints = () => {
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm w-full sm:w-auto"
+              className="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 text-sm w-full sm:w-auto"
             >
               Apply
             </button>
@@ -355,7 +355,7 @@ const Complaints = () => {
                           className={`px-2 py-1 text-xs rounded-full ${
                             item?.status === 'Closed'
                               ? 'bg-red-100 text-red-700'
-                              : item?.status === 'Pending'
+                              : item?.status === 'Open'
                                 ? 'bg-yellow-100 text-yellow-700'
                                 : item?.status === 'Under Review'
                                   ? 'bg-green-100 text-green-700'

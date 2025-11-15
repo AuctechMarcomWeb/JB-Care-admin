@@ -267,9 +267,15 @@ const BilingModal = ({
       .finally(() => setLoading(false))
   }
 
+<<<<<<< HEAD
+  useEffect(() => {
+    console.log('selectedBill UPDATED === ', setSelectedBill)
+  }, [setSelectedBill])
+=======
   // useEffect(() => {
   //   console.log('selectedBill UPDATED === ', selectedBill)
   // }, [selectedBill])
+>>>>>>> d16a6a1775ef5a3ee1327e832718a68feffb2215
 
   // 🔹 Auto-calculate totalAmount and billingAmount
   useEffect(() => {
@@ -436,7 +442,12 @@ const BilingModal = ({
           <button type="button" className="btn btn-secondary" onClick={handleCancel}>
             Cancel
           </button>
-          <button type="submit" className="btn bg-amber-200 text-black" disabled={loading}>
+          <button
+            type="submit"
+            className="btn bg-[#e5af2d] text-black hover:bg-[#e5af2d]"
+            disabled={loading}
+          >
+            {' '}
             {loading ? 'Saving...' : modalData ? 'Update Bill' : 'Save Bill'}
           </button>
         </div>

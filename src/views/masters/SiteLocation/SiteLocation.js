@@ -141,7 +141,7 @@ const SiteLocation = () => {
                 setPage(1)
                 setUpdateStatus((prev) => !prev)
               }}
-              className="bg-blue-600 text-white px-3 py-2 hover:bg-blue-700 rounded-md text-sm font-medium"
+              className="bg-amber-600 text-white px-3 py-2 hover:bg-amber-700 rounded-md text-sm font-medium"
             >
               Apply
             </button>
