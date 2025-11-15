@@ -10,7 +10,7 @@
   --cui-secondary-color: #ffffff;
   --cui-secondary-bg: #ffffff;
   --cui-tertiary-color: #ffffff;
-  --cui-tertiary-bg: linear-gradient(90deg, #d7a224, #f4cd69);
+  --cui-tertiary-bg: linear-gradient(90deg, rgb(229,175,45), #f9cb59);
   --cui-border-color: #000000 !important;
   /* border: none !important; */
 }

@@ -153,7 +153,7 @@ const SiteLocationModal = ({
           <button type="button" className="btn btn-secondary" onClick={handleCancel}>
             Cancel
           </button>
-          <button type="submit" className="btn bg-amber-200 text-black">
+          <button type="submit" className="btn bg-[#e5af2d] text-black hover:bg-[#e5af2d]">
             {modalData
               ? loading
                 ? 'Updating...'
