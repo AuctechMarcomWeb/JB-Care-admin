@@ -400,7 +400,6 @@ const Biling = () => {
                       <td className="px-1 py-2 text-center border border-gray-200">
                         {item.currentReading || '0.14 units'}
                       </td>
-
                       <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalBillingAmount}
                       </td>
