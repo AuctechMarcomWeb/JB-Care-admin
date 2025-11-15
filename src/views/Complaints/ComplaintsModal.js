@@ -167,6 +167,7 @@ const ComplaintsModal = ({
         closureDetails,
         repushedDetails,
         userRole: 'Admin',
+        problemType: modalData?.problemType || '',
       })
 
       // 🧩 Step 6: Also preselect the related user (optional)
@@ -216,8 +217,8 @@ const ComplaintsModal = ({
     if (!formData.complaintTitle.trim()) newErrors.complaintTitle = 'Complaint title is required'
     if (!formData.complaintDescription.trim())
       newErrors.complaintDescription = 'Description is required'
-    if (!formData.images || formData.images.length === 0)
-      newErrors.images = 'At least one image is required'
+    // if (!formData.images || formData.images.length === 0)
+    //   newErrors.images = 'At least one image is required'
 
     // ---- Extra validation for edit mode ----
     if (modalData && formData.action) {
@@ -226,8 +227,8 @@ const ComplaintsModal = ({
           newErrors.supervisorDetails = {}
           if (!formData.supervisorDetails?.comments?.trim())
             newErrors.supervisorDetails.comments = 'Comments are required'
-          if (!formData.supervisorDetails?.images?.length)
-            newErrors.supervisorDetails.images = 'At least one image is required'
+          // if (!formData.supervisorDetails?.images?.length)
+          //   newErrors.supervisorDetails.images = 'At least one image is required'
           if (Object.keys(newErrors.supervisorDetails).length === 0)
             delete newErrors.supervisorDetails
           break
@@ -240,8 +241,8 @@ const ComplaintsModal = ({
             newErrors.materialDemand.quantity = 'Quantity is required'
           if (!formData.materialDemand?.reason?.trim())
             newErrors.materialDemand.reason = 'Reason is required'
-          if (!formData.materialDemand?.images?.length)
-            newErrors.materialDemand.images = 'At least one image is required'
+          // if (!formData.materialDemand?.images?.length)
+          //   newErrors.materialDemand.images = 'At least one image is required'
           if (Object.keys(newErrors.materialDemand).length === 0) delete newErrors.materialDemand
           break
 
@@ -249,8 +250,8 @@ const ComplaintsModal = ({
           newErrors.resolution = {}
           if (!formData.resolution?.remarks?.trim())
             newErrors.resolution.remarks = 'Remarks are required'
-          if (!formData.resolution?.images?.length)
-            newErrors.resolution.images = 'Resolved images are required'
+          // if (!formData.resolution?.images?.length)
+          //   newErrors.resolution.images = 'Resolved images are required'
           if (Object.keys(newErrors.resolution).length === 0) delete newErrors.resolution
           break
 
@@ -258,8 +259,8 @@ const ComplaintsModal = ({
           newErrors.closureDetails = {}
           if (!formData.closureDetails?.remarks?.trim())
             newErrors.closureDetails.remarks = 'Remarks are required'
-          if (!formData.closureDetails?.images?.length)
-            newErrors.closureDetails.images = 'Proof images are required'
+          // if (!formData.closureDetails?.images?.length)
+          //   newErrors.closureDetails.images = 'Proof images are required'
           if (Object.keys(newErrors.closureDetails).length === 0) delete newErrors.closureDetails
           break
 
@@ -347,6 +348,7 @@ const ComplaintsModal = ({
       complaintTitle: '',
       complaintDescription: '',
       images: [],
+      problemType: '',
     })
   }
 
@@ -469,7 +471,8 @@ const ComplaintsModal = ({
           {/* Image Upload */}
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
-              Images <span className="text-danger">*</span>
+              Images
+              {/* <span className="text-danger">*</span> */}
             </label>
 
             {/* Flex container for input + previews */}
@@ -479,7 +482,7 @@ const ComplaintsModal = ({
                 className={`form-control ${errors.images ? 'is-invalid' : ''}`}
                 onChange={handleImageUpload}
                 multiple
-                required={!(formData.images && formData.images.length > 0)}
+                //  required={!(formData.images && formData.images.length > 0)}
                 ref={(el) => (imagesInputRefs.current[0] = el)}
                 style={{
                   flex: formData.images && formData.images.length > 0 ? '0 0 70%' : '1 1 100%',

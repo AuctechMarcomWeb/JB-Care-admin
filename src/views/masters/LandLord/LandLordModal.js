@@ -135,7 +135,7 @@ const LandLordModal = ({
     if (!formData?.address) newErrors.address = 'Address is required'
     if (!formData?.siteId) newErrors.siteId = 'Select a site'
     if (!formData?.unitId) newErrors.unitId = 'Select a unit'
-    if (!formData?.profilePic) newErrors.profilePic = 'Profile image is required'
+    // if (!formData?.profilePic) newErrors.profilePic = 'Profile image is required'
     if (!formData?.walletBalance) newErrors.walletBalance = 'Wallet Balance is required'
 
     if (!formData.email?.trim()) {
@@ -322,7 +322,8 @@ const LandLordModal = ({
         <div className="row">
           <div className="col-md-6 mb-3">
             <label className="form-label fw-bold">
-              Profile Image<span className="text-danger">*</span>
+              Profile Image
+              {/* <span className="text-danger">*</span> */}
             </label>
             <input
               type="file"

@@ -271,6 +271,9 @@ const Complaints = () => {
                       Complaint Date
                     </th>
                     <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
+                      Name
+                    </th>
+                    <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
                       Site Name
                     </th>
                     <th className="px-2 py-2 text-sm font-semibold text-gray-700 border border-gray-200">
@@ -309,6 +312,10 @@ const Complaints = () => {
                       {/* Date */}
                       <td className="px-2 py-2 text-gray-600 border border-gray-200 align-middle">
                         {formatDate(item?.createdAt || '-')}
+                      </td>
+                      {/* site */}
+                      <td className="px-2 py-2 text-gray-700 border border-gray-200 align-middle">
+                        {item?.userId?.name || '-'}
                       </td>
 
                       {/* site */}

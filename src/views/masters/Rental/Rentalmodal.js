@@ -26,7 +26,6 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     billTo: 'tenant',
     isActive: false,
     addedBy: 'landlord',
-
   })
 
   // 🔹 Fetch sites when modal opens
@@ -141,7 +140,7 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
     if (!formData.siteId) newErrors.siteId = 'Select site'
     if (!formData.unitId) newErrors.unitId = 'Select unit'
     if (!formData.landlordId) newErrors.landlordId = 'Select landlord'
-    if (!formData.profilePic) newErrors.profilePic = 'Profile image is required'
+    //if (!formData.profilePic) newErrors.profilePic = 'Profile image is required'
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -195,7 +194,6 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
       landlordId: '',
       billTo: 'tenant',
       isActive: false,
-      
     })
   }
 
@@ -207,224 +205,244 @@ const RentalModal = ({ setUpdateStatus, setModalData, modalData, isModalOpen, se
       onCancel={handleCancel}
     >
       <form onSubmit={modalData ? handleEdit : handleSubmit} noValidate>
-  <div className="row">
-    {/* Site */}
-    <div className="col-md-6 mb-3">
-      <label className="form-label fw-bold">Site <span className="text-danger">*</span></label>
-      <Select
-        showSearch
-        allowClear
-        placeholder="Select Site"
-        value={formData.siteId || undefined}
-        onChange={(value) => {
-          setFormData((prev) => ({ ...prev, siteId: value, unitId: '', landlordId: '' }));
-          if (value) setErrors((prev) => ({ ...prev, siteId: '' }));
-        }}
-        options={sites.map((s) => ({ value: s._id, label: s.siteName }))}
-        className={errors.siteId ? 'is-invalid' : ''}
-        size="large"
-                      style={{ width: '100%', height: '38px' }}
+        <div className="row">
+          {/* Site */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Site <span className="text-danger">*</span>
+            </label>
+            <Select
+              showSearch
+              allowClear
+              placeholder="Select Site"
+              value={formData.siteId || undefined}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, siteId: value, unitId: '', landlordId: '' }))
+                if (value) setErrors((prev) => ({ ...prev, siteId: '' }))
+              }}
+              options={sites.map((s) => ({ value: s._id, label: s.siteName }))}
+              className={errors.siteId ? 'is-invalid' : ''}
+              size="large"
+              style={{ width: '100%', height: '38px' }}
+            />
+            {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
+          </div>
 
-      />
-      {errors.siteId && <div className="invalid-feedback">{errors.siteId}</div>}
-    </div>
-
-    {/* Unit */}
-    <div className="col-md-6 mb-3">
-      <label className="form-label fw-bold">Unit <span className="text-danger">*</span></label>
-      <Select
-        showSearch
-        allowClear
-        placeholder="Select Unit"
-        value={formData.unitId || undefined}
-        onChange={(value) => {
-          setFormData((prev) => ({ ...prev, unitId: value, landlordId: '' }));
-          if (value) setErrors((prev) => ({ ...prev, unitId: '' }));
-        }}
-        disabled={!formData.siteId}
-        options={units.map((u) => ({ value: u._id, label: u.unitNumber }))}
-        className={errors.unitId ? 'is-invalid' : ''}
-        size="large"
-        style={{ width: '100%', height: '38px' }}
-
-      />
-      {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
-    </div>
-  </div>
-
-  <div className="row">
-    {/* Landlord */}
-    <div className="col-md-6 mb-3">
-      <label className="form-label fw-bold">Landlord <span className="text-danger">*</span></label>
-      <Select
-        showSearch
-        allowClear
-        placeholder="Select Landlord"
-        value={formData.landlordId || undefined}
-        onChange={(value) => {
-          setFormData((prev) => ({ ...prev, landlordId: value }));
-          if (value) setErrors((prev) => ({ ...prev, landlordId: '' }));
-        }}
-        disabled={!formData.unitId}
-        options={landlords.map((l) => ({ value: l._id, label: l.name }))}
-        className={errors.landlordId ? 'is-invalid' : ''}
-        size="large"
-        style={{ width: '100%', height: '38px' }}
-      />
-      {errors.landlordId && <div className="invalid-feedback">{errors.landlordId}</div>}
-    </div>
-
-    {/* Name */}
-    <div className="col-md-6 mb-3">
-      <label className="form-label fw-bold">Name <span className="text-danger">*</span></label>
-      <input
-        type="text"
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-        className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-      />
-      {errors.name && <div className="invalid-feedback">{errors.name}</div>}
-    </div>
-  </div>
-
-  <div className="row">
-    {/* Email */}
-    <div className="col-md-6 mb-3">
-      <label className="form-label fw-bold">Email <span className="text-danger">*</span></label>
-      <input
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-      />
-      {errors.email && <div className="invalid-feedback">{errors.email}</div>}
-    </div>
-
-    {/* Phone */}
-    <div className="col-md-6 mb-3">
-      <label className="form-label fw-bold">Phone <span className="text-danger">*</span></label>
-      <input
-        type="text"
-        name="phone"
-        value={formData.phone}
-        onChange={handleChange}
-        maxLength={10}
-        className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
-      />
-      {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
-    </div>
-  </div>
-
-  <div className="row">
-    {/* Address */}
-    <div className="col-md-6 mb-3">
-      <label className="form-label fw-bold">Address <span className="text-danger">*</span></label>
-      <input
-        type="text"
-        name="address"
-        value={formData.address}
-        onChange={handleChange}
-        className={`form-control ${errors.address ? 'is-invalid' : ''}`}
-      />
-      {errors.address && <div className="invalid-feedback">{errors.address}</div>}
-    </div>
-
-    {/* Profile Image */}
-    <div className="col-md-6 mb-3">
-      <label className="form-label fw-bold">Profile Image <span className="text-danger">*</span></label>
-      <input
-        type="file"
-        ref={imageInputRef}
-        className={`form-control ${errors.profilePic ? 'is-invalid' : ''}`}
-        onChange={handleImageUpload}
-        disabled={imageLoading}
-      />
-      {errors.profilePic && <div className="invalid-feedback">{errors.profilePic}</div>}
-      {formData.profilePic && (
-        <div className="mt-2 position-relative d-inline-block">
-          <img
-            src={formData.profilePic}
-            alt="Preview"
-            style={{
-              width: 60,
-              height: 60,
-              borderRadius: 6,
-              objectFit: 'cover',
-              opacity: imageLoading ? 0.5 : 1,
-            }}
-          />
-          {!imageLoading && (
-            <button
-              type="button"
-              onClick={handleRemoveImage}
-              className="btn btn-sm btn-danger position-absolute top-0 end-0"
-            >
-              ×
-            </button>
-          )}
+          {/* Unit */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Unit <span className="text-danger">*</span>
+            </label>
+            <Select
+              showSearch
+              allowClear
+              placeholder="Select Unit"
+              value={formData.unitId || undefined}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, unitId: value, landlordId: '' }))
+                if (value) setErrors((prev) => ({ ...prev, unitId: '' }))
+              }}
+              disabled={!formData.siteId}
+              options={units.map((u) => ({ value: u._id, label: u.unitNumber }))}
+              className={errors.unitId ? 'is-invalid' : ''}
+              size="large"
+              style={{ width: '100%', height: '38px' }}
+            />
+            {errors.unitId && <div className="invalid-feedback">{errors.unitId}</div>}
+          </div>
         </div>
-      )}
-    </div>
-  </div>
 
-  <div className="row">
-    {/* Bill To */}
-    <div className="col-md-6 mb-3">
-      <label className="form-label fw-bold">Select Payable Person</label>
-      <div className="d-flex align-items-center gap-4 mt-2">
-        <div className="form-check">
-          <input
-            className="form-check-input"
-            type="radio"
-            name="billTo"
-            value="tenant"
-            checked={formData.billTo === 'tenant'}
-            onChange={handleChange}
-          />
-          <label className="form-check-label">Tenant</label>
+        <div className="row">
+          {/* Landlord */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Landlord <span className="text-danger">*</span>
+            </label>
+            <Select
+              showSearch
+              allowClear
+              placeholder="Select Landlord"
+              value={formData.landlordId || undefined}
+              onChange={(value) => {
+                setFormData((prev) => ({ ...prev, landlordId: value }))
+                if (value) setErrors((prev) => ({ ...prev, landlordId: '' }))
+              }}
+              disabled={!formData.unitId}
+              options={landlords.map((l) => ({ value: l._id, label: l.name }))}
+              className={errors.landlordId ? 'is-invalid' : ''}
+              size="large"
+              style={{ width: '100%', height: '38px' }}
+            />
+            {errors.landlordId && <div className="invalid-feedback">{errors.landlordId}</div>}
+          </div>
+
+          {/* Name */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Name <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+            />
+            {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+          </div>
         </div>
-        <div className="form-check">
-          <input
-            className="form-check-input"
-            type="radio"
-            name="billTo"
-            value="landlord"
-            checked={formData.billTo === 'landlord'}
-            onChange={handleChange}
-          />
-          <label className="form-check-label">Landlord</label>
+
+        <div className="row">
+          {/* Email */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Email <span className="text-danger">*</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+            />
+            {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+          </div>
+
+          {/* Phone */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Phone <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              maxLength={10}
+              className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+            />
+            {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
+          </div>
         </div>
-      </div>
-    </div>
 
-    {/* Active */}
-    <div className="col-md-6 mb-3 d-flex align-items-center">
-      <div className="form-check mt-2">
-        <input
-          type="checkbox"
-          className="form-check-input"
-          name="isActive"
-          checked={formData.isActive}
-          onChange={handleChange}
-        />
-        <label className="form-check-label fw-bold">Active</label>
-      </div>
-    </div>
-  </div>
+        <div className="row">
+          {/* Address */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Address <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className={`form-control ${errors.address ? 'is-invalid' : ''}`}
+            />
+            {errors.address && <div className="invalid-feedback">{errors.address}</div>}
+          </div>
 
-  {/* Buttons */}
-  <div className="d-flex justify-content-end gap-2 mt-3">
-    <button type="button" className="btn btn-secondary" onClick={handleCancel}>
-      Cancel
-    </button>
-    <button type="submit" className="btn bg-amber-200 text-black" disabled={loading}>
-      {modalData ? (loading ? 'Updating...' : 'Update Tenant') : (loading ? 'Saving...' : 'Save Tenant')}
-    </button>
-  </div>
-</form>
+          {/* Profile Image */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">
+              Profile Image
+              {/* <span className="text-danger">*</span> */}
+            </label>
+            <input
+              type="file"
+              ref={imageInputRef}
+              className={`form-control ${errors.profilePic ? 'is-invalid' : ''}`}
+              onChange={handleImageUpload}
+              disabled={imageLoading}
+            />
+            {errors.profilePic && <div className="invalid-feedback">{errors.profilePic}</div>}
+            {formData.profilePic && (
+              <div className="mt-2 position-relative d-inline-block">
+                <img
+                  src={formData.profilePic}
+                  alt="Preview"
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 6,
+                    objectFit: 'cover',
+                    opacity: imageLoading ? 0.5 : 1,
+                  }}
+                />
+                {!imageLoading && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="btn btn-sm btn-danger position-absolute top-0 end-0"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
 
+        <div className="row">
+          {/* Bill To */}
+          <div className="col-md-6 mb-3">
+            <label className="form-label fw-bold">Select Payable Person</label>
+            <div className="d-flex align-items-center gap-4 mt-2">
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="billTo"
+                  value="tenant"
+                  checked={formData.billTo === 'tenant'}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label">Tenant</label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="billTo"
+                  value="landlord"
+                  checked={formData.billTo === 'landlord'}
+                  onChange={handleChange}
+                />
+                <label className="form-check-label">Landlord</label>
+              </div>
+            </div>
+          </div>
+
+          {/* Active */}
+          <div className="col-md-6 mb-3 d-flex align-items-center">
+            <div className="form-check mt-2">
+              <input
+                type="checkbox"
+                className="form-check-input"
+                name="isActive"
+                checked={formData.isActive}
+                onChange={handleChange}
+              />
+              <label className="form-check-label fw-bold">Active</label>
+            </div>
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="d-flex justify-content-end gap-2 mt-3">
+          <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+            Cancel
+          </button>
+          <button type="submit" className="btn bg-amber-200 text-black" disabled={loading}>
+            {modalData
+              ? loading
+                ? 'Updating...'
+                : 'Update Tenant'
+              : loading
+                ? 'Saving...'
+                : 'Save Tenant'}
+          </button>
+        </div>
+      </form>
     </Modal>
   )
 }

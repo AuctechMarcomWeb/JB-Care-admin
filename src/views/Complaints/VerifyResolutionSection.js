@@ -101,7 +101,7 @@ const VerifyResolutionSection = ({
               className={`form-control ${errors.closureDetails?.images ? 'is-invalid' : ''}`}
               onChange={handleClosedImageUpload}
               multiple
-              required={!(formData.closureDetails?.images?.length > 0)}
+              // required={!(formData.closureDetails?.images?.length > 0)}
               ref={(el) => (imagesInputRefs.current[3] = el)}
               style={{ width: '250px' }}
             />

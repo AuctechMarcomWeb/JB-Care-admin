@@ -130,7 +130,8 @@ const MaterialDemandSection = ({
 
       <div className="col-md-6 mb-3">
         <label className="form-label fw-bold">
-          Material Images <span className="text-danger">*</span>
+          Material Images
+          {/* <span className="text-danger">*</span> */}
         </label>
         <input
           type="file"
