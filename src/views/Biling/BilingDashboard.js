@@ -31,6 +31,7 @@ import { getRequest } from '../../Helpers'
 import { useNavigate } from 'react-router-dom'
 import { Empty, Pagination, Spin } from 'antd'
 import { useBillingContext } from '../../context/bilingContext'
+import BillingDashboard from '../../components/Stats/Billing stats/billingStatsTable'
 
 const BilingDashboard = () => {
   const [dashData, setDashData] = useState([])
@@ -190,6 +191,9 @@ const BilingDashboard = () => {
       {/* MAIN WRAPPER CARD */}
       <div className="w-full max-w-[1800px]   p-2 sm:p-6 lg:p-8">
         {/* Header */}
+        {/* <div className="mb-4">
+          <BillingDashboard />
+        </div> */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
             {/* <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
