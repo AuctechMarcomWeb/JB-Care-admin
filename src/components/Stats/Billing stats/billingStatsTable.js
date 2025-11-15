@@ -203,9 +203,9 @@ export default function BillingDashboard() {
                     <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
                       Pending
                     </th>
-                    <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
+                    {/* <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
                       Total Amt
-                    </th>
+                    </th> */}
                     <th className="px-2 py-1.5 text-right text-[10px] font-semibold text-slate-700 uppercase">
                       % Collected
                     </th>
@@ -237,9 +237,9 @@ export default function BillingDashboard() {
                             <CounterAnimation target={row.pendingBills} duration={2000} />
                           </td>
 
-                          <td className="px-2 py-1.5 text-right text-red-600 text-xs font-semibold">
+                          {/* <td className="px-2 py-1.5 text-right text-red-600 text-xs font-semibold">
                             <CounterAnimation target={row.totalAmount} duration={2000} />
-                          </td>
+                          </td> */}
 
                           <td className="px-2 py-1.5 text-right">
                             <span
@@ -274,9 +274,9 @@ export default function BillingDashboard() {
                         <CounterAnimation target={totalStats.pendingBills} duration={2000} />
                       </td>
 
-                      <td className="px-2 py-1.5 text-right text-xs text-red-700">
+                      {/* <td className="px-2 py-1.5 text-right text-xs text-red-700">
                         <CounterAnimation target={totalStats.totalAmount} duration={2000} />
-                      </td>
+                      </td> */}
 
                       <td className="px-2 py-1.5 text-right">
                         <span className="inline-block px-1.5 py-0.5 rounded text-xxs font-bold bg-blue-100 text-blue-700">

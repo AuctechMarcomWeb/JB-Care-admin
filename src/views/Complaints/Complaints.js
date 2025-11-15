@@ -246,7 +246,7 @@ const Complaints = () => {
         </div>
       </div>
       <hr className="" /> {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto table-watermark">
         {loading ? (
           // Loader when fetching data
           <div className="flex flex-col justify-center items-center py-20">
@@ -294,7 +294,7 @@ const Complaints = () => {
                   </tr>
                 </thead>
 
-                <tbody className="bg-white">
+                <tbody className="bg-white table-watermark">
                   {data?.map((item, index) => (
                     <tr
                       key={item._id}

@@ -267,9 +267,9 @@ const BilingModal = ({
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => {
-    console.log('selectedBill UPDATED === ', selectedBill)
-  }, [selectedBill])
+  // useEffect(() => {
+  //   console.log('selectedBill UPDATED === ', selectedBill)
+  // }, [selectedBill])
 
   // 🔹 Auto-calculate totalAmount and billingAmount
   useEffect(() => {
