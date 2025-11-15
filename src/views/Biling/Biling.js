@@ -365,7 +365,7 @@ const Biling = () => {
                     <th className="px-2 py-2 text-left border border-gray-200">
                       Billing Till Today
                     </th>
-                    <th className="px-2 py-2 text-left border border-gray-200">Previous Unpaid</th>
+                    <th className="px-2 py-2 text-left border border-gray-200">Due Amount</th>
                     <th className="px-2 py-2 text-left border border-gray-200">Unpaid Bill</th>
                     <th className="px-2 py-2 text-left border border-gray-200">Action</th>
                   </tr>
@@ -400,12 +400,7 @@ const Biling = () => {
                       <td className="px-1 py-2 text-center border border-gray-200">
                         {item.currentReading || '0.14 units'}
                       </td>
-                      <td className="px-1 py-2 text-center border border-gray-200">
-                        {item.totalElectricity}
-                      </td>
-                      <td className="px-2 py-2 text-center border border-gray-200">1</td>
-                      <td className="px-2 py-2 text-center border border-gray-200">1</td>
-                      <td className="px-2 py-2 text-center border border-gray-200">1</td>
+
                       <td className="px-2 py-2 text-center border border-gray-200">
                         {item.totalBillingAmount}
                       </td>
