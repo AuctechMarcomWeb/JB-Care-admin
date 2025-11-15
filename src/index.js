@@ -7,6 +7,7 @@ import App from './App'
 import store from './store'
 import { BillingSummaryProvider } from './context/BillingSummaryContext'
 import { BillingProvider } from './context/bilingContext'
+import './assets/styles/sidebar.css'
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>

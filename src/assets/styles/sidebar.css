@@ -1,0 +1,53 @@
+/* ===========================
+   MAIN SIDEBAR
+============================ */
+.rr-sidebar {
+  background: #000; /* pure black sidebar */
+  padding: 10px 12px;
+}
+
+/* ===========================
+   ACTIVE MAIN LABEL (YELLOW)
+============================ */
+.rr-sidebar .nav-group.active > .nav-link {
+  background: linear-gradient(90deg, #e5af2d, #f6d880);
+  color: #000 !important;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* ICON COLOR WHEN ACTIVE */
+.rr-sidebar .nav-group.active > .nav-link svg {
+  color: #000 !important;
+}
+
+/* ===========================
+   SUBMENU ITEMS (TRANSPARENT)
+============================ */
+.rr-sidebar .nav-group.active .nav-group-items .nav-link {
+  background: transparent !important;
+  color: #e2e2e2 !important;
+  padding-left: 34px;
+  font-size: 14px;
+}
+
+/* SUBMENU ACTIVE (small highlight) */
+.rr-sidebar .nav-group-items .nav-link.active {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  border-radius: 6px;
+}
+
+/* ===========================
+   NORMAL LINKS
+============================ */
+.rr-sidebar .nav-link {
+  color: #d6d6d6 !important;
+}
+
+/* ICON SIZE FIX */
+.rr-sidebar .nav-link svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
